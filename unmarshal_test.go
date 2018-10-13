@@ -2,6 +2,8 @@ package onnx
 
 import (
 	"testing"
+
+	"gorgonia.org/tensor"
 )
 
 func TestUnmarshalAttributes(t *testing.T) {
@@ -34,8 +36,9 @@ func TestUnmarshalAttributes(t *testing.T) {
 		}
 	}
 	type validReceiverType struct {
-		I    int64   `attribute:"I" required:"true"`
-		Ints []int64 `attribute:"INTS" required:"true"`
+		I    int64          `attributeName:"I" required:"true"`
+		Ints []int64        `attributeName:"INTS" required:"true"`
+		T    *tensor.Tensor `attributeName:"Tensor" required:"true"`
 	}
 	var validReceiver validReceiverType
 	err = UnmarshalAttributes(nil, &validReceiver)
