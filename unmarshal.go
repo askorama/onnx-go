@@ -23,7 +23,7 @@ const (
 //
 // The values are associated thanks to the `onnx` tag fields and `required` tag if needed.
 // Warning: any attribute not present in the v structure is silently discarded
-func UnmarshalAttributes(attrs []AttributeProto, v interface{}) error {
+func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 	rv := reflect.ValueOf(v)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return &InvalidUnmarshalError{reflect.TypeOf(v)}
@@ -33,7 +33,7 @@ func UnmarshalAttributes(attrs []AttributeProto, v interface{}) error {
 	if rvi.Kind() != reflect.Struct {
 		return &InvalidUnmarshalError{reflect.TypeOf(v)}
 	}
-	attrsInventory := make(map[string]AttributeProto, len(attrs))
+	attrsInventory := make(map[string]*AttributeProto, len(attrs))
 	for _, attr := range attrs {
 		attrsInventory[*attr.Name] = attr
 	}
