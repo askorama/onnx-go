@@ -4,13 +4,122 @@ import (
 	"reflect"
 )
 
-// UnmarshalAttributes reads the array of attributes and stores the result in the value pointed to by v. If v is nil or not a pointer, Unmarshal returns an InvalidUnmarshalError.
+const (
+	attrTagName     = "attribute"
+	requiredTagName = "required"
+)
+
+// UnmarshalAttributes reads the array of attributes and stores the result in the struct pointed to by v. If v is nil or not a pointer to a struct, Unmarshal returns an InvalidUnmarshalError.
+// The structure pointed by v can only be flat and composed of one of the following types:
+//    * string
+//    * []string
+//    * int64
+//    * []int64
+//    * float32
+//    * []float32
+//    * []byte
+//
+// The values are associated thanks to the `onnx` tag fields and `required` tag if needed.
+// Warning: any attribute not present in the v structure is silently discarded
 func UnmarshalAttributes(attrs []AttributeProto, v interface{}) error {
 	rv := reflect.ValueOf(v)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return &InvalidUnmarshalError{reflect.TypeOf(v)}
 	}
+
+	rvi := reflect.Indirect(rv)
+	if rvi.Kind() != reflect.Struct {
+		return &InvalidUnmarshalError{reflect.TypeOf(v)}
+	}
+	attrsInventory := make(map[string]AttributeProto, len(attrs))
+	for _, attr := range attrs {
+		attrsInventory[*attr.Name] = attr
+	}
+	for i := 0; i < rvi.NumField(); i++ {
+		onnxTag, ok := rvi.Type().Field(i).Tag.Lookup(attrTagName)
+		if ok {
+			required := false
+			req, ok := rvi.Type().Field(i).Tag.Lookup(requiredTagName)
+			if ok && req == "true" {
+				required = true
+
+			}
+			attr, ok := attrsInventory[onnxTag]
+			if required && !ok {
+				return &RequiredTagNotFound{
+					TagName: onnxTag,
+				}
+			}
+			// Process the attribute
+			// Check if the attribute type match the type of the field
+			switch *attr.Type {
+			case AttributeProto_UNDEFINED:
+				return &UnmarshalTypeError{}
+			case AttributeProto_FLOAT:
+				if rvi.Field(i).Kind() != reflect.Float32 || rvi.Field(i).Kind() != reflect.Float64 {
+					return &UnmarshalTypeError{}
+				}
+				rvi.Field(i).SetFloat(float64(*attr.F))
+			case AttributeProto_INT:
+				if rvi.Field(i).Kind() != reflect.Int64 {
+					return &UnmarshalTypeError{}
+				}
+				rvi.Field(i).SetInt(*attr.I)
+			case AttributeProto_STRING:
+				if rvi.Field(i).Kind() != reflect.String {
+					return &UnmarshalTypeError{}
+				}
+				rvi.Field(i).SetString(string(attr.S))
+			case AttributeProto_TENSOR:
+			case AttributeProto_GRAPH:
+				return &UnmarshalTypeError{}
+			case AttributeProto_FLOATS:
+				if rvi.Field(i).Kind() != reflect.Slice {
+					return &UnmarshalTypeError{}
+				}
+				/*
+					if rvi.Field(i).Elem().Kind() != reflect.Float32 {
+						return &UnmarshalTypeError{}
+					}
+				*/
+				rvi.Field(i).Set(reflect.ValueOf(attr.Floats))
+			case AttributeProto_INTS:
+				if rvi.Field(i).Kind() != reflect.Slice {
+					return &UnmarshalTypeError{}
+				}
+				/*
+					if rvi.Field(i).Kind() != reflect.Int64 {
+						return &UnmarshalTypeError{}
+					}
+				*/
+				rvi.Field(i).Set(reflect.ValueOf(attr.Ints))
+			case AttributeProto_STRINGS:
+				if rvi.Field(i).Kind() != reflect.Slice {
+					return &UnmarshalTypeError{}
+				}
+				/*
+					if rvi.Field(i).Elem().Kind() != reflect.String {
+						return &UnmarshalTypeError{}
+					}
+				*/
+			case AttributeProto_TENSORS:
+			case AttributeProto_GRAPHS:
+				return &UnmarshalTypeError{}
+			default:
+				return &UnmarshalTypeError{}
+			}
+		}
+	}
 	return nil
+}
+
+// A RequiredTagNotFound error is raised if a TagName is marked as required and is not found in the attribute list
+type RequiredTagNotFound struct {
+	TagName string
+}
+
+func (e *RequiredTagNotFound) Error() string {
+	return "onnx: tag " + e.TagName + " is required but not found in the attribute list"
 }
 
 // An InvalidUnmarshalError describes an invalid argument passed to Unmarshal.
