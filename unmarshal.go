@@ -19,7 +19,7 @@ const (
 //    * []int64
 //    * float32
 //    * []float32
-//    * []byte
+//    * tensor.Tensor
 //
 // The values are associated thanks to the `onnx` tag fields and `required` tag if needed.
 // Warning: any attribute not present in the v structure is silently discarded
@@ -73,6 +73,14 @@ func UnmarshalAttributes(attrs []AttributeProto, v interface{}) error {
 				}
 				rvi.Field(i).SetString(string(attr.S))
 			case AttributeProto_TENSOR:
+				if rvi.Field(i).Kind() != reflect.Interface {
+					return &UnmarshalTypeError{}
+				}
+				t, err := attr.T.Tensor()
+				if err != nil {
+					return err
+				}
+				rvi.Field(i).Set(reflect.ValueOf(t))
 			case AttributeProto_GRAPH:
 				return &UnmarshalTypeError{}
 			case AttributeProto_FLOATS:
@@ -105,6 +113,7 @@ func UnmarshalAttributes(attrs []AttributeProto, v interface{}) error {
 					}
 				*/
 			case AttributeProto_TENSORS:
+				return &UnmarshalTypeError{}
 			case AttributeProto_GRAPHS:
 				return &UnmarshalTypeError{}
 			default:
