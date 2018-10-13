@@ -5,8 +5,10 @@ import (
 )
 
 const (
-	attrTagName     = "attribute"
-	requiredTagName = "required"
+	// AttrTagName ...
+	AttrTagName = "attributeName"
+	// RequiredTagName ...
+	RequiredTagName = "required"
 )
 
 // UnmarshalAttributes reads the array of attributes and stores the result in the struct pointed to by v. If v is nil or not a pointer to a struct, Unmarshal returns an InvalidUnmarshalError.
@@ -36,10 +38,10 @@ func UnmarshalAttributes(attrs []AttributeProto, v interface{}) error {
 		attrsInventory[*attr.Name] = attr
 	}
 	for i := 0; i < rvi.NumField(); i++ {
-		onnxTag, ok := rvi.Type().Field(i).Tag.Lookup(attrTagName)
+		onnxTag, ok := rvi.Type().Field(i).Tag.Lookup(AttrTagName)
 		if ok {
 			required := false
-			req, ok := rvi.Type().Field(i).Tag.Lookup(requiredTagName)
+			req, ok := rvi.Type().Field(i).Tag.Lookup(RequiredTagName)
 			if ok && req == "true" {
 				required = true
 
