@@ -72,18 +72,18 @@ func TestUnmarshalAttributes(t *testing.T) {
 		Uint64Data: nil,
 	}
 
-	simpleAttributes := []AttributeProto{
-		AttributeProto{
+	simpleAttributes := []*AttributeProto{
+		&AttributeProto{
 			Name: &simpleAttributeIName,
 			Type: &simpleAttributeIType,
 			I:    &simpleAttributeIValue,
 		},
-		AttributeProto{
+		&AttributeProto{
 			Name: &simpleAttributeINTSName,
 			Type: &simpleAttributeINTSType,
 			Ints: simpleAttributeINTSValue,
 		},
-		AttributeProto{
+		&AttributeProto{
 			Name: &simpleAttributeTensorName,
 			Type: &simpleAttributeTensorType,
 			T:    simpleAttributeTensorValue,
