@@ -47,34 +47,48 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 
 			}
 			attr, ok := attrsInventory[onnxTag]
-			if required && !ok {
-				return &RequiredTagNotFound{
-					TagName: onnxTag,
+			if !ok {
+				if required {
+					return &RequiredTagNotFound{
+						TagName: onnxTag,
+					}
 				}
+				continue
 			}
 			// Process the attribute
 			// Check if the attribute type match the type of the field
 			switch *attr.Type {
 			case AttributeProto_UNDEFINED:
-				return &UnmarshalTypeError{}
+				return &UnmarshalTypeError{
+					Type: reflect.TypeOf(rvi.Field(i)),
+				}
 			case AttributeProto_FLOAT:
-				if rvi.Field(i).Kind() != reflect.Float32 || rvi.Field(i).Kind() != reflect.Float64 {
-					return &UnmarshalTypeError{}
+				kind := rvi.Field(i).Kind()
+				if kind != reflect.Float64 {
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				rvi.Field(i).SetFloat(float64(*attr.F))
 			case AttributeProto_INT:
 				if rvi.Field(i).Kind() != reflect.Int64 {
-					return &UnmarshalTypeError{}
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				rvi.Field(i).SetInt(*attr.I)
 			case AttributeProto_STRING:
 				if rvi.Field(i).Kind() != reflect.String {
-					return &UnmarshalTypeError{}
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				rvi.Field(i).SetString(string(attr.S))
 			case AttributeProto_TENSOR:
 				if rvi.Field(i).Kind() != reflect.Interface {
-					return &UnmarshalTypeError{}
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				t, err := attr.T.Tensor()
 				if err != nil {
@@ -82,10 +96,14 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 				}
 				rvi.Field(i).Set(reflect.ValueOf(t))
 			case AttributeProto_GRAPH:
-				return &UnmarshalTypeError{}
+				return &UnmarshalTypeError{
+					Type: reflect.TypeOf(rvi.Field(i)),
+				}
 			case AttributeProto_FLOATS:
 				if rvi.Field(i).Kind() != reflect.Slice {
-					return &UnmarshalTypeError{}
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				/*
 					if rvi.Field(i).Elem().Kind() != reflect.Float32 {
@@ -95,7 +113,9 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 				rvi.Field(i).Set(reflect.ValueOf(attr.Floats))
 			case AttributeProto_INTS:
 				if rvi.Field(i).Kind() != reflect.Slice {
-					return &UnmarshalTypeError{}
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				/*
 					if rvi.Field(i).Kind() != reflect.Int64 {
@@ -105,7 +125,9 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 				rvi.Field(i).Set(reflect.ValueOf(attr.Ints))
 			case AttributeProto_STRINGS:
 				if rvi.Field(i).Kind() != reflect.Slice {
-					return &UnmarshalTypeError{}
+					return &UnmarshalTypeError{
+						Type: reflect.TypeOf(rvi.Field(i)),
+					}
 				}
 				/*
 					if rvi.Field(i).Elem().Kind() != reflect.String {
