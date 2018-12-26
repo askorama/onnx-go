@@ -1,4 +1,4 @@
-package onnx
+package pb
 
 import (
 	"reflect"

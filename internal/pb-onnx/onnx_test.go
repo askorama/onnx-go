@@ -1,4 +1,4 @@
-package onnx_test
+package pb_test
 
 import (
 	"io/ioutil"
