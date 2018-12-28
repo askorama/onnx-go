@@ -5,7 +5,6 @@ import (
 
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gonum.org/v1/gonum/graph/encoding/dot"
-	"gonum.org/v1/gonum/graph/simple"
 )
 
 var (
@@ -130,7 +129,8 @@ func init() {
 }
 
 func TestUnmarshal(t *testing.T) {
-	graph := simple.NewDirectedGraph()
+	graph := newSimpleGraph()
+	//graph := simple.NewDirectedGraph()
 	err := Unmarshal(sigmoidNeuronONNX, graph)
 	if err != nil {
 		t.Fatal(err)

@@ -13,10 +13,15 @@ type Attribute struct {
 	Value interface{}
 }
 
-// NodeOp ...
-type NodeOp interface {
+// Node ...
+type Node interface {
 	SetName(string)
 	SetDoc(string)
+}
+
+// NodeOp ...
+type NodeOp interface {
+	Node
 	SetType(string)
 	SetAttributes([]Attribute) error
 }
@@ -32,11 +37,17 @@ func Unmarshal(data []byte, dst graph.DirectedBuilder) error {
 	for _, input := range model.Graph.Input {
 		n := dst.NewNode()
 		db[*input.Name] = n
+		if _, ok := n.(Node); ok {
+			n.(Node).SetName(*input.Name)
+		}
 		dst.AddNode(n)
 	}
 	for _, output := range model.Graph.Output {
 		n := dst.NewNode()
 		db[*output.Name] = n
+		if _, ok := n.(Node); ok {
+			n.(Node).SetName(*output.Name)
+		}
 		dst.AddNode(n)
 	}
 	for _, node := range model.Graph.Node {
