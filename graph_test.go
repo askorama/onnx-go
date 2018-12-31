@@ -86,7 +86,6 @@ var (
 			newValueProtoScalar("x1w1"),
 			newValueProtoScalar("x0w0+x1w1"),
 			newValueProtoScalar("x0w0+x1w1+w2"),
-			newValueProtoScalar("x0w0+x1w1+w2"),
 			newValueProtoScalar("-(x0w0+x1w1+w2)"),
 			newValueProtoScalar("exp(-(x0w0+x1w1+w2))"),
 			newValueProtoScalar("1+exp(-(x0w0+x1w1+w2))"),
@@ -137,7 +136,7 @@ func TestUnmarshal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	b, err := dot.Marshal(graph, "name", "", "")
+	b, err := dot.Marshal(graph, "name", "", "\t")
 	if err != nil {
 		t.Fatal(err)
 	}

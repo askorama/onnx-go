@@ -33,3 +33,17 @@ func (e *ErrNotImplemented) Error() string {
 	}
 	return "onnx: operator " + e.Operator + " not implemented"
 }
+
+// ErrInvalidModel is raised if we are not able to unmarshal the model because it is invalid
+type ErrInvalidModel struct {
+	NodeNotDefined string // Happens if the corresponding node is used in the graph, but not present in the input or output fields
+}
+
+func (e *ErrInvalidModel) Error() string {
+	err := "Invalid graph: "
+	if e.NodeNotDefined != "" {
+		return fmt.Sprintf("%v: node %v is referenced in the Node lists but not defined nor in []input nor in []output", err, e.NodeNotDefined)
+	}
+	return err
+
+}
