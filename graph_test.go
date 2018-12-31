@@ -3,6 +3,7 @@ package onnx
 import (
 	"testing"
 
+	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gonum.org/v1/gonum/graph/encoding/dot"
 )
@@ -32,42 +33,42 @@ var (
 			&pb.NodeProto{
 				Input:  []string{x0, w0},
 				Output: []string{"x0w0"},
-				OpType: &mul,
+				OpType: mul,
 			},
 			&pb.NodeProto{
 				Input:  []string{x1, w1},
 				Output: []string{"x1w1"},
-				OpType: &mul,
+				OpType: mul,
 			},
 			&pb.NodeProto{
 				Input:  []string{"x0w0", "x1w1"},
 				Output: []string{"x0w0+x1w1"},
-				OpType: &add,
+				OpType: add,
 			},
 			&pb.NodeProto{
 				Input:  []string{"x0w0+x1w1", w2},
 				Output: []string{"x0w0+x1w1+w2"},
-				OpType: &add,
+				OpType: add,
 			},
 			&pb.NodeProto{
 				Input:  []string{"x0w0+x1w1+w2", minusOne},
 				Output: []string{"-(x0w0+x1w1+w2)"},
-				OpType: &mul,
+				OpType: mul,
 			},
 			&pb.NodeProto{
 				Input:  []string{"-(x0w0+x1w1+w2)"},
 				Output: []string{"exp(-(x0w0+x1w1+w2))"},
-				OpType: &exp,
+				OpType: exp,
 			},
 			&pb.NodeProto{
 				Input:  []string{one, "exp(-(x0w0+x1w1+w2))"},
 				Output: []string{"1+exp(-(x0w0+x1w1+w2))"},
-				OpType: &add,
+				OpType: add,
 			},
 			&pb.NodeProto{
 				Input:  []string{"1+exp(-(x0w0+x1w1+w2))", minusOne},
 				Output: []string{y},
-				OpType: &pow,
+				OpType: pow,
 			},
 		},
 		Initializer: []*pb.TensorProto{},
@@ -79,6 +80,8 @@ var (
 			newValueProtoScalar(x1),
 			newValueProtoScalar(w1),
 			newValueProtoScalar(w2),
+		},
+		Output: []*pb.ValueInfoProto{
 			newValueProtoScalar("x0w0"),
 			newValueProtoScalar("x1w1"),
 			newValueProtoScalar("x0w0+x1w1"),
@@ -87,8 +90,6 @@ var (
 			newValueProtoScalar("-(x0w0+x1w1+w2)"),
 			newValueProtoScalar("exp(-(x0w0+x1w1+w2))"),
 			newValueProtoScalar("1+exp(-(x0w0+x1w1+w2))"),
-		},
-		Output: []*pb.ValueInfoProto{
 			newValueProtoScalar(y),
 		},
 	}
@@ -97,11 +98,11 @@ var (
 
 func newValueProtoScalar(name string) *pb.ValueInfoProto {
 	return &pb.ValueInfoProto{
-		Name: &name,
+		Name: name,
 		Type: &pb.TypeProto{
 			Value: &pb.TypeProto_TensorType{
 				TensorType: &pb.TypeProto_Tensor{
-					ElemType: &float,
+					ElemType: int32(pb.TensorProto_FLOAT),
 					Shape: &pb.TensorShapeProto{
 						Dim: []*pb.TensorShapeProto_Dimension{
 							&pb.TensorShapeProto_Dimension{
@@ -122,7 +123,8 @@ func init() {
 		Graph: sigmoidNeuron,
 	}
 	var err error
-	sigmoidNeuronONNX, err = model.Marshal()
+	//sigmoidNeuronONNX, err = model.Marshal()
+	sigmoidNeuronONNX, err = proto.Marshal(model)
 	if err != nil {
 		panic(err)
 	}

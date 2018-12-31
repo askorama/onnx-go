@@ -3,6 +3,7 @@ package onnx
 import (
 	"fmt"
 
+	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gonum.org/v1/gonum/graph"
 )
@@ -28,25 +29,29 @@ type NodeOp interface {
 
 // Unmarshal onnx encoded model proto data into a graph builder
 func Unmarshal(data []byte, dst graph.DirectedBuilder) error {
-	model := new(pb.ModelProto)
-	err := model.Unmarshal(data)
+	model := &pb.ModelProto{}
+	err := proto.Unmarshal(data, model)
 	if err != nil {
 		return err
 	}
+	return unmarshal(model, dst)
+}
+
+func unmarshal(model *pb.ModelProto, dst graph.DirectedBuilder) error {
 	db := make(map[string]graph.Node)
 	for _, input := range model.Graph.Input {
 		n := dst.NewNode()
-		db[*input.Name] = n
+		db[input.Name] = n
 		if _, ok := n.(Node); ok {
-			n.(Node).SetName(*input.Name)
+			n.(Node).SetName(input.Name)
 		}
 		dst.AddNode(n)
 	}
 	for _, output := range model.Graph.Output {
 		n := dst.NewNode()
-		db[*output.Name] = n
+		db[output.Name] = n
 		if _, ok := n.(Node); ok {
-			n.(Node).SetName(*output.Name)
+			n.(Node).SetName(output.Name)
 		}
 		dst.AddNode(n)
 	}
@@ -66,6 +71,5 @@ func Unmarshal(data []byte, dst graph.DirectedBuilder) error {
 			}
 		}
 	}
-
-	return err
+	return nil
 }
