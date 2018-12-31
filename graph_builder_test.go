@@ -1,7 +1,10 @@
 package onnx
 
 import (
+	"fmt"
+
 	"gonum.org/v1/gonum/graph"
+	"gonum.org/v1/gonum/graph/encoding"
 	"gonum.org/v1/gonum/graph/simple"
 )
 
@@ -19,8 +22,13 @@ func (n *node) ID() int64 {
 	return n.id
 }
 
-func (n *node) DOTID() string {
-	return n.name
+func (n *node) Attributes() []encoding.Attribute {
+	return []encoding.Attribute{
+		encoding.Attribute{
+			Key:   "label",
+			Value: fmt.Sprintf(`"%v"`, n.name),
+		},
+	}
 }
 func (n *node) SetDoc(name string) {
 	n.description = name

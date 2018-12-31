@@ -1,8 +1,6 @@
 package onnx
 
 import (
-	"fmt"
-
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gonum.org/v1/gonum/graph"
@@ -56,17 +54,24 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedBuilder) error {
 		dst.AddNode(n)
 	}
 	for _, node := range model.Graph.Node {
-		for _, input := range node.Input {
-			for _, output := range node.Output {
-				var ni, no graph.Node
+		for _, output := range node.Output {
+			var ok bool
+			var no graph.Node
+			if no, ok = db[output]; !ok {
+				return &ErrInvalidModel{
+					NodeNotDefined: output,
+				}
+			}
+			// input should be ordered for non-commutatives operations
+			for _, input := range node.Input {
+				var ni graph.Node
 				var ok bool
 				if ni, ok = db[input]; !ok {
-					return fmt.Errorf("Node %v not defined in the input", input)
+					return &ErrInvalidModel{
+						NodeNotDefined: input,
+					}
 				}
-				if no, ok = db[output]; !ok {
-					return fmt.Errorf("Node %v not defined in the input", output)
-				}
-				e := dst.NewEdge(ni, no)
+				e := dst.NewEdge(no, ni)
 				dst.SetEdge(e)
 			}
 		}
