@@ -7,7 +7,9 @@ import (
 	"gorgonia.org/tensor"
 )
 
-// Unmarshal onnx encoded model proto data into a  weigthed directe builder
+// Unmarshal onnx encoded model proto data into a weigthed directed builder
+// The weight of the edges represents the indicies of the children (therefore their order)
+// first child has a weight of 0
 func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
 	model := &pb.ModelProto{}
 	err := proto.Unmarshal(data, model)
@@ -19,7 +21,8 @@ func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
 
 func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 	db := make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
-	for _, io := range append(model.Graph.Input, model.Graph.Output...) {
+	// Well...
+	for _, io := range append(append(model.Graph.Input, model.Graph.ValueInfo...), model.Graph.Output...) {
 		n := dst.NewNode()
 		db[io.Name] = n
 		if _, ok := n.(Namer); ok {

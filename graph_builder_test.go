@@ -32,6 +32,10 @@ func (n *node) ID() int64 {
 func (n *node) Attributes() []encoding.Attribute {
 	return []encoding.Attribute{
 		encoding.Attribute{
+			Key:   "shape",
+			Value: "Mrecord",
+		},
+		encoding.Attribute{
 			Key:   "label",
 			Value: fmt.Sprintf(`"%v"`, n.name),
 		},
@@ -93,21 +97,27 @@ func (g *simpleGraph) NewNode() graph.Node {
 func (g *simpleGraph) Node(id int64) graph.Node {
 	return g.g.Node(id)
 }
+
 func (g *simpleGraph) Nodes() graph.Nodes {
 	return g.g.Nodes()
 }
+
 func (g *simpleGraph) From(id int64) graph.Nodes {
 	return g.g.From(id)
 }
+
 func (g *simpleGraph) HasEdgeBetween(xid, yid int64) bool {
 	return g.g.HasEdgeBetween(xid, yid)
 }
+
 func (g *simpleGraph) Edge(uid, vid int64) graph.Edge {
 	return g.g.Edge(uid, vid)
 }
+
 func (g *simpleGraph) HasEdgeFromTo(uid, vid int64) bool {
 	return g.g.HasEdgeFromTo(uid, vid)
 }
+
 func (g *simpleGraph) To(id int64) graph.Nodes {
 	return g.g.To(id)
 }
