@@ -1,6 +1,11 @@
 package onnx
 
-import pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+import (
+	"testing"
+
+	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"gonum.org/v1/gonum/graph/encoding/dot"
+)
 
 var mnist = &pb.ModelProto{
 	IrVersion: 3,
@@ -489,8 +494,6 @@ var mnist = &pb.ModelProto{
 					},
 				},
 			},
-		},
-		ValueInfo: []*pb.ValueInfoProto{
 			&pb.ValueInfoProto{
 				Name: "Convolution28_Output_0",
 				Type: &pb.TypeProto{
@@ -761,4 +764,17 @@ var mnist = &pb.ModelProto{
 			},
 		},
 	},
+}
+
+func TestUnmarshal_mnist(t *testing.T) {
+	graph := newSimpleGraph()
+	err := unmarshal(mnist, graph)
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := dot.Marshal(graph, "name", "", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(b))
 }
