@@ -1,10 +1,12 @@
-package onnx
+package onnx_test
 
 import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
+	onnx "github.com/owulveryck/onnx-go"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/simple"
 )
 
 var (
@@ -129,9 +131,9 @@ func init() {
 }
 
 func TestUnmarshal(t *testing.T) {
-	graph := newSimpleGraph()
+	graph := simple.NewSimpleGraph()
 	//graph := simple.NewDirectedGraph()
-	err := Unmarshal(sigmoidNeuronONNX, graph)
+	err := onnx.Unmarshal(sigmoidNeuronONNX, graph)
 	if err != nil {
 		t.Fatal(err)
 	}
