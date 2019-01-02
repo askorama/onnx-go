@@ -5,7 +5,6 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
-	"gonum.org/v1/gonum/graph/encoding/dot"
 )
 
 var (
@@ -136,10 +135,5 @@ func TestUnmarshal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	b, err := dot.Marshal(graph, "name", "", "\t")
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log(string(b))
 
 }
