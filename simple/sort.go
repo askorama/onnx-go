@@ -1,4 +1,4 @@
-package onnx
+package simple
 
 import (
 	"gonum.org/v1/gonum/graph"
