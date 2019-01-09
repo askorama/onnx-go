@@ -5,12 +5,6 @@ import (
 	"gorgonia.org/tensor"
 )
 
-// Attribute ...
-type Attribute struct {
-	Key   string
-	Value interface{}
-}
-
 // Namer is a node that know its own name
 type Namer interface {
 	graph.Node
@@ -30,11 +24,4 @@ type Tensor interface {
 	graph.Node
 	SetValue(t tensor.Tensor) error
 	GetValue() tensor.Tensor
-}
-
-// Op is a node that represents an operation
-type Op interface {
-	graph.Node
-	SetOpType(string)
-	SetOpAttributes([]*Attribute) error
 }
