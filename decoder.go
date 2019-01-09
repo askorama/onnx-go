@@ -3,6 +3,7 @@ package onnx
 import (
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/pkg/errors"
 	"gonum.org/v1/gonum/graph"
 	"gorgonia.org/tensor"
 )
@@ -53,20 +54,6 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 					NodeNotDefined: output,
 				}
 			}
-			if _, ok := no.(Op); ok {
-				no.(Op).SetOpType(node.OpType)
-				attrs := make([]*Attribute, len(node.Attribute))
-				for i, a := range node.Attribute {
-					attrs[i] = &Attribute{
-						Key: a.Name,
-						//Value: a.GetValue(),
-					}
-					err := no.(Op).SetOpAttributes(attrs)
-					if err != nil {
-						return err
-					}
-				}
-			}
 			// input should be ordered for non-commutatives operations
 			for i, input := range node.Input {
 				var ni graph.Node
@@ -79,7 +66,39 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 				e := dst.NewWeightedEdge(no, ni, float64(i))
 				dst.SetWeightedEdge(e)
 			}
+			// The graph can apply operations
+			if _, ok := dst.(OperationApplyer); ok {
+				op, err := dst.(OperationApplyer).ONNXGetOperationFromName(node.OpType)
+				if err != nil {
+					return err
+				}
+				operation, ok := op.(Operation)
+				if !ok {
+					return errors.New("Graph builder did not return an operation")
+				}
+				err = dst.(OperationApplyer).ONNXApply(operation.Constructor(), no)
+				if err != nil {
+					return err
+				}
+
+			}
 		}
 	}
 	return nil
+}
+
+// OperationApplyer is any graph that can apply operations on its node
+// regarding the structure of the graph
+type OperationApplyer interface {
+	// ONNXGetOperationFromName returns an interface that should be compatible with Operation
+	// It is the responsibility of the implementor to do that
+	ONNXGetOperationFromName(s string) (interface{}, error)
+	ONNXApply(operation func(g graph.WeightedDirected, n graph.Node) (interface{}, error), n graph.Node) error
+}
+
+// Operation is an interface that should be fulfiled by any Operation
+type Operation interface {
+	// Constructor returns a function that itself returns an operator to be applied on node n.
+	// The arguments of the operator are found thanks to the graph
+	Constructor() func(g graph.WeightedDirected, n graph.Node) (interface{}, error)
 }
