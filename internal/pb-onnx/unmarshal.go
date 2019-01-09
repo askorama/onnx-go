@@ -35,7 +35,7 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 	}
 	attrsInventory := make(map[string]*AttributeProto, len(attrs))
 	for _, attr := range attrs {
-		attrsInventory[*attr.Name] = attr
+		attrsInventory[attr.Name] = attr
 	}
 	for i := 0; i < rvi.NumField(); i++ {
 		onnxTag, ok := rvi.Type().Field(i).Tag.Lookup(AttrTagName)
@@ -57,7 +57,7 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 			}
 			// Process the attribute
 			// Check if the attribute type match the type of the field
-			switch *attr.Type {
+			switch attr.Type {
 			case AttributeProto_UNDEFINED:
 				return &UnmarshalTypeError{
 					Type: reflect.TypeOf(rvi.Field(i)),
@@ -69,14 +69,14 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 						Type: reflect.TypeOf(rvi.Field(i)),
 					}
 				}
-				rvi.Field(i).SetFloat(float64(*attr.F))
+				rvi.Field(i).SetFloat(float64(attr.F))
 			case AttributeProto_INT:
 				if rvi.Field(i).Kind() != reflect.Int64 {
 					return &UnmarshalTypeError{
 						Type: reflect.TypeOf(rvi.Field(i)),
 					}
 				}
-				rvi.Field(i).SetInt(*attr.I)
+				rvi.Field(i).SetInt(attr.I)
 			case AttributeProto_STRING:
 				if rvi.Field(i).Kind() != reflect.String {
 					return &UnmarshalTypeError{
