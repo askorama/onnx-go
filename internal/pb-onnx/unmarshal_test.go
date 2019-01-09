@@ -59,14 +59,14 @@ func TestUnmarshalAttributes(t *testing.T) {
 	name := "testFloat"
 	simpleAttributeTensorValue := &TensorProto{
 		Dims:       dims,
-		DataType:   &dataType,
+		DataType:   int32(dataType),
 		Segment:    (*TensorProto_Segment)(nil),
 		FloatData:  floatData,
 		Int32Data:  nil,
 		StringData: nil,
 		Int64Data:  nil,
-		Name:       &name,
-		DocString:  nil,
+		Name:       name,
+		DocString:  "",
 		RawData:    nil,
 		DoubleData: nil,
 		Uint64Data: nil,
@@ -74,18 +74,18 @@ func TestUnmarshalAttributes(t *testing.T) {
 
 	simpleAttributes := []*AttributeProto{
 		&AttributeProto{
-			Name: &simpleAttributeIName,
-			Type: &simpleAttributeIType,
-			I:    &simpleAttributeIValue,
+			Name: simpleAttributeIName,
+			Type: simpleAttributeIType,
+			I:    simpleAttributeIValue,
 		},
 		&AttributeProto{
-			Name: &simpleAttributeINTSName,
-			Type: &simpleAttributeINTSType,
+			Name: simpleAttributeINTSName,
+			Type: simpleAttributeINTSType,
 			Ints: simpleAttributeINTSValue,
 		},
 		&AttributeProto{
-			Name: &simpleAttributeTensorName,
-			Type: &simpleAttributeTensorType,
+			Name: simpleAttributeTensorName,
+			Type: simpleAttributeTensorType,
 			T:    simpleAttributeTensorValue,
 		},
 	}
