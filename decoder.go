@@ -8,9 +8,12 @@ import (
 	"gorgonia.org/tensor"
 )
 
-// Unmarshal onnx encoded model proto data into a weigthed directed builder
-// The weight of the edges represents the indicies of the children (therefore their order)
-// first child has a weight of 0
+// Unmarshal a NN model encoded in ONNX-Protobuf format into a graph .
+// The weight of the edges represent the indices of the children (therefore their order).
+// The first child weights 0
+// If dst fulfils the OperationApplyer interface, the operations are applied to the nodes
+// carying them.
+// If the graph nodes are fulfiling the Tensor interface, their values and shape are set.
 func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
 	model := &pb.ModelProto{}
 	err := proto.Unmarshal(data, model)
