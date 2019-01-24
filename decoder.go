@@ -10,10 +10,17 @@ import (
 
 // Unmarshal a NN model encoded in ONNX-Protobuf format into a graph .
 // The weight of the edges represent the indices of the children (therefore their order).
-// The first child weights 0
-// If dst fulfils the OperationApplyer interface, the operations are applied to the nodes
-// carying them.
-// If the graph nodes are fulfiling the Tensor interface, their values and shape are set.
+// The first child weights 0.
+//
+// Executable graphs
+//
+// If dst fulfils the OperationApplyer interface, the corresponding methods are called after the initialization of
+// the structure.
+//
+// Node values
+//
+// If the graph nodes are fulfilling the Tensor interface, this function their values and shapes by calling
+// the corresponding methods.
 func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
 	model := &pb.ModelProto{}
 	err := proto.Unmarshal(data, model)
