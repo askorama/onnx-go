@@ -6,12 +6,12 @@ import (
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
-	"gorgonia.org/gorgonia"
 	"gorgonia.org/gorgonia/debugger/dot"
+	gorgonnx "gorgonia.org/gorgonia/onnx"
 )
 
 func main() {
-	graph := gorgonia.NewGraph()
+	graph := gorgonnx.NewGraph()
 	err := onnx.Unmarshal(mnist.GetMnist(), graph)
 	if err != nil {
 		log.Fatal(err)
