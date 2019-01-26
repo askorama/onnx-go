@@ -39,7 +39,7 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 		if _, ok := n.(Namer); ok {
 			n.(Namer).SetName(io.Name)
 		}
-		if _, ok := n.(Tensor); ok {
+		if _, ok := n.(TensorCarrier); ok {
 			ttype := io.Type.GetTensorType()
 			shape := make([]int, len(ttype.Shape.Dim))
 			for i, d := range ttype.Shape.Dim {
@@ -50,8 +50,10 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 				return err
 			}
 			t := tensor.New(tensor.WithShape(shape...), tensor.Of(dtype))
-			n.(Tensor).SetValue(t)
-
+			err = n.(TensorCarrier).ApplyTensor(t)
+			if err != nil {
+				return err
+			}
 		}
 		dst.AddNode(n)
 	}

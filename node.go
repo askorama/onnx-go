@@ -19,9 +19,7 @@ type Documenter interface {
 	GetDescription() string
 }
 
-// Tensor ...
-type Tensor interface {
-	graph.Node
-	SetValue(t tensor.Tensor) error
-	GetValue() tensor.Tensor
+// TensorCarrier is a graph which can turn a node into a tensor
+type TensorCarrier interface {
+	ApplyTensor(t tensor.Tensor) error
 }
