@@ -39,23 +39,45 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 		if _, ok := n.(Namer); ok {
 			n.(Namer).SetName(io.Name)
 		}
-		if _, ok := n.(TensorCarrier); ok {
-			ttype := io.Type.GetTensorType()
-			shape := make([]int, len(ttype.Shape.Dim))
-			for i, d := range ttype.Shape.Dim {
-				shape[i] = int(d.GetDimValue())
-			}
-			dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
-			if err != nil {
-				return err
-			}
-			t := tensor.New(tensor.WithShape(shape...), tensor.Of(dtype))
-			err = n.(TensorCarrier).ApplyTensor(t)
-			if err != nil {
-				return err
-			}
-		}
 		dst.AddNode(n)
+		if _, ok := n.(TensorCarrier); !ok {
+			continue
+		}
+		ttype := io.Type.GetTensorType()
+		shape := make([]int, len(ttype.Shape.Dim))
+		for i, d := range ttype.Shape.Dim {
+			shape[i] = int(d.GetDimValue())
+		}
+		dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
+		if err != nil {
+			return err
+		}
+		t := tensor.New(tensor.WithShape(shape...), tensor.Of(dtype))
+		err = n.(TensorCarrier).ApplyTensor(t)
+		if err != nil {
+			return err
+		}
+	}
+	for _, tensorProto := range model.Graph.GetInitializer() {
+		name := tensorProto.GetName()
+		if name == "" {
+			return errors.New("initializer should have a name")
+		}
+		n, ok := db[name]
+		if !ok {
+			return errors.New("invalid model: initializer has not been defined in input, output or value")
+		}
+		if _, ok := n.(TensorCarrier); !ok {
+			continue
+		}
+		t, err := tensorProto.Tensor()
+		if err != nil {
+			return err
+		}
+		err = n.(TensorCarrier).ApplyTensor(t)
+		if err != nil {
+			return err
+		}
 	}
 	for _, node := range model.Graph.Node {
 		for _, output := range node.Output {
