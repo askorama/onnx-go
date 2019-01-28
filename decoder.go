@@ -106,7 +106,12 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 				if err != nil {
 					return err
 				}
-				err = pb.UnmarshalAttributes(node.GetAttribute(), &op)
+				// TODO check the pointer
+				err = pb.UnmarshalAttributes(node.GetAttribute(), op)
+				if err != nil {
+					return err
+				}
+
 				operation, ok := op.(Operation)
 				if !ok {
 					return errors.New("Graph builder did not return an operation")
