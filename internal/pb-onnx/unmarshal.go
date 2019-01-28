@@ -48,6 +48,7 @@ func UnmarshalAttributes(attrs []*AttributeProto, v interface{}) error {
 			}
 			attr, ok := attrsInventory[onnxTag]
 			if !ok {
+				// Set the default value
 				if required {
 					return &RequiredTagNotFound{
 						TagName: onnxTag,
