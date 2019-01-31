@@ -3,19 +3,17 @@ package main
 import (
 	"fmt"
 	"log"
+	"testing"
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
 	"gorgonia.org/gorgonia/debugger/dot"
-	"gorgonia.org/gorgonia/node"
 	gorgonnx "gorgonia.org/gorgonia/onnx"
 )
 
-func main() {
-
+func TestMain(t *testing.T) {
 	graph := gorgonnx.NewGraph()
-	m := onnx.NewModel(graph)
-	err := m.Unmarshal(mnist.GetMnist())
+	err := onnx.Unmarshal(mnist.GetMnist(), graph)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +21,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	//  fmt.Println(string(b))
 	// create a VM to run the program on
 	machine := gorgonnx.NewTapeMachine(graph)
@@ -33,7 +30,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, v := range m.Output {
-		fmt.Println(graph.Node(v).(node.Node).Value().Data())
+	//fmt.Println(graph)
+	log.Println("....")
+	vals := graph.GetOutputValues()
+	fmt.Println(vals)
+	for _, v := range vals {
+		fmt.Println(v.Data())
 	}
 }

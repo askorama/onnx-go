@@ -8,6 +8,31 @@ import (
 	"gorgonia.org/tensor"
 )
 
+// Model ...
+type Model struct {
+	g        graph.DirectedWeightedBuilder
+	dbByName map[string]graph.Node
+	Input    []int64
+	Output   []int64
+}
+
+// NewModel ...
+func NewModel(dst graph.DirectedWeightedBuilder) *Model {
+	return &Model{
+		g: dst,
+	}
+}
+
+// Unmarshal ...
+func (m *Model) Unmarshal(data []byte) error {
+	model := &pb.ModelProto{}
+	err := proto.Unmarshal(data, model)
+	if err != nil {
+		return err
+	}
+	return m.unmarshal(model)
+}
+
 // Unmarshal a NN model encoded in ONNX-Protobuf format into a graph .
 // The weight of the edges represent the indices of the children (therefore their order).
 // The first child weights 0.
@@ -27,45 +52,82 @@ func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
 	if err != nil {
 		return err
 	}
-	return unmarshal(model, dst)
+	m := &Model{
+		g: dst,
+	}
+	return m.unmarshal(model)
 }
 
-func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
-	db := make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
+func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
+	dst := m.g
+	n := dst.NewNode()
+	if _, ok := n.(Namer); ok {
+		n.(Namer).SetName(io.Name)
+	}
+	dst.AddNode(n)
+	m.dbByName[io.Name] = n
+	if _, ok := n.(TensorCarrier); !ok {
+		return n, nil
+	}
+	ttype := io.Type.GetTensorType()
+	shape := make([]int, len(ttype.Shape.Dim))
+	for i, d := range ttype.Shape.Dim {
+		shape[i] = int(d.GetDimValue())
+	}
+	dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
+	if err != nil {
+		return n, err
+	}
+	t := tensor.New(tensor.WithShape(shape...), tensor.Of(dtype))
+	err = n.(TensorCarrier).ApplyTensor(t)
+	if err != nil {
+		return n, err
+	}
+
+	return n, nil
+}
+
+func (m *Model) unmarshal(model *pb.ModelProto) error {
+	m.Input = make([]int64, len(model.Graph.Input))
+	m.Output = make([]int64, len(model.Graph.Output))
+	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
+	dst := m.g
 	// Well...
-	for _, io := range append(append(model.Graph.Input, model.Graph.ValueInfo...), model.Graph.Output...) {
-		n := dst.NewNode()
-		db[io.Name] = n
-		if _, ok := n.(Namer); ok {
-			n.(Namer).SetName(io.Name)
-		}
-		dst.AddNode(n)
-		if _, ok := n.(TensorCarrier); !ok {
-			continue
-		}
-		ttype := io.Type.GetTensorType()
-		shape := make([]int, len(ttype.Shape.Dim))
-		for i, d := range ttype.Shape.Dim {
-			shape[i] = int(d.GetDimValue())
-		}
-		dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
+	for i, io := range model.Graph.Input {
+		n, err := m.processValue(io)
 		if err != nil {
 			return err
 		}
-		t := tensor.New(tensor.WithShape(shape...), tensor.Of(dtype))
-		err = n.(TensorCarrier).ApplyTensor(t)
+		m.Input[i] = n.ID()
+	}
+	for _, io := range model.Graph.ValueInfo {
+		_, err := m.processValue(io)
 		if err != nil {
 			return err
 		}
+	}
+	for i, io := range model.Graph.Output {
+		n, err := m.processValue(io)
+		if err != nil {
+			return err
+		}
+		m.Output[i] = n.ID()
 	}
 	for _, tensorProto := range model.Graph.GetInitializer() {
 		name := tensorProto.GetName()
 		if name == "" {
 			return errors.New("initializer should have a name")
 		}
-		n, ok := db[name]
+		n, ok := m.dbByName[name]
 		if !ok {
 			return errors.New("invalid model: initializer has not been defined in input, output or value")
+		}
+		// Remove it from the input
+		// find the ID
+		for i := 0; i < len(m.Input); i++ {
+			if m.Input[i] == n.ID() {
+				m.Input = append(m.Input[:i], m.Input[i+1:]...)
+			}
 		}
 		if _, ok := n.(TensorCarrier); !ok {
 			continue
@@ -83,7 +145,7 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 		for _, output := range node.Output {
 			var ok bool
 			var no graph.Node
-			if no, ok = db[output]; !ok {
+			if no, ok = m.dbByName[output]; !ok {
 				return &ErrInvalidModel{
 					NodeNotDefined: output,
 				}
@@ -92,7 +154,7 @@ func unmarshal(model *pb.ModelProto, dst graph.DirectedWeightedBuilder) error {
 			for i, input := range node.Input {
 				var ni graph.Node
 				var ok bool
-				if ni, ok = db[input]; !ok {
+				if ni, ok = m.dbByName[input]; !ok {
 					return &ErrInvalidModel{
 						NodeNotDefined: input,
 					}
