@@ -6,6 +6,7 @@ import (
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
+	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gorgonia.org/gorgonia/debugger/dot"
 	"gorgonia.org/gorgonia/node"
 	gorgonnx "gorgonia.org/gorgonia/onnx"
@@ -24,10 +25,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	sampleTestData := new(pb.TensorProto)
+	err = sampleTestData.XXX_Unmarshal(mnist.GetInput0())
+	if err != nil {
+		log.Fatal(err)
+	}
+	t, err := sampleTestData.Tensor()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if len(m.Input) != 1 {
 		log.Fatal("Expected only one input")
 	}
-	err = gorgonnx.Let(graph.Node(m.Input[0]).(node.Node), nil)
+	err = gorgonnx.Let(graph.Node(m.Input[0]).(node.Node), t)
 	if err != nil {
 		log.Fatal(err)
 	}
