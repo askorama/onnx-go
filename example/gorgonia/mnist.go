@@ -24,6 +24,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if len(m.Input) != 1 {
+		log.Fatal("Expected only one input")
+	}
+	err = gorgonnx.Let(graph.Node(m.Input[0]).(node.Node), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 	//  fmt.Println(string(b))
 	// create a VM to run the program on
 	machine := gorgonnx.NewTapeMachine(graph)
