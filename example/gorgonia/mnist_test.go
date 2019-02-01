@@ -1,4 +1,4 @@
-package mnist_test
+package main_test
 
 import (
 	"os"
