@@ -33,6 +33,12 @@ func (m *Model) Unmarshal(data []byte) error {
 	return m.unmarshal(model)
 }
 
+// GetNodeByName ...
+func (m *Model) GetNodeByName(name string) (graph.Node, bool) {
+	n, ok := m.dbByName[name]
+	return n, ok
+}
+
 // Unmarshal a NN model encoded in ONNX-Protobuf format into a graph .
 // The weight of the edges represent the indices of the children (therefore their order).
 // The first child weights 0.

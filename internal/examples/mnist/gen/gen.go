@@ -3,25 +3,30 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"os"
 )
 
 func main() {
-	b, err := ioutil.ReadFile("test_data_set_0/output_0.pb")
+	b, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
 		panic(err)
 	}
 	var qb bytes.Buffer
-	fmt.Fprint(&qb, `data := "`)
+	fmt.Fprintln(&qb, `package main`)
+	fmt.Fprintln(&qb, `func Get() []byte {`)
+	fmt.Fprint(&qb, `return []byte("`)
 	print(&qb, b)
-	fmt.Fprint(&qb, `"`)
-	if err = ioutil.WriteFile("olwu.go", qb.Bytes(), 0644); err != nil {
-		return
-	}
+	fmt.Fprint(&qb, `")}`)
+	io.Copy(os.Stdout, &qb)
 	/*
-		if string(b) == data {
-			fmt.Println("ok")
+		if err = ioutil.WriteFile("olwu.go", qb.Bytes(), 0644); err != nil {
+			return
 		}
+			if string(b) == data {
+				fmt.Println("ok")
+			}
 	*/
 }
 
