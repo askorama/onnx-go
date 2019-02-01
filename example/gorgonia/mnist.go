@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 
-	"github.com/gogo/protobuf/proto"
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
@@ -55,44 +53,44 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	for _, v := range m.Output {
+		fmt.Println(graph.Node(v).(node.Node).Value().Data())
+	}
 	/*
-		for _, v := range m.Output {
-			fmt.Println(graph.Node(v).(node.Node).Value().Data())
+		// DEBUGGING
+		mp := &pb.ModelProto{}
+		err = proto.Unmarshal(b, mp)
+		if err != nil {
+			log.Fatal(err)
+		}
+		w := os.Stdout
+		fmt.Fprintf(w, "const dir = \"numpy/\"\n")
+		for i, nodeProto := range mp.Graph.Node {
+			fmt.Fprintf(w, "func Test%v%v(t *testing.T) {\n", nodeProto.OpType, i)
+			fmt.Fprintf(w, "save := dir + \"%v%v\"\n", nodeProto.OpType, i)
+			fmt.Fprintf(w, "os.MkdirAll(save, os.ModePerm)\n")
+			// Input
+			for i := range nodeProto.Input {
+				n, ok := m.GetNodeByName(nodeProto.Input[i])
+				if !ok {
+					log.Fatalf("Node %v not found", nodeProto.Input[i])
+				}
+				//fmt.Printf("[%v] Input %v: %v\n", nodeProto.OpType, i, n.(node.Node).Value().Dtype())
+				writeTensorTo(w, fmt.Sprintf("input%v", i), n.(node.Node))
+			}
+			// Output
+			if len(nodeProto.Output) != 1 {
+				log.Fatal("Weird")
+			}
+			n, ok := m.GetNodeByName(nodeProto.Output[0])
+			if !ok {
+				log.Fatalf("Node %v not found", nodeProto.Output[0])
+			}
+			writeTensorTo(w, "output", n.(node.Node))
+			//fmt.Printf("[%v] Output: %v\n", nodeProto.OpType, n.(node.Node).Value())
+			fmt.Fprintf(w, "}\n")
 		}
 	*/
-	// DEBUGGING
-	mp := &pb.ModelProto{}
-	err = proto.Unmarshal(b, mp)
-	if err != nil {
-		log.Fatal(err)
-	}
-	w := os.Stdout
-	fmt.Fprintf(w, "const dir = \"numpy/\"\n")
-	for i, nodeProto := range mp.Graph.Node {
-		fmt.Fprintf(w, "func Test%v%v(t *testing.T) {\n", nodeProto.OpType, i)
-		fmt.Fprintf(w, "save := dir + \"%v%v\"\n", nodeProto.OpType, i)
-		fmt.Fprintf(w, "os.MkdirAll(save, os.ModePerm)\n")
-		// Input
-		for i := range nodeProto.Input {
-			n, ok := m.GetNodeByName(nodeProto.Input[i])
-			if !ok {
-				log.Fatalf("Node %v not found", nodeProto.Input[i])
-			}
-			//fmt.Printf("[%v] Input %v: %v\n", nodeProto.OpType, i, n.(node.Node).Value().Dtype())
-			writeTensorTo(w, fmt.Sprintf("input%v", i), n.(node.Node))
-		}
-		// Output
-		if len(nodeProto.Output) != 1 {
-			log.Fatal("Weird")
-		}
-		n, ok := m.GetNodeByName(nodeProto.Output[0])
-		if !ok {
-			log.Fatalf("Node %v not found", nodeProto.Output[0])
-		}
-		writeTensorTo(w, "output", n.(node.Node))
-		//fmt.Printf("[%v] Output: %v\n", nodeProto.OpType, n.(node.Node).Value())
-		fmt.Fprintf(w, "}\n")
-	}
 }
 
 func writeTensorTo(w io.Writer, name string, n node.Node) error {
