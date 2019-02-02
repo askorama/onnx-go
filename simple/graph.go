@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 
-	onnx "github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/encoding"
 	"gonum.org/v1/gonum/graph/simple"
@@ -16,13 +15,14 @@ type Graph struct {
 	g *simple.WeightedDirectedGraph
 }
 
+// Node of the graph
 type Node struct {
 	id          int64
 	name        string
 	description string
 	value       tensor.Tensor
 	opType      string
-	attributes  []*onnx.Attribute
+	//attributes  []*pb.Attribute
 }
 
 // ID to fulfil the graph.Node interface
@@ -53,11 +53,6 @@ func (n *Node) Attributes() []encoding.Attribute {
 	}
 }
 
-// SetDoc to fulfil the Docuemnter interface
-func (n *Node) SetDoc(name string) {
-	n.description = name
-}
-
 // SetName to fulfil the Namer interface
 func (n *Node) SetName(desc string) {
 	n.name = desc
@@ -68,31 +63,19 @@ func (n *Node) GetName() string {
 	return n.name
 }
 
-// SetDoc to fulfil the Namer interface
+// SetDescription to fulfil the Namer interface
 func (n *Node) SetDescription(desc string) {
 	n.description = desc
 }
 
-// GetDoc to fulfil the Namer interface
+// GetDescription to fulfil the Namer interface
 func (n *Node) GetDescription() string {
 	return n.description
 }
 
-func (n *Node) SetValue(t tensor.Tensor) error {
+// ApplyTensor to fulfil the TensorCarrier interface
+func (n *Node) ApplyTensor(t tensor.Tensor) error {
 	n.value = t
-	return nil
-}
-
-func (n *Node) GetValue() tensor.Tensor {
-	return n.value
-}
-
-func (n *Node) SetOpType(op string) {
-	n.opType = op
-}
-
-func (n *Node) SetOpAttributes(attrs []*onnx.Attribute) error {
-	n.attributes = attrs
 	return nil
 }
 
