@@ -41,6 +41,7 @@ func (instr *execOp) exec(m *tapeMachine) (err error) {
 			readfrom[i] = instr.readFrom[i].id
 		}
 		enc.Encode(debugger.Instruction{
+			NodeID:       instr.id,
 			Op:           instr.op.String(),
 			Readfrom:     readfrom,
 			Writeto:      instr.writeTo.id,

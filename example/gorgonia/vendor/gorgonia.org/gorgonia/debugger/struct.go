@@ -10,6 +10,8 @@ const (
 	InputsMsg
 	// ResultMsg ...
 	ResultMsg
+	// StopMsg ...
+	StopMsg
 )
 
 // DebugMsg ...
@@ -20,6 +22,7 @@ type DebugMsg struct {
 
 // Instruction holds the informations about the current instruction
 type Instruction struct {
+	NodeID       int64
 	Op           string
 	Readfrom     []int
 	Writeto      int
