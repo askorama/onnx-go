@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
@@ -46,7 +47,10 @@ func main() {
 	}
 	//  fmt.Println(string(b))
 	// create a VM to run the program on
-	machine := gorgonnx.NewTapeMachine(graph)
+	machine := gorgonnx.NewTapeMachine(graph,
+		gorgonnx.WithLogger(log.New(os.Stderr, "", 0)), // log execution
+		gorgonnx.WithWatchlist(),                       //  watching all nodes
+		gorgonnx.WithValueFmt("%#1.1f"))                // log with the following format for values
 
 	// Run the program
 	err = machine.RunAll()
