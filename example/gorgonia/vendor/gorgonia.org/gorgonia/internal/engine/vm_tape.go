@@ -644,7 +644,7 @@ func newExecOp(n *Node) *execOp {
 }
 
 func (instr *execOp) String() string {
-	return fmt.Sprintf("%v\t%v\t%v\t%t\t%t\t%t", instr.op, instr.readFrom, instr.writeTo, instr.op.CallsExtern(), instr.useUnsafe, instr.preAllocated)
+	return fmt.Sprintf("OP:%v\n\tReadFrom: %v\n\tWriteTo: %v\n\tCallsExtern: %t\n\tUseUnsafe: %t\n\tUsePreAllocated: %t", instr.op, instr.readFrom, instr.writeTo, instr.op.CallsExtern(), instr.useUnsafe, instr.preAllocated)
 }
 
 // flushInstr is for blastoise and cubone
