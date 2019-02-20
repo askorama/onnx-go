@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"sync"
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
@@ -54,8 +55,17 @@ func main() {
 	machine := gorgonnx.NewTapeMachine(graph,
 		gorgonnx.WithDebuggingChannel(debugC))
 
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func(c chan debugger.DebugMsg) {
+		defer wg.Done()
+		i := 0
+		fmt.Println("digraph g {")
 		for msg := range c {
+			if msg.MsgType == debugger.StopMsg {
+				fmt.Println("}")
+				return
+			}
 			pload := bytes.NewBuffer(msg.Payload)
 			dec := gob.NewDecoder(pload)
 			var instr debugger.Instruction
@@ -63,17 +73,27 @@ func main() {
 			if err != nil {
 				log.Println(err)
 			}
+			log.Printf("%v: %v", instr.Readfrom, instr)
+			for j, v := range instr.Readfrom {
+				n := graph.Node(instr.NodeID).(node.Node)
+				if n != nil {
+					fmt.Printf("\t%v -> %v [ label=\"(%v) %v: %v\" ]\n", v, instr.Writeto, i, j, n)
+				} else {
+					fmt.Printf("\t%v -> %v [ label=\"(%v) %v: %v\" ]\n", v, instr.Writeto, i, j, instr.Op)
+				}
+			}
 			log.Println(instr)
 			for err == nil {
 				var input tensor.Dense
 				err = dec.Decode(&input)
-				if err == nil {
-					log.Println("Value:", input)
-				}
+				//if err == nil {
+				// log.Println("Value:", input)
+				//}
 			}
-			if err != nil && err != io.EOF {
-				log.Println(err)
-			}
+			//if err != nil && err != io.EOF {
+			//	log.Println(err)
+			//}
+			i++
 		}
 	}(debugC)
 
@@ -82,9 +102,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, v := range m.Output {
-		fmt.Println(graph.Node(v).(node.Node).Value().Data())
+	debugC <- debugger.DebugMsg{
+		MsgType: debugger.StopMsg,
 	}
+	for _, v := range m.Output {
+		log.Println(graph.Node(v).(node.Node).Value().Data())
+	}
+	wg.Wait()
+
 	/*
 		// DEBUGGING
 		mp := &pb.ModelProto{}
