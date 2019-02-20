@@ -1,17 +1,20 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"io"
 	"log"
-	"os"
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/debugger/dot"
 	"gorgonia.org/gorgonia/node"
 	gorgonnx "gorgonia.org/gorgonia/onnx"
+	"gorgonia.org/tensor"
 )
 
 func main() {
@@ -45,12 +48,34 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	debugC := make(chan debugger.DebugMsg, 0)
 	//  fmt.Println(string(b))
 	// create a VM to run the program on
 	machine := gorgonnx.NewTapeMachine(graph,
-		gorgonnx.WithLogger(log.New(os.Stderr, "", 0)), // log execution
-		gorgonnx.WithWatchlist(),                       //  watching all nodes
-		gorgonnx.WithValueFmt("%#1.1f"))                // log with the following format for values
+		gorgonnx.WithDebuggingChannel(debugC))
+
+	go func(c chan debugger.DebugMsg) {
+		for msg := range c {
+			pload := bytes.NewBuffer(msg.Payload)
+			dec := gob.NewDecoder(pload)
+			var instr debugger.Instruction
+			err := dec.Decode(&instr)
+			if err != nil {
+				log.Println(err)
+			}
+			log.Println(instr)
+			for err == nil {
+				var input tensor.Dense
+				err = dec.Decode(&input)
+				if err == nil {
+					log.Println("Value:", input)
+				}
+			}
+			if err != nil && err != io.EOF {
+				log.Println(err)
+			}
+		}
+	}(debugC)
 
 	// Run the program
 	err = machine.RunAll()

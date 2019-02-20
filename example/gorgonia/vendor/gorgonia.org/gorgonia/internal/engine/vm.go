@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/internal/value"
 	"gorgonia.org/tensor"
 )
@@ -285,6 +286,7 @@ func WithManualGradient() VMOpt {
 	return f
 }
 
+// WithEngine ...
 func WithEngine(e tensor.Engine) VMOpt {
 	f := func(m VM) {
 		switch v := m.(type) {
@@ -292,6 +294,19 @@ func WithEngine(e tensor.Engine) VMOpt {
 			v.setEngine(e)
 		case *tapeMachine:
 			v.setEngine(e)
+		}
+	}
+	return f
+}
+
+// WithDebuggingChannel receives information at runtime
+func WithDebuggingChannel(c chan debugger.DebugMsg) VMOpt {
+	f := func(m VM) {
+		switch v := m.(type) {
+		case *tapeMachine:
+			v.c = c
+		default:
+			// no op
 		}
 	}
 	return f

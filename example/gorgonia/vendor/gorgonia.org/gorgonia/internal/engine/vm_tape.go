@@ -9,6 +9,7 @@ import (
 
 	"github.com/chewxy/hm"
 	"github.com/pkg/errors"
+	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/internal/execution"
 	"gorgonia.org/gorgonia/internal/value"
 	"gorgonia.org/gorgonia/ops"
@@ -39,6 +40,8 @@ type tapeMachine struct {
 	logFlags    byte
 
 	runFlags byte //  spare2: trace(copy values and put into nodes)
+	// Debugging... Send a gobencoded value on the channel
+	c chan debugger.DebugMsg
 }
 
 // NewTapeMachine creates a VM that compiles a graph into a prog.

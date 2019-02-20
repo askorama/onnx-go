@@ -3,6 +3,7 @@ package onnx
 import (
 	"log"
 
+	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/internal/engine"
 )
 
@@ -25,4 +26,9 @@ func WithWatchlist(list ...interface{}) engine.VMOpt {
 // WithValueFmt defines how the logger will output the values. It defaults to "%3.3f"
 func WithValueFmt(format string) engine.VMOpt {
 	return engine.WithValueFmt(format)
+}
+
+// WithDebuggingChannel receives information at runtime
+func WithDebuggingChannel(c chan debugger.DebugMsg) engine.VMOpt {
+	return engine.WithDebuggingChannel(c)
 }
