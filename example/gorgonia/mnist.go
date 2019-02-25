@@ -1,21 +1,14 @@
 package main
 
 import (
-	"bytes"
-	"encoding/gob"
-	"fmt"
-	"io"
 	"log"
-	"sync"
 
 	onnx "github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/internal/examples/mnist"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
-	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/debugger/dot"
 	"gorgonia.org/gorgonia/node"
 	gorgonnx "gorgonia.org/gorgonia/onnx"
-	"gorgonia.org/tensor"
 )
 
 func main() {
@@ -49,119 +42,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	debugC := make(chan debugger.DebugMsg, 0)
 	//  fmt.Println(string(b))
 	// create a VM to run the program on
-	machine := gorgonnx.NewTapeMachine(graph,
-		gorgonnx.WithDebuggingChannel(debugC))
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func(c chan debugger.DebugMsg) {
-		defer wg.Done()
-		i := 0
-		fmt.Println("digraph g {")
-		for msg := range c {
-			if msg.MsgType == debugger.StopMsg {
-				fmt.Println("}")
-				return
-			}
-			pload := bytes.NewBuffer(msg.Payload)
-			dec := gob.NewDecoder(pload)
-			var instr debugger.Instruction
-			err := dec.Decode(&instr)
-			if err != nil {
-				log.Println(err)
-			}
-			log.Printf("%v: %v", instr.Readfrom, instr)
-			for j, v := range instr.Readfrom {
-				n := graph.Node(instr.NodeID).(node.Node)
-				if n != nil {
-					fmt.Printf("\t%v -> %v [ label=\"(%v) %v: %v\" ]\n", v, instr.Writeto, i, j, n)
-				} else {
-					fmt.Printf("\t%v -> %v [ label=\"(%v) %v: %v\" ]\n", v, instr.Writeto, i, j, instr.Op)
-				}
-			}
-			log.Println(instr)
-			for err == nil {
-				var input tensor.Dense
-				err = dec.Decode(&input)
-				//if err == nil {
-				// log.Println("Value:", input)
-				//}
-			}
-			//if err != nil && err != io.EOF {
-			//	log.Println(err)
-			//}
-			i++
-		}
-	}(debugC)
+	machine := gorgonnx.NewTapeMachine(graph)
 
 	// Run the program
 	err = machine.RunAll()
 	if err != nil {
 		log.Fatal(err)
 	}
-	debugC <- debugger.DebugMsg{
-		MsgType: debugger.StopMsg,
-	}
 	for _, v := range m.Output {
 		log.Println(graph.Node(v).(node.Node).Value().Data())
 	}
-	wg.Wait()
-
-	/*
-		// DEBUGGING
-		mp := &pb.ModelProto{}
-		err = proto.Unmarshal(b, mp)
-		if err != nil {
-			log.Fatal(err)
-		}
-		w := os.Stdout
-		fmt.Fprintf(w, "const dir = \"numpy/\"\n")
-		for i, nodeProto := range mp.Graph.Node {
-			fmt.Fprintf(w, "func Test%v%v(t *testing.T) {\n", nodeProto.OpType, i)
-			fmt.Fprintf(w, "save := dir + \"%v%v\"\n", nodeProto.OpType, i)
-			fmt.Fprintf(w, "os.MkdirAll(save, os.ModePerm)\n")
-			// Input
-			for i := range nodeProto.Input {
-				n, ok := m.GetNodeByName(nodeProto.Input[i])
-				if !ok {
-					log.Fatalf("Node %v not found", nodeProto.Input[i])
-				}
-				//fmt.Printf("[%v] Input %v: %v\n", nodeProto.OpType, i, n.(node.Node).Value().Dtype())
-				writeTensorTo(w, fmt.Sprintf("input%v", i), n.(node.Node))
-			}
-			// Output
-			if len(nodeProto.Output) != 1 {
-				log.Fatal("Weird")
-			}
-			n, ok := m.GetNodeByName(nodeProto.Output[0])
-			if !ok {
-				log.Fatalf("Node %v not found", nodeProto.Output[0])
-			}
-			writeTensorTo(w, "output", n.(node.Node))
-			//fmt.Printf("[%v] Output: %v\n", nodeProto.OpType, n.(node.Node).Value())
-			fmt.Fprintf(w, "}\n")
-		}
-	*/
-}
-
-func writeTensorTo(w io.Writer, name string, n node.Node) error {
-	fmt.Fprintf(w, "f%v, err := os.Create(save + \"/%v.np\")\n", name, name)
-	fmt.Fprintf(w, "if err != nil {\n")
-	fmt.Fprintf(w, "t.Fatal(err)\n")
-	fmt.Fprintf(w, "}\n")
-	fmt.Fprintf(w, "defer f%v.Close()\n", name)
-	fmt.Fprintf(w, "%v := tensor.New(\n", name)
-	fmt.Fprintf(w, "\ttensor.WithShape%v,\n", n.Value().Shape())
-	fmt.Fprintf(w, "\ttensor.Of(tensor.Dtype{reflect.TypeOf(%v(1))}),\n", n.Value().Dtype())
-	fmt.Fprintf(w, "\ttensor.WithBacking(%#v),\n", n.Value().Data())
-	fmt.Fprintf(w, ")\n")
-	fmt.Fprintf(w, "err = %v.WriteNpy(f%v)\n", name, name)
-	fmt.Fprintf(w, "if err != nil {\n")
-	fmt.Fprintf(w, "t.Fatal(err)\n")
-	fmt.Fprintf(w, "}\n")
-
-	return nil
 }
