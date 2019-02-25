@@ -28,6 +28,7 @@ func (g *ExprGraph) AddNode(n graph.Node) {
 // NewNode returns a new unique Node to be added to g. The Node's ID does not become valid in g until the Node is added to g.
 func (g *ExprGraph) NewNode() graph.Node {
 	n := borrowNode()
+	n.op = nil
 	n.dataOn = execution.CPU
 	n.id = g.w.NewNode().ID()
 	n.g = g

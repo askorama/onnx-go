@@ -107,6 +107,7 @@ func (g *ExprGraph) applyOp(op ops.Op, n *Node) error {
 
 	n.t = retType
 	n.op = op
+	n.isStmt = false
 	n.shape = s
 	returnDimSizers(ds)
 	return nil

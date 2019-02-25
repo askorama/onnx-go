@@ -9,6 +9,7 @@ import (
 
 	"github.com/chewxy/hm"
 	"github.com/pkg/errors"
+	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/internal/execution"
 	"gorgonia.org/gorgonia/internal/value"
 	"gorgonia.org/gorgonia/ops"
@@ -39,6 +40,8 @@ type tapeMachine struct {
 	logFlags    byte
 
 	runFlags byte //  spare2: trace(copy values and put into nodes)
+	// Debugging... Send a gobencoded value on the channel
+	c chan debugger.DebugMsg
 }
 
 // NewTapeMachine creates a VM that compiles a graph into a prog.
@@ -644,7 +647,7 @@ func newExecOp(n *Node) *execOp {
 }
 
 func (instr *execOp) String() string {
-	return fmt.Sprintf("%v\t%v\t%v\t%t\t%t\t%t", instr.op, instr.readFrom, instr.writeTo, instr.op.CallsExtern(), instr.useUnsafe, instr.preAllocated)
+	return fmt.Sprintf("OP:%v\n\tReadFrom: %v\n\tWriteTo: %v\n\tCallsExtern: %t\n\tUseUnsafe: %t\n\tUsePreAllocated: %t", instr.op, instr.readFrom, instr.writeTo, instr.op.CallsExtern(), instr.useUnsafe, instr.preAllocated)
 }
 
 // flushInstr is for blastoise and cubone
