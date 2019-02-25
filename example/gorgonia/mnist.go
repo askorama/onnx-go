@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io"
 	"log"
 
 	onnx "github.com/owulveryck/onnx-go"
@@ -54,60 +52,6 @@ func main() {
 		log.Fatal(err)
 	}
 	for _, v := range m.Output {
-		fmt.Println(graph.Node(v).(node.Node).Value().Data())
+		log.Println(graph.Node(v).(node.Node).Value().Data())
 	}
-	/*
-		// DEBUGGING
-		mp := &pb.ModelProto{}
-		err = proto.Unmarshal(b, mp)
-		if err != nil {
-			log.Fatal(err)
-		}
-		w := os.Stdout
-		fmt.Fprintf(w, "const dir = \"numpy/\"\n")
-		for i, nodeProto := range mp.Graph.Node {
-			fmt.Fprintf(w, "func Test%v%v(t *testing.T) {\n", nodeProto.OpType, i)
-			fmt.Fprintf(w, "save := dir + \"%v%v\"\n", nodeProto.OpType, i)
-			fmt.Fprintf(w, "os.MkdirAll(save, os.ModePerm)\n")
-			// Input
-			for i := range nodeProto.Input {
-				n, ok := m.GetNodeByName(nodeProto.Input[i])
-				if !ok {
-					log.Fatalf("Node %v not found", nodeProto.Input[i])
-				}
-				//fmt.Printf("[%v] Input %v: %v\n", nodeProto.OpType, i, n.(node.Node).Value().Dtype())
-				writeTensorTo(w, fmt.Sprintf("input%v", i), n.(node.Node))
-			}
-			// Output
-			if len(nodeProto.Output) != 1 {
-				log.Fatal("Weird")
-			}
-			n, ok := m.GetNodeByName(nodeProto.Output[0])
-			if !ok {
-				log.Fatalf("Node %v not found", nodeProto.Output[0])
-			}
-			writeTensorTo(w, "output", n.(node.Node))
-			//fmt.Printf("[%v] Output: %v\n", nodeProto.OpType, n.(node.Node).Value())
-			fmt.Fprintf(w, "}\n")
-		}
-	*/
-}
-
-func writeTensorTo(w io.Writer, name string, n node.Node) error {
-	fmt.Fprintf(w, "f%v, err := os.Create(save + \"/%v.np\")\n", name, name)
-	fmt.Fprintf(w, "if err != nil {\n")
-	fmt.Fprintf(w, "t.Fatal(err)\n")
-	fmt.Fprintf(w, "}\n")
-	fmt.Fprintf(w, "defer f%v.Close()\n", name)
-	fmt.Fprintf(w, "%v := tensor.New(\n", name)
-	fmt.Fprintf(w, "\ttensor.WithShape%v,\n", n.Value().Shape())
-	fmt.Fprintf(w, "\ttensor.Of(tensor.Dtype{reflect.TypeOf(%v(1))}),\n", n.Value().Dtype())
-	fmt.Fprintf(w, "\ttensor.WithBacking(%#v),\n", n.Value().Data())
-	fmt.Fprintf(w, ")\n")
-	fmt.Fprintf(w, "err = %v.WriteNpy(f%v)\n", name, name)
-	fmt.Fprintf(w, "if err != nil {\n")
-	fmt.Fprintf(w, "t.Fatal(err)\n")
-	fmt.Fprintf(w, "}\n")
-
-	return nil
 }

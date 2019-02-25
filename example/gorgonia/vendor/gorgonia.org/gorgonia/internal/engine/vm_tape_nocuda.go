@@ -3,7 +3,12 @@
 package engine
 
 import (
+	"bytes"
+	"encoding/gob"
+	"log"
+
 	"github.com/pkg/errors"
+	"gorgonia.org/gorgonia/debugger"
 	"gorgonia.org/gorgonia/internal/execution"
 	"gorgonia.org/gorgonia/internal/value"
 	"gorgonia.org/gorgonia/ops"
@@ -20,20 +25,52 @@ func UseCudaFor(ops ...string) VMOpt {
 func (m *tapeMachine) getEngine(dev execution.Device) tensor.Engine { return m.Engine }
 
 func (instr *execOp) exec(m *tapeMachine) (err error) {
-	m.logf("Executing %v. Node is: %x", instr, instr.id)
-	m.enterLogScope()
-	defer m.leaveLogScope()
+	var enc *gob.Encoder
+	var network bytes.Buffer
+	if m.c != nil {
+		enc = gob.NewEncoder(&network)
+
+		defer func(c chan debugger.DebugMsg) {
+			c <- debugger.DebugMsg{
+				MsgType: debugger.ExecOp,
+				Payload: network.Bytes(),
+			}
+		}(m.c)
+		readfrom := make([]int, len(instr.readFrom))
+		for i := 0; i < len(instr.readFrom); i++ {
+			readfrom[i] = instr.readFrom[i].id
+		}
+		enc.Encode(debugger.Instruction{
+			NodeID:       instr.id,
+			Op:           instr.op.String(),
+			Readfrom:     readfrom,
+			Writeto:      instr.writeTo.id,
+			CallsExtern:  instr.op.CallsExtern(),
+			UseUnsafe:    instr.useUnsafe,
+			PreAllocated: instr.preAllocated,
+		})
+	}
+
+	//m.logf("Executing %v. Node is: %x", instr, instr.id)
+	//m.enterLogScope()
+	//defer m.leaveLogScope()
 
 	// Read
-	m.watchedLogf("Inputs:")
-	m.enterLogScope()
+	//m.watchedLogf("Inputs:")
+	//m.enterLogScope()
 	var inputs []value.Value
 	for _, reg := range instr.readFrom {
 		v := m.cpumem[reg.id]
 		inputs = append(inputs, v)
-		m.watchedLogf(m.valueFmt, v)
+		if m.c != nil {
+			err := enc.Encode(v)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		//	m.watchedLogf(m.valueFmt, v)
 	}
-	m.leaveLogScope()
+	//m.leaveLogScope()
 
 	// Execute
 	var v value.Value
@@ -66,11 +103,13 @@ func (instr *execOp) exec(m *tapeMachine) (err error) {
 			return errors.Wrap(err, opDoFail)
 		}
 	}
-
-	m.watchedLogf("Result:")
-	m.enterLogScope()
-	m.watchedLogf(m.valueFmt, v)
-	m.leaveLogScope()
+	if m.c != nil {
+		enc.Encode(v)
+	}
+	//m.watchedLogf("Result:")
+	//m.enterLogScope()
+	//m.watchedLogf(m.valueFmt, v)
+	//m.leaveLogScope()
 	// TODO: type and shape checks
 
 	// Write
