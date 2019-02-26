@@ -76,9 +76,12 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 		return n, nil
 	}
 	ttype := io.Type.GetTensorType()
-	shape := make([]int, len(ttype.Shape.Dim))
-	for i, d := range ttype.Shape.Dim {
-		shape[i] = int(d.GetDimValue())
+	var shape []int
+	for i := range ttype.Shape.Dim {
+		_, ok := ttype.Shape.Dim[i].GetValue().(*pb.TensorShapeProto_Dimension_DimValue)
+		if ok {
+			shape = append(shape, int(ttype.Shape.Dim[i].GetDimValue()))
+		}
 	}
 	dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
 	if err != nil {
