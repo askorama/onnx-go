@@ -1,6 +1,8 @@
 package onnx
 
 import (
+	"log"
+
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"github.com/pkg/errors"
@@ -65,6 +67,7 @@ func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
 }
 
 func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
+	var opts []tensor.ConsOpt
 	dst := m.g
 	n := dst.NewNode()
 	if _, ok := n.(Namer); ok {
@@ -76,18 +79,22 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 		return n, nil
 	}
 	ttype := io.Type.GetTensorType()
-	var shape []int
-	for i := range ttype.Shape.Dim {
-		_, ok := ttype.Shape.Dim[i].GetValue().(*pb.TensorShapeProto_Dimension_DimValue)
-		if ok {
-			shape = append(shape, int(ttype.Shape.Dim[i].GetDimValue()))
+	if ttype.GetShape() != nil {
+		var shape []int
+		for i := range ttype.Shape.Dim {
+			_, ok := ttype.Shape.Dim[i].GetValue().(*pb.TensorShapeProto_Dimension_DimValue)
+			if ok {
+				shape = append(shape, int(ttype.Shape.Dim[i].GetDimValue()))
+			}
 		}
+		opts = append(opts, tensor.WithShape(shape...))
 	}
 	dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
 	if err != nil {
 		return n, err
 	}
-	t := tensor.New(tensor.WithShape(shape...), tensor.Of(dtype))
+	opts = append(opts, tensor.Of(dtype))
+	t := tensor.New(opts...)
 	err = n.(TensorCarrier).ApplyTensor(t)
 	if err != nil {
 		return n, err
@@ -155,18 +162,37 @@ func (m *Model) unmarshal(model *pb.ModelProto) error {
 			var ok bool
 			var no graph.Node
 			if no, ok = m.dbByName[output]; !ok {
-				return &ErrInvalidModel{
-					NodeNotDefined: output,
+				dst := m.g
+				no = dst.NewNode()
+				if _, ok := no.(Namer); ok {
+					no.(Namer).SetName(output)
 				}
+				dst.AddNode(no)
+				m.dbByName[output] = no
+
+				/*
+					return &ErrInvalidModel{
+						NodeNotDefined: output,
+					}
+				*/
 			}
 			// input should be ordered for non-commutatives operations
 			for i, input := range node.Input {
 				var ni graph.Node
 				var ok bool
 				if ni, ok = m.dbByName[input]; !ok {
-					return &ErrInvalidModel{
-						NodeNotDefined: input,
+					dst := m.g
+					ni = dst.NewNode()
+					if _, ok := ni.(Namer); ok {
+						ni.(Namer).SetName(input)
 					}
+					dst.AddNode(ni)
+					m.dbByName[input] = ni
+					/*
+						return &ErrInvalidModel{
+							NodeNotDefined: input,
+						}
+					*/
 				}
 				e := dst.NewWeightedEdge(no, ni, float64(i))
 				dst.SetWeightedEdge(e)
@@ -187,6 +213,7 @@ func (m *Model) unmarshal(model *pb.ModelProto) error {
 				if !ok {
 					return errors.New("Graph builder did not return an operation")
 				}
+				log.Println(no)
 				err = dst.(OperationApplyer).ONNXApply(operation.Constructor(), no)
 				if err != nil {
 					return err

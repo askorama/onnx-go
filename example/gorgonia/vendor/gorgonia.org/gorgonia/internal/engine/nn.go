@@ -218,7 +218,8 @@ func NewConv2d(kernelShape tensor.Shape, pad, stride, dilation []int) Operation 
 	return func(g graph.WeightedDirected, n node.Node) (ops.Op, error) {
 		it := getOrderedChildren(g, n)
 		if it.Len() != 2 {
-			return nil, errors.New("Conv2d: Unexpected number of children")
+			//DEBUG
+			//return nil, errors.New("Conv2d: Unexpected number of children")
 		}
 		children := make([]*Node, it.Len())
 		for i := 0; it.Next(); i++ {

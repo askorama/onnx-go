@@ -2,6 +2,7 @@ package onnx
 
 import (
 	"errors"
+	"log"
 	"math"
 
 	"gonum.org/v1/gonum/graph"
@@ -46,7 +47,8 @@ func (c *Conv2d) Constructor() func(g graph.WeightedDirected, n graph.Node) (int
 		it := getOrderedChildren(g, n)
 		// Get the shape from the child
 		if it.Len() != 2 {
-			return nil, errors.New("invalid number of children, expected 2")
+			//return nil, errors.New("invalid number of children, expected 2")
+			log.Println("invalid number of children, expected 2")
 		}
 		children := make([]*engine.Node, it.Len())
 		for i := 0; it.Next(); i++ {
