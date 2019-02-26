@@ -1,8 +1,6 @@
 package onnx
 
 import (
-	"log"
-
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"github.com/pkg/errors"
@@ -162,81 +160,39 @@ func (m *Model) unmarshal(model *pb.ModelProto) error {
 			var ok bool
 			var no graph.Node
 			if no, ok = m.dbByName[output]; !ok {
-				dst := m.g
 				no = dst.NewNode()
 				if _, ok := no.(Namer); ok {
 					no.(Namer).SetName(output)
 				}
 				dst.AddNode(no)
 				m.dbByName[output] = no
-
-				/*
-					return &ErrInvalidModel{
-						NodeNotDefined: output,
-					}
-				*/
 			}
 			// input should be ordered for non-commutatives operations
 			for i, input := range node.Input {
 				var ni graph.Node
 				var ok bool
 				if ni, ok = m.dbByName[input]; !ok {
-					dst := m.g
 					ni = dst.NewNode()
 					if _, ok := ni.(Namer); ok {
 						ni.(Namer).SetName(input)
 					}
 					dst.AddNode(ni)
 					m.dbByName[input] = ni
-					/*
-						return &ErrInvalidModel{
-							NodeNotDefined: input,
-						}
-					*/
 				}
 				e := dst.NewWeightedEdge(no, ni, float64(i))
 				dst.SetWeightedEdge(e)
 			}
 			// The graph can apply operations
-			if _, ok := dst.(OperationApplyer); ok {
-				op, err := dst.(OperationApplyer).ONNXGetOperationFromName(node.OpType)
+			if _, ok := dst.(OperationCarrier); ok {
+				err := dst.(OperationCarrier).ApplyOperation(Operation{
+					node.OpType,
+					node.GetAttribute(),
+				}, no)
 				if err != nil {
 					return err
 				}
-				// TODO check the pointer
-				err = pb.UnmarshalAttributes(node.GetAttribute(), op)
-				if err != nil {
-					return err
-				}
-
-				operation, ok := op.(Operation)
-				if !ok {
-					return errors.New("Graph builder did not return an operation")
-				}
-				log.Println(no)
-				err = dst.(OperationApplyer).ONNXApply(operation.Constructor(), no)
-				if err != nil {
-					return err
-				}
-
 			}
 		}
 	}
 	return nil
-}
-
-// OperationApplyer is any graph that can apply operations on its node
-// regarding the structure of the graph
-type OperationApplyer interface {
-	// ONNXGetOperationFromName returns an interface that should be compatible with Operation
-	// It is the responsibility of the implementor to do that
-	ONNXGetOperationFromName(s string) (interface{}, error)
-	ONNXApply(operation func(g graph.WeightedDirected, n graph.Node) (interface{}, error), n graph.Node) error
-}
-
-// Operation is an interface that should be fulfiled by any Operation
-type Operation interface {
-	// Constructor returns a function that itself returns an operator to be applied on node n.
-	// The arguments of the operator are found thanks to the graph
-	Constructor() func(g graph.WeightedDirected, n graph.Node) (interface{}, error)
 }
