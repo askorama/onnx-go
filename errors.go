@@ -42,7 +42,7 @@ type ErrInvalidModel struct {
 func (e *ErrInvalidModel) Error() string {
 	err := "Invalid graph: "
 	if e.NodeNotDefined != "" {
-		return fmt.Sprintf("%v: node %v is referenced in the Node lists but not defined nor in []input nor in []output", err, e.NodeNotDefined)
+		return fmt.Sprintf("%v: node %v is referenced in the Node lists but not defined in []input nor in []output", err, e.NodeNotDefined)
 	}
 	return err
 

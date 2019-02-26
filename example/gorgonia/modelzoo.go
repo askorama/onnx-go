@@ -1,12 +1,10 @@
-// +build ignore
-
 package main
 
 import (
+	"io/ioutil"
 	"log"
 
 	onnx "github.com/owulveryck/onnx-go"
-	"github.com/owulveryck/onnx-go/internal/examples/mnist"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gorgonia.org/gorgonia/debugger/dot"
 	"gorgonia.org/gorgonia/node"
@@ -14,11 +12,14 @@ import (
 )
 
 func main() {
-
 	graph := gorgonnx.NewGraph()
 	m := onnx.NewModel(graph)
-	b := mnist.GetMnist()
-	err := m.Unmarshal(b)
+	b, err := ioutil.ReadFile("/Users/olivier.wulveryck/Documents/squeezenet/model.onnx")
+	if err != nil {
+		log.Fatal(err)
+	}
+	//b := mnist.GetMnist()
+	err = m.Unmarshal(b)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,7 +29,13 @@ func main() {
 	}
 
 	sampleTestData := new(pb.TensorProto)
-	err = sampleTestData.XXX_Unmarshal(mnist.GetTest1Input0())
+
+	b, err = ioutil.ReadFile("/Users/olivier.wulveryck/Documents/squeezenet/test_data_set_0/input_0.pb")
+	if err != nil {
+		log.Fatal(err)
+	}
+	//err = sampleTestData.XXX_Unmarshal(mnist.GetTest1Input0())
+	err = sampleTestData.XXX_Unmarshal(b)
 	if err != nil {
 		log.Fatal(err)
 	}
