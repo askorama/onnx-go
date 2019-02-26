@@ -1,6 +1,7 @@
 package onnx
 
 import (
+	onnx "github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gorgonia.org/gorgonia/internal/engine"
 	"gorgonia.org/gorgonia/node"
@@ -19,88 +20,101 @@ func NewGraph() *Graph {
 	return &Graph{engine.NewGraph()}
 }
 
-// ONNXGetOperationFromName ...
-func (g Graph) ONNXGetOperationFromName(s string) (interface{}, error) {
+type operation interface {
+	Constructor() func(g graph.WeightedDirected, n graph.Node) (interface{}, error)
+}
+
+// ApplyOperation ...
+func (g Graph) ApplyOperation(op onnx.Operation, n graph.Node) error {
+	s := op.Name
+	var o operation
 	switch s {
 	case "MaxPool":
-		return NewMaxpool(), nil
+		o = NewMaxpool()
 	case "Conv":
-		return NewConv(), nil
+		o = NewConv()
 	case "Relu":
-		return &Rectify{}, nil
+		o = &Rectify{}
 	case "Reshape":
-		return &Reshape{}, nil
+		o = &Reshape{}
 	case "Abs":
-		return &Abs{}, nil
+		o = &Abs{}
 	case "Sign":
-		return &Sign{}, nil
+		o = &Sign{}
 	case "Ceil":
-		return &Ceil{}, nil
+		o = &Ceil{}
 	case "Floor":
-		return &Floor{}, nil
+		o = &Floor{}
 	case "Sin":
-		return &Sin{}, nil
+		o = &Sin{}
 	case "Cos":
-		return &Cos{}, nil
+		o = &Cos{}
 	case "Exp":
-		return &Exp{}, nil
+		o = &Exp{}
 	case "Log":
-		return &Log{}, nil
+		o = &Log{}
 	case "Log2":
-		return &Log2{}, nil
+		o = &Log2{}
 	case "Neg":
-		return &Neg{}, nil
+		o = &Neg{}
 	case "Square":
-		return &Square{}, nil
+		o = &Square{}
 	case "Sqrt":
-		return &Sqrt{}, nil
+		o = &Sqrt{}
 	case "Inverse":
-		return &Inverse{}, nil
+		o = &Inverse{}
 	case "InverseSqrt":
-		return &InverseSqrt{}, nil
+		o = &InverseSqrt{}
 	case "Cube":
-		return &Cube{}, nil
+		o = &Cube{}
 	case "Tanh":
-		return &Tanh{}, nil
+		o = &Tanh{}
 	case "Sigmoid":
-		return &Sigmoid{}, nil
+		o = &Sigmoid{}
 	case "Log1p":
-		return &Log1p{}, nil
+		o = &Log1p{}
 	case "Expm1":
-		return &Expm1{}, nil
+		o = &Expm1{}
 	case "Softplus":
-		return &Softplus{}, nil
+		o = &Softplus{}
 	case "Add":
-		return &Add{}, nil
+		o = &Add{}
 	case "Sub":
-		return &Sub{}, nil
+		o = &Sub{}
 	case "MatMul":
-		return &Mul{}, nil
+		o = &Mul{}
 	case "HadamardDiv":
-		return &HadamardDiv{}, nil
+		o = &HadamardDiv{}
 	case "Pow":
-		return &Pow{}, nil
+		o = &Pow{}
 	case "Lt":
-		return &Lt{}, nil
+		o = &Lt{}
 	case "Gt":
-		return &Gt{}, nil
+		o = &Gt{}
 	case "Lte":
-		return &Lte{}, nil
+		o = &Lte{}
 	case "Gte":
-		return &Gte{}, nil
+		o = &Gte{}
 	case "Eq":
-		return &Eq{}, nil
+		o = &Eq{}
 	case "Ne":
-		return &Ne{}, nil
+		o = &Ne{}
 	default:
-		return nil, &ErrNotImplemented{
+		return &ErrNotImplemented{
 			Operator: s,
 		}
 	}
+	// TODO UnmarshalAttributes
+	// TODO check the pointer
+	err := onnx.UnmarshalAttributes(op.Attributes, o)
+	if err != nil {
+		return err
+	}
+	return g.apply(o.Constructor(), n)
 }
 
-// ONNXApply ...
-func (g Graph) ONNXApply(operation func(g graph.WeightedDirected, n graph.Node) (interface{}, error), n graph.Node) error { // HL
+// apply ...
+func (g Graph) apply(operation func(g graph.WeightedDirected, n graph.Node) (interface{}, error), n graph.Node) error { // HL
 	oper := func(g graph.WeightedDirected, n node.Node) (ops.Op, error) {
 		output, err := operation(g, n)
 		if output == nil {
