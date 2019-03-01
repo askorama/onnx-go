@@ -11,12 +11,13 @@ The implementation of the spec is partial on the import, and non-existent for th
 
 # About
 
-This package contains some facilities for reading binary version of an ONNX model and for unmarshaling it into a pointer to 
-an object compatible with [`gonum's DirectedWeightedBuilder`](https://godoc.org/gonum.org/v1/gonum/graph#DirectedWeightedBuilder) interface.
-
 The target of this repository is to create an abstraction to create a conputation graph based on [the spec of ONNX](https://github.com/onnx/onnx/blob/master/docs/IR.md).
 
 _for more information on computation graphs, please read this [blog post](http://gopherdata.io/post/deeplearning_in_go_part_1/)_
+
+This package contains some facilities for reading binary version of an ONNX model and for unmarshaling it into a pointer to 
+an object compatible with [`gonum's DirectedWeightedBuilder`](https://godoc.org/gonum.org/v1/gonum/graph#DirectedWeightedBuilder) interface.
+The weigth of the edges is used to garantee the order of execution of the operands for non-commutative operations.
 
 The entry point of this library is the `Unmarshal` function:
 
