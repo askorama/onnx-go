@@ -65,7 +65,7 @@ curl https://www.cntk.ai/OnnxModels/mnist/opset_7/mnist.tar.gz | tar -C /tmp -xz
 
 Example:
 
-```
+```go
 import (
         "log"
 
