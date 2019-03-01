@@ -11,7 +11,7 @@ The implementation of the spec is partial on the import, and non-existent for th
 
 # About
 
-This package contains some facilities to read binary version of a ONNX model and to unmarshal it into a pointer to 
+This package contains some facilities for reading binary version of an ONNX model and for unmarshaling it into a pointer to 
 an object compatible with [`gonum's DirectedWeightedBuilder`](https://godoc.org/gonum.org/v1/gonum/graph#DirectedWeightedBuilder) interface.
 
 The target of this repository is to create an abstraction to create a conputation graph based on [the spec of ONNX](https://github.com/onnx/onnx/blob/master/docs/IR.md).
@@ -27,12 +27,12 @@ func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error
 ## protobuf definition of ONNX
 
 The protobuf definition of onnx has been converted into Go with the classic `protoc` tool. The definition can be found in the `internal` directory.
-The definition is not exposed to avoid external dependencies to this repo. Indeed, the definition could change in order to used a more efficient compiler such
+The definition is not exposed to avoid external dependencies to this repo. Indeed, the definition could change to use a more efficient compiler such
 as `gogo protobuf` and this change should be transparent to the user of this package.
 
 ## Execution
 
-In order for the graph to be executed, its node must carry references to tensors and operators.
+For the graph to be executed, its node must carry references to tensors and operators.
 
 ### Tensors
 
@@ -48,16 +48,16 @@ If the graph builder is compatible with the [`OperationCarrier`](https://godoc.o
 
 ## Backend
 
-onnx-go do not provide any executable backend but for a reference, a simple backend that simply build an information graph is provided as example (see the `simple` subpackage).
+onnx-go do not provide any executable backend, but for a reference, a simple backend that builds an information graph is provided as an example (see the `simple` subpackage).
 
 ### Gorgonia
 
 A tweaked version of Gorgonia is vendored in the example directory. Next official release of Gorgonia should be compatible with the ONNX interface out-of-the box. Meanwhile, feel free to play
-with the vendorer version that is delivered as-is without any garantee.
+with the vendorer version that is delivered as-is without any guarantee.
 
 # Example: MNIST
 
-The vendored version of Gorgonia is able to run the MNIST model.
+The vendored version of Gorgonia can run the MNIST model.
 
 ```sh
 curl https://www.cntk.ai/OnnxModels/mnist/opset_7/mnist.tar.gz | tar -C /tmp -xzvf -
