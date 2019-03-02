@@ -1,0 +1,73 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>mnist test</title>
+
+  <!-- fabric.js library -->
+  <!--
+  <script type='text/javascript' src='http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.0/fabric.min.js'></script>
+  -->
+  <script type='text/javascript' src='static/js/fabric.min.js'></script>
+
+  <!-- Going to use JQuery so its good to have library locally -->
+  <script type='text/javascript' src="static/js/jquery-3.2.1.min.js"></script>
+        <script type='text/javascript'>
+
+            
+            var canvas;
+            var image;
+            var bThick = 20;
+            var cColour = '#FFFFFF'; // #black
+
+            //Initialize  fabric 
+            function initCanvas(){
+                canvas = new fabric.Canvas('canvasBox');
+                canvas.isDrawingMode = true;
+                canvas.freeDrawingBrush.width = bThick;
+                canvas.freeDrawingBrush.color = cColour;
+                canvas.backgroundColor = '#000000';            
+            }
+        
+            window.onload = function(){
+                initCanvas();
+                // submit button
+                var btnsub = document.getElementById('btnSubmit');
+                btnsub.addEventListener('click', postImg());
+            };
+            
+            //reset canvas
+            function reset() {           
+                canvas.clear();   
+                $('#guess').text('');     
+            }
+
+            function postImg(){                        
+                var imgURL = canvas.toDataURL();   
+
+                //Send Ajax call
+                $.ajax({
+                    type: 'post',
+                    url: '/picture',
+                    data: imgURL,
+                
+                    success: function(data){
+                        $('#guess').text(data);
+                    }              
+                });                     
+            }
+        </script>
+
+
+</head>
+    <body>
+
+      <canvas id="canvasBox"position="relative" width="280" height="280"></canvas>                             
+      <button id="btnSubmit" onclick="postImg()">Submit</button>
+      <button onclick="reset()">Reset</button>
+      <h2>Result:</h2>                    
+      <h1 id="guess"></h1>
+
+    </body>
+</html>
