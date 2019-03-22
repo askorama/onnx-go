@@ -5,13 +5,13 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
 
 	"github.com/disintegration/imaging"
 	"github.com/owulveryck/onnx-go"
-	"github.com/owulveryck/onnx-go/internal/examples/mnist"
 	"github.com/vincent-petithory/dataurl"
 	"gorgonia.org/gorgonia/node"
 	gorgonnx "gorgonia.org/gorgonia/onnx"
@@ -28,12 +28,18 @@ var (
 func main() {
 	port := flag.String("p", "8100", "port to serve on")
 	directory := flag.String("d", ".", "the directory of static file to host")
+	onnxModel := flag.String("model", "", "the onnx model to use")
 	flag.Parse()
 
 	graph = gorgonnx.NewGraph()
 	model = onnx.NewModel(graph)
-	b := mnist.GetMnist()
-	err := model.Unmarshal(b)
+
+	b, err := ioutil.ReadFile(*onnxModel)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//b := mnist.GetMnist()
+	err = model.Unmarshal(b)
 	if err != nil {
 		log.Fatal(err)
 	}
