@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/encoding"
 	"gonum.org/v1/gonum/graph/simple"
@@ -163,4 +164,8 @@ func (g *Graph) HasEdgeFromTo(uid, vid int64) bool {
 
 func (g *Graph) To(id int64) graph.Nodes {
 	return g.g.To(id)
+}
+
+func (g *Graph) ApplyOperation(o onnx.Operation, n graph.Node) error {
+	return nil
 }
