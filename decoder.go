@@ -10,7 +10,8 @@ import (
 	"gorgonia.org/tensor"
 )
 
-// Model ...
+// Model is a wrapper around a computation graph.
+// Input and Output are containing the ID of the corresponding nodes.
 type Model struct {
 	backend  Backend
 	dbByName map[string]graph.Node
@@ -18,47 +19,28 @@ type Model struct {
 	Output   []int64
 }
 
-// NewModel ...
+// NewModel with dst as backend.
+// dst should be a non-nil pointer.
 func NewModel(dst Backend) *Model {
 	return &Model{
 		backend: dst,
 	}
 }
 
-// Unmarshal ...
-func (m *Model) Unmarshal(data []byte) error {
-	model := &pb.ModelProto{}
-	err := proto.Unmarshal(data, model)
+// Decode the onnx binary data into the model
+func (m *Model) Decode(data []byte) error {
+	pbModel := &pb.ModelProto{}
+	err := proto.Unmarshal(data, pbModel)
 	if err != nil {
 		return err
 	}
-	return m.unmarshal(model)
+	return m.decode(pbModel)
 }
 
-// GetNodeByName ...
+// GetNodeByName is a utility method that returns a node of the computation graph
 func (m *Model) GetNodeByName(name string) (graph.Node, bool) {
 	n, ok := m.dbByName[name]
 	return n, ok
-}
-
-// Unmarshal a NN model encoded in ONNX-Protobuf format into a graph .
-// The weight of the edges represent the indices of the children (therefore their order).
-// The first child weights 0.
-//
-// Node values
-//
-// If the graph nodes are fulfilling the Tensor interface, this function their values and shapes by calling
-// the corresponding methods.
-func Unmarshal(data []byte, dst Backend) error {
-	model := &pb.ModelProto{}
-	err := proto.Unmarshal(data, model)
-	if err != nil {
-		return err
-	}
-	m := &Model{
-		backend: dst,
-	}
-	return m.unmarshal(model)
 }
 
 func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
@@ -98,7 +80,7 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	return n, nil
 }
 
-func (m *Model) unmarshal(model *pb.ModelProto) error {
+func (m *Model) decode(model *pb.ModelProto) error {
 	rv := reflect.ValueOf(m.backend)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
