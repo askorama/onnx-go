@@ -2,6 +2,7 @@ package onnx
 
 import (
 	fmt "fmt"
+	"reflect"
 
 	"github.com/pkg/errors"
 )
@@ -46,4 +47,21 @@ func (e *ErrInvalidModel) Error() string {
 	}
 	return err
 
+}
+
+// An InvalidUnmarshalError describes an invalid argument passed to Unmarshal.
+// (The argument to Unmarshal must be a non-nil pointer.)
+type InvalidUnmarshalError struct {
+	Type reflect.Type
+}
+
+func (e *InvalidUnmarshalError) Error() string {
+	if e.Type == nil {
+		return "onnx: Unmarshal(nil)"
+	}
+
+	if e.Type.Kind() != reflect.Ptr {
+		return "onnx: Unmarshal(non-pointer " + e.Type.String() + ")"
+	}
+	return "onnx: Unmarshal(nil " + e.Type.String() + ")"
 }
