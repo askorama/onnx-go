@@ -2,62 +2,46 @@
 
 [![](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](http://godoc.org/github.com/owulveryck/onnx-go)
 
-This is the Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/).
+# onnx-go
 
-# About
+This is a Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/).
 
-This is a compiled version of the ONNX protobuf definition file.
+## Overview [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
 
-## Using this API
+onnx-go contains primitives to decode a onnx binary model into a computation backend, and use it like any other library in your go code.
+for more information about onnx, please visit [onnx.ai](https://onnx.ai).
 
-This package is go-gettable.
+## Install
 
-```shell
-go get -v github.com/owulveryck/onnx-go
+```
+go get github.com/owulveryck/onnx-go
 ```
 
-### Example
+## Example
 
-This reads a ONNX file and decode the Model into the `ModelProto`
-
+[embedmd]:# (example_test.go /\/\/ Create/ /model.Decode.*/)
 ```go
-import (
-        "io/ioutil"
-        "log"
+// Create a backend receiver
+	backend := simple.NewSimpleGraph()
+	// Create a model and set the execution backend
+	model := onnx.NewModel(backend)
 
-        onnx "github.com/owulveryck/onnx-go"
-)
-
-func main() {
-        b, err := ioutil.ReadFile("/path/to/onnx/file.onnx")
-        if err != nil {
-                log.Fatal(err)
-        }
-        model := new(onnx.ModelProto)
-        err = model.Unmarshal(b)
-        if err != nil {
-                log.Fatal(err)
-        }
-        log.Println(model)
-}
+	// read the onnx model
+	b, _ := ioutil.ReadFile("model.onnx")
+	// Decode it into the model
+	err := model.Decode(b)
 ```
 
-For more information, please refer to the GoDoc.
 
-## Generating the file
+## Contributing
 
-This file is generated from the protobuf definition file of the official [Github repository of ONNX](github.com/onnx/onnx).
-You should not need to rebuild it and it can be used as-is.
+ToDo.
 
-Anyway if for any reason you want to test some new feature, you need:
+## Author
 
-* a protobuf compiler with a go extension (see [here](https://github.com/golang/protobuf) for more info;
-* the [Protocol Buffers for Go with Gadgets](https://github.com/gogo/protobuf) (aka gogoproto) binaries 
+[Olivier Wulveryck](https://about.me/owulveryck/getstarted)
 
-Checkout the repository of ONNX somewhere, then run:
+## License
 
-```
-protoc --gofast_out=. /onnx/onnx.proto
-``` 
+MIT.
 
-from the base directory of the repository.
