@@ -22,14 +22,14 @@ go get github.com/owulveryck/onnx-go
 [embedmd]:# (example_test.go /\/\/ Create/ /model.Decode.*/)
 ```go
 // Create a backend receiver
-backend := simple.NewSimpleGraph()
-// Create a model and set the execution backend
-model := onnx.NewModel(backend)
+	backend := simple.NewSimpleGraph()
+	// Create a model and set the execution backend
+	model := onnx.NewModel(backend)
 
-// read the onnx model
-b, _ := ioutil.ReadFile("model.onnx")
-// Decode it into the model
-err := model.Decode(b)
+	// read the onnx model
+	b, _ := ioutil.ReadFile("model.onnx")
+	// Decode it into the model
+	err := model.Decode(b)
 ```
 
 
