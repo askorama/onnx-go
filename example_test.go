@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/owulveryck/onnx-go"
-	"github.com/owulveryck/onnx-go/simple"
+	"github.com/owulveryck/onnx-go/backends/simple"
 )
 
 func Example_simple() {
