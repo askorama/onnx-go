@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -33,6 +34,7 @@ func main() {
 		if len(elements) == 0 {
 			continue
 		}
+		fmt.Printf("var %v = tests.TestCase{", file.Name())
 		b, err := ioutil.ReadFile(*testdir + file.Name() + "/model.onnx")
 		if err != nil {
 			log.Fatal(err)
@@ -42,6 +44,55 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Print("Model:")
 		pretty.Print(model)
+		fmt.Println(",")
+		// There should be only one node
+		if len(model.GetGraph().GetNode()) > 1 {
+			log.Fatal("Not supported")
+		}
+		node := model.GetGraph().GetNode()[0]
+		fmt.Printf("Inputs: []pb.TensorProto{\n")
+		for i := range node.GetInput() {
+			// Open the tensorproto sample file
+			filename := fmt.Sprintf("%v%v/test_data_set_0/input_%v.pb", *testdir, file.Name(), i)
+			b, err = ioutil.ReadFile(filename)
+			if err != nil {
+				log.Fatal(err)
+			}
+			sampleTestData := new(onnx.TensorProto)
+			err = sampleTestData.XXX_Unmarshal(b)
+			if err != nil {
+				log.Fatal(err)
+			}
+			//t, err := sampleTestData.Tensor()
+			//if err != nil {
+			//	log.Fatal(err)
+			//}
+			pretty.Print(sampleTestData)
+			fmt.Println(",")
+		}
+		pretty.Printf("}\n")
+		fmt.Printf("Output: []pb.TensorProto{\n")
+		for i := range node.GetOutput() {
+			// Open the tensorproto sample file
+			filename := fmt.Sprintf("%v%v/test_data_set_0/output_%v.pb", *testdir, file.Name(), i)
+			b, err = ioutil.ReadFile(filename)
+			if err != nil {
+				log.Fatal(err)
+			}
+			sampleTestData := new(onnx.TensorProto)
+			err = sampleTestData.XXX_Unmarshal(b)
+			if err != nil {
+				log.Fatal(err)
+			}
+			//t, err := sampleTestData.Tensor()
+			//if err != nil {
+			//		log.Fatal(err)
+			//}
+			pretty.Print(sampleTestData)
+			fmt.Println(",")
+		}
+		pretty.Printf("}\n")
 	}
 }
