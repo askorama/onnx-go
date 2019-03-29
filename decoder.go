@@ -169,7 +169,7 @@ func (m *Model) decode(model *pb.ModelProto) error {
 			// The graph can apply operations
 			err := dst.ApplyOperation(Operation{
 				node.OpType,
-				node.GetAttribute(),
+				toOperationAttributes(node.GetAttribute()),
 			}, no)
 			if err != nil {
 				return err

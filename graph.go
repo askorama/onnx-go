@@ -1,7 +1,6 @@
 package onnx
 
 import (
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gonum.org/v1/gonum/graph"
 )
 
@@ -14,10 +13,10 @@ type Backend interface {
 // Operation defined by its name and its attribute
 type Operation struct {
 	Name       string
-	Attributes []*pb.AttributeProto
+	Attributes map[string]interface{}
 }
 
-// OperationCarrier should be amethod of the graph
+// OperationCarrier should be a method of the graph
 // because the operation needs the topology of the graph
 // to check the arity of the node for example
 type OperationCarrier interface {
