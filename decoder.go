@@ -1,6 +1,8 @@
 package onnx
 
 import (
+	"reflect"
+
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"github.com/pkg/errors"
@@ -8,72 +10,49 @@ import (
 	"gorgonia.org/tensor"
 )
 
-// Model ...
+// Model is a wrapper around a computation graph.
+// Input and Output are containing the ID of the corresponding nodes.
 type Model struct {
-	g        graph.DirectedWeightedBuilder
+	backend  Backend
 	dbByName map[string]graph.Node
 	Input    []int64
 	Output   []int64
 }
 
-// NewModel ...
-func NewModel(dst graph.DirectedWeightedBuilder) *Model {
+// NewModel with dst as backend.
+// dst should be a non-nil pointer.
+func NewModel(dst Backend) *Model {
 	return &Model{
-		g: dst,
+		backend: dst,
 	}
 }
 
-// Unmarshal ...
-func (m *Model) Unmarshal(data []byte) error {
-	model := &pb.ModelProto{}
-	err := proto.Unmarshal(data, model)
+// Decode the onnx binary data into the model
+func (m *Model) Decode(data []byte) error {
+	pbModel := &pb.ModelProto{}
+	err := proto.Unmarshal(data, pbModel)
 	if err != nil {
 		return err
 	}
-	return m.unmarshal(model)
+	return m.decode(pbModel)
 }
 
-// GetNodeByName ...
+// GetNodeByName is a utility method that returns a node of the computation graph
 func (m *Model) GetNodeByName(name string) (graph.Node, bool) {
 	n, ok := m.dbByName[name]
 	return n, ok
 }
 
-// Unmarshal a NN model encoded in ONNX-Protobuf format into a graph .
-// The weight of the edges represent the indices of the children (therefore their order).
-// The first child weights 0.
-//
-// Executable graphs
-//
-// If dst fulfils the OperationApplyer interface, the corresponding methods are called after the initialization of
-// the structure.
-//
-// Node values
-//
-// If the graph nodes are fulfilling the Tensor interface, this function their values and shapes by calling
-// the corresponding methods.
-func Unmarshal(data []byte, dst graph.DirectedWeightedBuilder) error {
-	model := &pb.ModelProto{}
-	err := proto.Unmarshal(data, model)
-	if err != nil {
-		return err
-	}
-	m := &Model{
-		g: dst,
-	}
-	return m.unmarshal(model)
-}
-
 func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	var opts []tensor.ConsOpt
-	dst := m.g
+	dst := m.backend
 	n := dst.NewNode()
 	if _, ok := n.(Namer); ok {
 		n.(Namer).SetName(io.Name)
 	}
 	dst.AddNode(n)
 	m.dbByName[io.Name] = n
-	if _, ok := n.(TensorCarrier); !ok {
+	if _, ok := n.(DataCarrier); !ok {
 		return n, nil
 	}
 	ttype := io.Type.GetTensorType()
@@ -93,7 +72,7 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	}
 	opts = append(opts, tensor.Of(dtype))
 	t := tensor.New(opts...)
-	err = n.(TensorCarrier).ApplyTensor(t)
+	err = n.(DataCarrier).SetTensor(t)
 	if err != nil {
 		return n, err
 	}
@@ -101,11 +80,16 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	return n, nil
 }
 
-func (m *Model) unmarshal(model *pb.ModelProto) error {
+func (m *Model) decode(model *pb.ModelProto) error {
+	rv := reflect.ValueOf(m.backend)
+	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
+	}
+
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
-	dst := m.g
+	dst := m.backend
 	// Well...
 	for i, io := range model.Graph.Input {
 		n, err := m.processValue(io)
@@ -143,14 +127,14 @@ func (m *Model) unmarshal(model *pb.ModelProto) error {
 				m.Input = append(m.Input[:i], m.Input[i+1:]...)
 			}
 		}
-		if _, ok := n.(TensorCarrier); !ok {
+		if _, ok := n.(DataCarrier); !ok {
 			continue
 		}
 		t, err := tensorProto.Tensor()
 		if err != nil {
 			return err
 		}
-		err = n.(TensorCarrier).ApplyTensor(t)
+		err = n.(DataCarrier).SetTensor(t)
 		if err != nil {
 			return err
 		}
@@ -183,14 +167,12 @@ func (m *Model) unmarshal(model *pb.ModelProto) error {
 				dst.SetWeightedEdge(e)
 			}
 			// The graph can apply operations
-			if _, ok := dst.(OperationCarrier); ok {
-				err := dst.(OperationCarrier).ApplyOperation(Operation{
-					node.OpType,
-					node.GetAttribute(),
-				}, no)
-				if err != nil {
-					return err
-				}
+			err := dst.ApplyOperation(Operation{
+				node.OpType,
+				toOperationAttributes(node.GetAttribute()),
+			}, no)
+			if err != nil {
+				return err
 			}
 		}
 	}
