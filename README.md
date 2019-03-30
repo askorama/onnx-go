@@ -64,6 +64,44 @@ This picture represents the mechanism:
 onnx-go do not provide any executable backend, but for a reference, a simple backend that builds an information graph is provided as an example (see the `simple` subpackage).
 Gorgonia is the man target backend of ONNX-Go.
 
+#### Backend implementation
+
+a backend is basically a Weighted directed graph that can apply on Operation on its nodes. It should fulfill this interface:
+
+[embedmd]:# (backend.go /type Backend/ /}/)
+```go
+type Backend interface {
+	OperationCarrier
+	graph.DirectedWeightedBuilder
+}
+```
+
+[embedmd]:# (backend.go /type OperationCarrier/ /}/)
+```go
+type OperationCarrier interface {
+	ApplyOperation(Operation, graph.Node) error
+}
+```
+
+An Operation is represented by its `name` and a map of attributes. For example the Convolution operator as described in the [spec of onnx](https://github.com/onnx/onnx/blob/master/docs/Operators.md#Conv) will be represented like this:
+
+[embedmd]:# (conv_example_test.go /convOperator/ /}/)
+```go
+convOperator := Operation{
+		Name: "Conv",
+		Attributes: map[string]interface{}
+```
+
+Besides, operators, a node can carry a value. Values are described as [`tensor.Tensor`](https://godoc.org/gorgonia.org/tensor#Tensor)
+To carry data, a *`Node`* of the graph should fulfill this interface:
+
+[embedmd]:# (node.go /type DataCarrier/ /}/)
+```go
+type DataCarrier interface {
+	SetTensor(t tensor.Tensor) error
+}
+```
+
 ## Contributing
 
 ToDo.
