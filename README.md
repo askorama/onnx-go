@@ -1,11 +1,10 @@
 ![ONNX Logo](vignettes/imgs/ONNX_logo_main.png) ![Go Logo](vignettes/imgs/Go-Logo_Blue.png)
 
-[![](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](http://godoc.org/github.com/owulveryck/onnx-go)
+[![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
 
 This is a Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/).
 
-## Overview [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
-
+## Overview 
 onnx-go contains primitives to decode a onnx binary model into a computation backend, and use it like any other library in your go code.
 for more information about onnx, please visit [onnx.ai](https://onnx.ai).
 
