@@ -85,11 +85,18 @@ type OperationCarrier interface {
 
 An Operation is represented by its `name` and a map of attributes. For example the Convolution operator as described in the [spec of onnx](https://github.com/onnx/onnx/blob/master/docs/Operators.md#Conv) will be represented like this:
 
-[embedmd]:# (conv_example_test.go /convOperator/ /}/)
+[embedmd]:# (conv_example_test.go /convOperator/ /}$/)
 ```go
 convOperator := Operation{
 		Name: "Conv",
-		Attributes: map[string]interface{}
+		Attributes: map[string]interface{}{
+			"auto_pad":  "NOTSET",
+			"dilations": []int64{1, 1},
+			"group":     1,
+			"pads":      []int64{1, 1},
+			"strides":   []int64{1, 1},
+		},
+	}
 ```
 
 Besides, operators, a node can carry a value. Values are described as [`tensor.Tensor`](https://godoc.org/gorgonia.org/tensor#Tensor)
