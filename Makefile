@@ -1,10 +1,16 @@
-all: $(GOPATH)/bin/protoc-gen-gofast 
+GOFILES := $(wildcard *.go)
 
-$(GOPATH)/bin/protoc-gen-gofast: $(GOPATH)/bin/protoc-gen-go
-	go get github.com/gogo/protobuf/protoc-gen-gofast
+## install: Install missing dependencies. Runs `go get` internally. e.g; make install get=github.com/foo/bar
+install: go-get
 
-$(GOPATH)/bin/protoc-gen-go:
-	go get -u github.com/golang/protobuf/protoc-gen-go
+go-get:
+	@echo "  >  Checking if there is any missing dependencies..."
+	@go get $(get)
 
-#onnx.pb.go: $(GOPATH)/bin/protoc-gen-gofast ../onnx/onnx.proto
-#	protoc --gofast_out=. --proto_path=../onnx ../onnx/onnx.proto
+doc: $(GOPATH)/bin/embedmd $(wildcard *test.go)
+	@$(GOPATH)/bin/embedmd -w README.md	
+
+$(GOBIN)/embedmd:
+	@go get github.com/campoy/embedmd
+
+all:
