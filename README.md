@@ -49,8 +49,6 @@ go get github.com/owulveryck/onnx-go
 
 ## Internal
 
-## protobuf definition of ONNX
-
 ### ONNX protobuf definition 
 
 The protobuf definition of onnx has is compiled into Go with the classic `protoc` tool. The definition can be found in the `internal` directory.
@@ -63,7 +61,8 @@ In order to execute the neural network, you need a backend able to execute a com
 
 This picture represents the mechanism:
 
-<script async class="speakerdeck-embed" data-slide="10" data-id="a040d5195ae546199edbdda3d27393dc" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+![Schema](vignettes/imgs/schema.png)
+
 onnx-go do not provide any executable backend, but for a reference, a simple backend that builds an information graph is provided as an example (see the `simple` subpackage).
 Gorgonia is the man target backend of ONNX-Go.
 
