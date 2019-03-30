@@ -2,8 +2,6 @@
 
 [![](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](http://godoc.org/github.com/owulveryck/onnx-go)
 
-# onnx-go
-
 This is a Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/).
 
 ## Overview [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
@@ -77,4 +75,3 @@ ToDo.
 ## License
 
 MIT.
-
