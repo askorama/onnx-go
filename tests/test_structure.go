@@ -1,6 +1,8 @@
 package tests
 
 import (
+	"testing"
+
 	"github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"gorgonia.org/tensor"
 )
@@ -11,4 +13,11 @@ type TestCase struct {
 	Model   *pb.ModelProto
 	Inputs  []tensor.Tensor
 	Outputs []tensor.Tensor
+}
+
+// TestOperator ...
+func TestOperator(testCase TestCase) func(t *testing.T) {
+	return func(t *testing.T) {
+
+	}
 }
