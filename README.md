@@ -104,7 +104,8 @@ type DataCarrier interface {
 
 ## Contributing
 
-ToDo.
+Contributions are welcome. A contribution guide will be eventually written. Meanwhile, you can raise an issue or send a PR.
+You can also contact me via Twitter or on the gophers' slack (I am owulveryck on both)
 
 ## Author
 
