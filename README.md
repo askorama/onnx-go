@@ -11,6 +11,20 @@ This is a Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/
 onnx-go contains primitives to decode a onnx binary model into a computation backend, and use it like any other library in your go code.
 for more information about onnx, please visit [onnx.ai](https://onnx.ai).
 
+The implementation of the [the spec of ONNX](https://github.com/onnx/onnx/blob/master/docs/IR.md) is partial on the import, and non-existent for the export.
+
+**Warning** The API is experimental and may change.
+
+### Disclaimer
+[embedmd]:# (RELNOTES.md)
+```md
+This is a new version of the API.
+The tweaked version of Gorgonia have been removed. Therefore this version do not have any computation backend.
+A new version using the official Gorgonia package will soon be added.
+Meanwhile, you can use the old version for a demo by fetching a pre-release version of checking out the old version `01b2e2b`
+```
+
+
 ## Install
 
 ```
@@ -32,6 +46,26 @@ go get github.com/owulveryck/onnx-go
 	err := model.Decode(b)
 ```
 
+
+## Internal
+
+## protobuf definition of ONNX
+
+### ONNX protobuf definition 
+
+The protobuf definition of onnx has is compiled into Go with the classic `protoc` tool. The definition can be found in the `internal` directory.
+The definition is not exposed to avoid external dependencies to this repo. Indeed, the pb code can change to use a more efficient compiler such
+as `gogo protobuf` and this change should be transparent to the user of this package.
+
+### Execution backend
+
+In order to execute the neural network, you need a backend able to execute a computation graph (_for more information on computation graphs, please read this [blog post](http://gopherdata.io/post/deeplearning_in_go_part_1/)_
+
+This picture represents the mechanism:
+
+<script async class="speakerdeck-embed" data-slide="10" data-id="a040d5195ae546199edbdda3d27393dc" data-ratio="1.77777777777778" src="//speakerdeck.com/assets/embed.js"></script>
+onnx-go do not provide any executable backend, but for a reference, a simple backend that builds an information graph is provided as an example (see the `simple` subpackage).
+Gorgonia is the man target backend of ONNX-Go.
 
 ## Contributing
 
