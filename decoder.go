@@ -23,18 +23,19 @@ type Model struct {
 // dst should be a non-nil pointer.
 func NewModel(dst Backend) *Model {
 	return &Model{
-		backend: dst,
+		dbByName: make(map[string]graph.Node, 0),
+		backend:  dst,
 	}
 }
 
-// Decode the onnx binary data into the model
-func (m *Model) Decode(data []byte) error {
+// UnmarshalBinary decodes the binary data in onnx format into the model
+func (m *Model) UnmarshalBinary(data []byte) error {
 	pbModel := &pb.ModelProto{}
 	err := proto.Unmarshal(data, pbModel)
 	if err != nil {
 		return err
 	}
-	return m.decode(pbModel)
+	return m.decodeProto(pbModel)
 }
 
 // GetNodeByName is a utility method that returns a node of the computation graph
@@ -80,7 +81,8 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	return n, nil
 }
 
-func (m *Model) decode(model *pb.ModelProto) error {
+// decodeProto decode a protobuf definition inside the model
+func (m *Model) decodeProto(model *pb.ModelProto) error {
 	rv := reflect.ValueOf(m.backend)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
