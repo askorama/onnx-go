@@ -111,7 +111,10 @@ type DataCarrier interface {
 ## Contributing
 
 Contributions are welcome. A contribution guide will be eventually written. Meanwhile, you can raise an issue or send a PR.
-You can also contact me via Twitter or on the gophers' slack (I am owulveryck on both)
+You can also contact me via Twitter or on the gophers' slack (I am @owulveryck on both)
+
+This project is intended to be a safe, welcoming space for collaboration, and
+contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## Author
 
