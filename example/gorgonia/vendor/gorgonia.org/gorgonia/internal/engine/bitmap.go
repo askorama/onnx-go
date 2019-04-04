@@ -1,5 +1,7 @@
 package engine
 
+import "math/bits"
+
 const (
 	bitmapBits = 64
 )
@@ -58,9 +60,12 @@ func (bm *bitmap) Clear(i int) {
 func (bm *bitmap) BlocksWithZero(atleast int) int {
 	var retVal int = -1
 	for i, b := range bm.n {
-		if popcnt(b) != bitmapBits {
+		if bits.OnesCount64(b) != bitmapBits {
+
+			//		if popcnt(b) != bitmapBits {
 			// shortcut:
-			if clz(b) > atleast {
+			if bits.LeadingZeros64(b) > atleast {
+				//if clz(b) > atleast {
 				return i
 			}
 

@@ -1,4 +1,4 @@
-// +build !noasm
+// +build !noasm,!wasm
 
 #include "textflag.h"
 

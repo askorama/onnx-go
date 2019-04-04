@@ -62,13 +62,14 @@ func main() {
 			log.Println(err)
 			return nil
 		}
+		var output int
 		if dataURL.ContentType() == "image/png" {
 			m, _, err := image.Decode(bytes.NewReader(dataURL.Data))
 			if err != nil {
 				log.Println(err)
 				return nil
 			}
-			output, err := analyze(m)
+			output, err = analyze(m)
 			if err != nil {
 				log.Println(err)
 				return nil
@@ -77,7 +78,7 @@ func main() {
 
 		js.Global().Get("document").
 			Call("getElementById", "guess").
-			Set("innerHTML", "hello wasm")
+			Set("innerHTML", output)
 		return nil
 	})
 	// Hook it up with a DOM event
