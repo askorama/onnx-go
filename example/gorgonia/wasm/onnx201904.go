@@ -26,12 +26,18 @@ var (
 )
 
 func main() {
+	js.Global().Get("document").
+		Call("getElementById", "info").
+		Set("innerHTML", "Starting the WASM program")
 	graph = gorgonnx.NewGraph()
 	model = onnx.NewModel(graph)
 	files := js.Global().Get("document").Call("getElementById", "knowledgeFile").Get("files")
 	//fmt.Println("file", files)
 	//fmt.Println("Length", files.Length())
 	if files.Length() == 1 {
+		js.Global().Get("document").
+			Call("getElementById", "info").
+			Set("innerHTML", "Reading the model from the memory of the browser")
 		//fmt.Println("Reading from uploaded file")
 		reader := js.Global().Get("FileReader").New()
 		reader.Call("readAsDataURL", files.Index(0))
@@ -42,42 +48,60 @@ func main() {
 		content := reader.Get("result").String()
 		dataURL, err := dataurl.DecodeString(content)
 		if err != nil {
-			log.Println(err)
+			js.Global().Get("document").
+				Call("getElementById", "info").
+				Set("innerHTML", err)
 			return
 		}
 		err = model.Unmarshal(dataURL.Data)
 		if err != nil {
-			log.Fatal(err)
+			js.Global().Get("document").
+				Call("getElementById", "info").
+				Set("innerHTML", "Fatal... cannot decode model, please reload the page")
 		}
 
 		// modelonnx = dataURL.Data
 	}
+	js.Global().Get("document").
+		Call("getElementById", "info").
+		Set("innerHTML", "Ready to process!")
 	// Declare callback
 	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		// handle event
 		// Get the picture
+		js.Global().Get("document").
+			Call("getElementById", "info").
+			Set("innerHTML", "processing element")
 		pic := js.Global().Get("document").Call("getElementById", "canvasBox").Call("toDataURL")
 		dataURL, err := dataurl.DecodeString(pic.String())
 		if err != nil {
-			log.Println(err)
+			js.Global().Get("document").
+				Call("getElementById", "info").
+				Set("innerHTML", "error")
 			return nil
 		}
 		var output int
 		if dataURL.ContentType() == "image/png" {
 			m, _, err := image.Decode(bytes.NewReader(dataURL.Data))
 			if err != nil {
-				log.Println(err)
+				js.Global().Get("document").
+					Call("getElementById", "info").
+					Set("innerHTML", "error")
 				return nil
 			}
 			output, err = analyze(m)
 			if err != nil {
-				log.Println(err)
+				/*js.Global().Get("document").
+				Call("getElementById", "info").
+				Set("innerHTML", "error")
+				*/
 				return nil
 			}
 		}
 
+		log.Println(output)
 		js.Global().Get("document").
-			Call("getElementById", "guess").
+			Call("getElementById", "info").
 			Set("innerHTML", output)
 		return nil
 	})
@@ -99,7 +123,6 @@ func analyze(m image.Image) (int, error) {
 	T := tensor.New(tensor.WithBacking(t), tensor.WithShape(1, 1, size, size))
 	err := gorgonnx.Let(graph.Node(model.Input[0]).(node.Node), T)
 	if err != nil {
-		log.Println(err)
 		return 0, err
 	}
 	// create a VM to run the program on
@@ -108,7 +131,6 @@ func analyze(m image.Image) (int, error) {
 	// Run the program
 	err = machine.RunAll()
 	if err != nil {
-		log.Println(err)
 		return 0, nil
 	}
 	val := float32(-math.MaxFloat32)
@@ -119,5 +141,7 @@ func analyze(m image.Image) (int, error) {
 			val = v
 		}
 	}
+	log.Println("RES", res)
+
 	return res, nil
 }
