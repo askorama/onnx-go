@@ -22,4 +22,5 @@ type Documenter interface {
 // DataCarrier is node with the ability to carry a tensor data
 type DataCarrier interface {
 	SetTensor(t tensor.Tensor) error
+	GetTensor() tensor.Tensor
 }
