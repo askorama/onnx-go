@@ -108,6 +108,10 @@ type DataCarrier interface {
 }
 ```
 
+#### Backend testing
+
+onnx-go provides a some utilities to test a backend. Visit the [`testbackend` package](backend/testbackend) for more info.
+
 ## Contributing
 
 Contributions are welcome. A contribution guide will be eventually written. Meanwhile, you can raise an issue or send a PR.
