@@ -30,8 +30,8 @@ var allOpTypes map[string][]func() *TestCase
 // allTests holds a reference of the test regarding their name
 var allTests map[string]func() *TestCase
 
-// FindAllTestsMatching tests matching the regexp
-func FindAllTestsMatching(r *regexp.Regexp) []func() *TestCase {
+// TODO findAllTestsMatching tests matching the regexp
+func findAllTestsMatching(r *regexp.Regexp) []func() *TestCase {
 	return nil
 }
 
@@ -83,7 +83,11 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 			}
 			t.Fatal(err)
 		}
-		output := m.GetOutput()
+		output, err := m.GetOutputTensors()
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		if len(output) != len(tc.ExpectedOutput) {
 			t.Fatalf("expected %v output, got %v", len(tc.ExpectedOutput), len(output))
 		}
