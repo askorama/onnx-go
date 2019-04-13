@@ -1,8 +1,6 @@
 package gorgonnx
 
 import (
-	"log"
-
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
@@ -34,7 +32,6 @@ func (g *Graph) Run() error {
 			return err
 		}
 	}
-	log.Println(g.exprgraph)
 	t := gorgonia.NewTapeMachine(g.exprgraph)
 	err := t.RunAll()
 	if err != nil {
@@ -62,6 +59,5 @@ func (g *Graph) PopulateExprgraph() error {
 	if len(g.roots) != 1 {
 		return &onnx.ErrNotImplemented{}
 	}
-
 	return g.walk(g.roots[0])
 }
