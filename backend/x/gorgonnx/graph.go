@@ -18,7 +18,7 @@ type Graph struct {
 
 // ApplyOperation to fulfill the onnx.Backend interface
 func (g *Graph) ApplyOperation(o onnx.Operation, n graph.Node) error {
-	n.(*Node).operation = o
+	n.(*Node).operation = &o
 	return nil
 }
 
@@ -27,16 +27,35 @@ func (g *Graph) Run() error {
 	if g.exprgraph == nil {
 		err := g.PopulateExprgraph()
 		if err != nil {
-			return nil
+			return err
 		}
 	}
 	t := gorgonia.NewTapeMachine(g.exprgraph)
-	return t.RunAll()
+	err := t.RunAll()
+	if err != nil {
+		return err
+	}
+	// Now sets the output tensor
+	// TODO
+	return nil
 }
 
 // PopulateExprgraph creates the underlynig graph by walking the current graph
 func (g *Graph) PopulateExprgraph() error {
 	g.exprgraph = gorgonia.NewGraph()
-	// TODO this is where we should walk the graph and create the exprgraph
-	return nil
+	// Find the root nodes
+	// TODO make it more efficient
+	root := make([]int64, 0)
+	it := g.g.Nodes()
+	for it.Next() {
+		n := it.Node()
+		if g.g.To(n.ID()).Len() == 0 {
+			root = append(root, n.ID())
+		}
+	}
+	if len(root) != 1 {
+		return &onnx.ErrNotImplemented{}
+	}
+
+	return g.walk(root[0])
 }

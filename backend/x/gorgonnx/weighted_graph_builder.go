@@ -7,19 +7,28 @@ import (
 	"gonum.org/v1/gonum/graph/simple"
 )
 
-// NewSimpleGraph ...
-func NewSimpleGraph() *Graph {
+// NewGraph ...
+func NewGraph() *Graph {
 	return &Graph{
 		g: simple.NewWeightedDirectedGraph(math.MaxFloat64, -1),
 	}
 }
 
-// SetWeightedEdge ...
+// SetWeightedEdge adds an edge from one node to
+// another. If the graph supports node addition
+// the nodes will be added if they do not exist,
+// otherwise SetWeightedEdge will panic.
+// The behavior of a WeightedEdgeAdder when the IDs
+// returned by e.From() and e.To() are equal is
+// implementation-dependent.
+// Whether e, e.From() and e.To() are stored.
+// Fulfills the graph.WeightedEdgeAdder interface
 func (g *Graph) SetWeightedEdge(e graph.WeightedEdge) {
 	g.g.SetWeightedEdge(e)
 }
 
-// NewWeightedEdge ...
+// NewWeightedEdge returns a new WeightedEdge from the source to the destination node.
+// Fulfills the graph.WeightedEdgeAdder interface
 func (g *Graph) NewWeightedEdge(from, to graph.Node, w float64) graph.WeightedEdge {
 	return g.g.NewWeightedEdge(from, to, w)
 
