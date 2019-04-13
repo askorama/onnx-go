@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/traverse"
@@ -30,14 +31,14 @@ func (g *Graph) walk(node int64) error {
 	// for each node, if nil, and if hold an operation, add the graph
 	for i := len(nodes) - 1; i >= 0; i-- {
 		n := g.g.Node(nodes[i]).(*Node)
+		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
+			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
+		}
 		if n.operation != nil {
 			err := g.applyOperation(n)
 			if err != nil {
 				return err
 			}
-		}
-		if n.t != nil && n.gorgoniaNode == nil {
-			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t)
 		}
 	}
 
@@ -59,11 +60,11 @@ func (g *Graph) applyOperation(n *Node) error {
 		if children[0].gorgoniaNode == nil || children[1].gorgoniaNode == nil {
 			return fmt.Errorf("at least one of the children node is nil")
 		}
-		gn, err := gorgonia.Add(children[0].gorgoniaNode, children[1].gorgoniaNode)
+		var err error
+		n.gorgoniaNode, err = gorgonia.Add(children[0].gorgoniaNode, children[1].gorgoniaNode)
 		if err != nil {
 			return err
 		}
-		n.gorgoniaNode = gn
 	default:
 		return &onnx.ErrNotImplemented{
 			Operator: n.operation.Name,

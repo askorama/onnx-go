@@ -90,6 +90,7 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
+	// OLWU
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
 	dst := m.backend
 	// Well...
