@@ -61,6 +61,13 @@ func (g *Graph) applyOperation(n *Node) (*gorgonia.Node, error) {
 		if children[0].gorgoniaNode == nil || children[1].gorgoniaNode == nil {
 			return nil, fmt.Errorf("at least one of the children node is nil")
 		}
+		if len(children[0].gorgoniaNode.Shape()) != len(children[1].gorgoniaNode.Shape()) {
+			return nil, &onnx.ErrNotImplemented{
+				Operator: n.operation.Name,
+				Message:  "broadcast not yet implemented",
+			}
+
+		}
 		return gorgonia.Add(children[0].gorgoniaNode, children[1].gorgoniaNode)
 	case "Cos":
 		children := getOrderedChildren(g.g, n)
