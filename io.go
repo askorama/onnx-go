@@ -34,7 +34,7 @@ func (m *Model) GetOutputTensors() ([]tensor.Tensor, error) {
 		if _, ok := n.(DataCarrier); !ok {
 			return nil, fmt.Errorf("cannot set output because node is not a DataCarrier")
 		}
-		output = append(output, n.(DataCarrier).GetTensor())
+		output[i] = n.(DataCarrier).GetTensor()
 	}
 	return output, nil
 }
