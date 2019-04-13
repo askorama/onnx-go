@@ -92,7 +92,7 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 			t.Fatalf("expected %v output, got %v", len(tc.ExpectedOutput), len(output))
 		}
 		for i := range output {
-			assert.Equal(t, tc.ExpectedOutput[i], output[i], "the two tensors should be equal.")
+			assert.InDeltaSlice(t, tc.ExpectedOutput[i].Data(), output[i].Data(), 1e-6, "the two tensors should be equal.")
 		}
 
 	}
