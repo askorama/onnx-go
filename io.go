@@ -27,7 +27,7 @@ func (m *Model) SetInput(i int, t tensor.Tensor) error {
 func (m *Model) GetOutputTensors() ([]tensor.Tensor, error) {
 	output := make([]tensor.Tensor, len(m.Output))
 	for i := range m.Output {
-		n := m.backend.Node(int64(i))
+		n := m.backend.Node(int64(m.Output[i]))
 		if n == nil {
 			return nil, fmt.Errorf("cannot get output for node %v, node is nil", i)
 		}
