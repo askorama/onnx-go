@@ -62,6 +62,24 @@ func (g *Graph) applyOperation(n *Node) (*gorgonia.Node, error) {
 			return nil, fmt.Errorf("at least one of the children node is nil")
 		}
 		return gorgonia.Add(children[0].gorgoniaNode, children[1].gorgoniaNode)
+	case "Cos":
+		children := getOrderedChildren(g.g, n)
+		if len(children) != 1 {
+			return nil, fmt.Errorf("bad arity for add operation")
+		}
+		if children[0].gorgoniaNode == nil {
+			return nil, fmt.Errorf("at least one of the children node is nil")
+		}
+		return gorgonia.Cos(children[0].gorgoniaNode)
+	case "Abs":
+		children := getOrderedChildren(g.g, n)
+		if len(children) != 1 {
+			return nil, fmt.Errorf("bad arity for add operation")
+		}
+		if children[0].gorgoniaNode == nil {
+			return nil, fmt.Errorf("at least one of the children node is nil")
+		}
+		return gorgonia.Abs(children[0].gorgoniaNode)
 	default:
 		return nil, &onnx.ErrNotImplemented{
 			Operator: n.operation.Name,
