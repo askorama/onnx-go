@@ -30,7 +30,7 @@ func (e *ErrNotImplemented) Error() string {
 			e.AttributeValue,
 			e.Message)
 	}
-	return "onnx: operator " + e.Operator + " not implemented"
+	return "onnx: operator " + e.Operator + " not implemented (" + e.Message + ")"
 }
 
 // ErrInvalidModel is raised if we are not able to unmarshal the model because it is invalid
