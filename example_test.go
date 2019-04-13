@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/owulveryck/onnx-go"
-	"github.com/owulveryck/onnx-go/backends/simple"
+	"github.com/owulveryck/onnx-go/backend/simple"
 )
 
 func Example_simple() {
@@ -18,7 +18,7 @@ func Example_simple() {
 	// read the onnx model
 	b, _ := ioutil.ReadFile("model.onnx")
 	// Decode it into the model
-	err := model.Decode(b)
+	err := model.UnmarshalBinary(b)
 	// END SIMPLE
 	if err != nil {
 		log.Fatal(err)
