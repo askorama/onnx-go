@@ -2,16 +2,18 @@ package gorgonnx
 
 import (
 	"github.com/owulveryck/onnx-go"
+	"gorgonia.org/gorgonia"
 	"gorgonia.org/tensor"
 )
 
-// Node is compatible with graph.Node and
-// onnx.DataCarrier
+// Node is compatible with graph.Node and onnx.DataCarrier
 type Node struct {
 	id        int64
 	t         tensor.Tensor
-	operation onnx.Operation
+	operation *onnx.Operation
 	name      string
+	// gorgoniaNode stores a pointer to the node of the exprgraph
+	gorgoniaNode *gorgonia.Node
 }
 
 // ID to fulfill the graph.Node interface
