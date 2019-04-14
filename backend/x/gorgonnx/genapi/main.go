@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"go/format"
 	"log"
 	"strings"
+	"text/template"
 )
 
 var allOps = []operation{
@@ -48,12 +50,16 @@ var allOps = []operation{
 }
 
 func main() {
-	fmt.Println(`package gorgonnx
-
-import (
-	"github.com/owulveryck/onnx-go"
-	"gorgonia.org/gorgonia"
-)`)
+	test := flag.Bool("test", false, "generate test file")
+	flag.Parse()
+	var t *template.Template
+	if *test {
+		t = testTmpl
+		fmt.Println(testHeader)
+	} else {
+		t = opTmpl
+		fmt.Println(opHeader)
+	}
 	for _, op := range allOps {
 		if op.GorgonnxOp == "" {
 			op.GorgonnxOp = strings.ToLower(op.ONNXOpType)
@@ -63,7 +69,7 @@ import (
 		}
 
 		var buf bytes.Buffer
-		if err := opTmpl.Execute(&buf, op); err != nil {
+		if err := t.Execute(&buf, op); err != nil {
 			log.Fatal(err)
 		}
 		p, err := format.Source(buf.Bytes())
