@@ -1,6 +1,10 @@
 package gorgonnx
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/owulveryck/onnx-go"
+)
 
 func init() {
 	//operators = make(map[string]operator, 0)
@@ -14,9 +18,11 @@ var operators = map[string]operator{}
 
 type operator interface {
 	// apply analyse the graph to find the children of the node
-	// the extract its gorgonia.Node references and assign the result of the operation
-	// to the node n
+	// then extract its gorgonia.Node references
+	// and assign the result of the operation to the node n
 	apply(g *Graph, n *Node) error
+	// init the operator with name and attributes as carried by the onnx.Operator
+	init(o onnx.Operation) error
 }
 
 // check conditions of the children.
