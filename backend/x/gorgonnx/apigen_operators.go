@@ -33,6 +33,10 @@ func (a *hadamardProd) apply(g *Graph, n *Node) error {
 	return err
 }
 
+func (a *hadamardProd) init(o onnx.Operation) error {
+	return nil
+}
+
 
 type hadamardDiv struct{}
 
@@ -60,6 +64,10 @@ func (a *hadamardDiv) apply(g *Graph, n *Node) error {
 		children[1].gorgoniaNode,
 	)
 	return err
+}
+
+func (a *hadamardDiv) init(o onnx.Operation) error {
+	return nil
 }
 
 
@@ -91,6 +99,10 @@ func (a *sub) apply(g *Graph, n *Node) error {
 	return err
 }
 
+func (a *sub) init(o onnx.Operation) error {
+	return nil
+}
+
 
 type add struct{}
 
@@ -120,6 +132,10 @@ func (a *add) apply(g *Graph, n *Node) error {
 	return err
 }
 
+func (a *add) init(o onnx.Operation) error {
+	return nil
+}
+
 
 type cos struct{}
 
@@ -138,6 +154,10 @@ func (a *cos) apply(g *Graph, n *Node) error {
 		children[0].gorgoniaNode,
 	)
 	return err
+}
+
+func (a *cos) init(o onnx.Operation) error {
+	return nil
 }
 
 
@@ -160,6 +180,10 @@ func (a *sin) apply(g *Graph, n *Node) error {
 	return err
 }
 
+func (a *sin) init(o onnx.Operation) error {
+	return nil
+}
+
 
 type tanh struct{}
 
@@ -178,5 +202,9 @@ func (a *tanh) apply(g *Graph, n *Node) error {
 		children[0].gorgoniaNode,
 	)
 	return err
+}
+
+func (a *tanh) init(o onnx.Operation) error {
+	return nil
 }
 

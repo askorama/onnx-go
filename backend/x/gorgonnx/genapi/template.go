@@ -41,6 +41,10 @@ func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
 	)
 	return err
 }
+
+func (a *{{ .GorgonnxOp }}) init(o onnx.Operation) error {
+	return nil
+}
 `
 
 var iterator = template.FuncMap{
