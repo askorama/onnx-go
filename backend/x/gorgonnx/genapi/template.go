@@ -3,6 +3,7 @@ package main
 import "text/template"
 
 var opTmpl = template.Must(template.New("op").Funcs(iterator).Parse(opTemplate))
+var testTmpl = template.Must(template.New("test").Parse(testTemplate))
 
 type operation struct {
 	GorgonnxOp    string
@@ -47,6 +48,16 @@ func (a *{{ .GorgonnxOp }}) init(o onnx.Operation) error {
 }
 `
 
+const testTemplate = `
+// Test{{ .ONNXOpType }} ...
+func Test{{ .ONNXOpType }}(t *testing.T) {
+	  for _, tc := range testbackend.GetOpTypeTests("{{ .ONNXOpType }}") {
+		  tc := tc() // capture range variable
+		  t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
+	  }
+}
+`
+
 var iterator = template.FuncMap{
 	"Iterate": func(count int) []int {
 		var i int
@@ -57,3 +68,19 @@ var iterator = template.FuncMap{
 		return Items
 	},
 }
+
+const testHeader = `package gorgonnx
+
+import (
+	"testing"
+
+	"github.com/owulveryck/onnx-go/backend/testbackend"
+	_ "github.com/owulveryck/onnx-go/backend/testbackend/onnx"
+)`
+
+const opHeader = `package gorgonnx
+
+import (
+	"github.com/owulveryck/onnx-go"
+	"gorgonia.org/gorgonia"
+)`
