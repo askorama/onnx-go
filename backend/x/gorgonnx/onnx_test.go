@@ -33,8 +33,8 @@ func TestONNXCoverage(t *testing.T) {
 	status := make([]report, 0)
 	for _, tc := range testbackend.GetAllRegisteredTests() {
 		tc := *tc() // capture range variable
-		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
-		status = append(status, report{tc.GetInfo(), t.Failed(), t.Skipped()})
+		failed := t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
+		status = append(status, report{tc.GetInfo(), failed, t.Skipped()})
 	}
 	for i := range status {
 		status := status[i]
