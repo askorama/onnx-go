@@ -170,9 +170,13 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 				dst.SetWeightedEdge(e)
 			}
 			// The graph can apply operations
-			err := dst.ApplyOperation(Operation{
+			attrs, err := toOperationAttributes(node.GetAttribute())
+			if err != nil {
+				return err
+			}
+			err = dst.ApplyOperation(Operation{
 				node.OpType,
-				toOperationAttributes(node.GetAttribute()),
+				attrs,
 			}, no)
 			if err != nil {
 				return err
