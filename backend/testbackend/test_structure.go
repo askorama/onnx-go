@@ -30,9 +30,15 @@ var allOpTypes map[string][]func() *TestCase
 // allTests holds a reference of the test regarding their name
 var allTests map[string]func() *TestCase
 
-// TODO findAllTestsMatching tests matching the regexp
-func findAllTestsMatching(r *regexp.Regexp) []func() *TestCase {
-	return nil
+// FindAllTestsMatching tests matching the regexp
+func FindAllTestsMatching(re *regexp.Regexp) []func() *TestCase {
+	output := make([]func() *TestCase, 0)
+	for k, v := range allTests {
+		if re.MatchString(k) {
+			output = append(output, v)
+		}
+	}
+	return output
 }
 
 // GetOpTypeTests returns all the tests of the OpType passed as argument
