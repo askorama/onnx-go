@@ -21,7 +21,7 @@ func init() {
 // Register a test
 func Register(optype, testTitle string, constructor func() *TestCase) {
 	allOpTypes[optype] = append(allOpTypes[optype], constructor)
-	allTests[optype] = constructor
+	allTests[testTitle] = constructor
 }
 
 // allOpTypes returns all the tests for a given OpType
