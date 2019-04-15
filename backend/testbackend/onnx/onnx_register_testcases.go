@@ -250,7 +250,6 @@ func init() {
 	testbackend.Register("Relu", "TestRelu", NewTestRelu)
 	testbackend.Register("Reshape", "TestReshapeExtendedDims", NewTestReshapeExtendedDims)
 	testbackend.Register("Reshape", "TestReshapeNegativeDim", NewTestReshapeNegativeDim)
-	testbackend.Register("Reshape", "TestReshapeOneDim", NewTestReshapeOneDim)
 	testbackend.Register("Reshape", "TestReshapeReducedDims", NewTestReshapeReducedDims)
 	testbackend.Register("Reshape", "TestReshapeReorderedDims", NewTestReshapeReorderedDims)
 	testbackend.Register("Resize", "TestResizeDownsampleLinear", NewTestResizeDownsampleLinear)
