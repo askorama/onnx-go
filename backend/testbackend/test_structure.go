@@ -21,7 +21,7 @@ func init() {
 // Register a test
 func Register(optype, testTitle string, constructor func() *TestCase) {
 	allOpTypes[optype] = append(allOpTypes[optype], constructor)
-	allTests[optype] = constructor
+	allTests[testTitle] = constructor
 }
 
 // allOpTypes returns all the tests for a given OpType
@@ -30,9 +30,25 @@ var allOpTypes map[string][]func() *TestCase
 // allTests holds a reference of the test regarding their name
 var allTests map[string]func() *TestCase
 
-// TODO findAllTestsMatching tests matching the regexp
-func findAllTestsMatching(r *regexp.Regexp) []func() *TestCase {
-	return nil
+// GetAllRegisteredTests ...
+func GetAllRegisteredTests() []func() *TestCase {
+	output := make([]func() *TestCase, 0)
+	for _, v := range allTests {
+		output = append(output, v)
+	}
+	return output
+
+}
+
+// FindAllTestsMatching tests matching the regexp
+func FindAllTestsMatching(re *regexp.Regexp) []func() *TestCase {
+	output := make([]func() *TestCase, 0)
+	for k, v := range allTests {
+		if re.MatchString(k) {
+			output = append(output, v)
+		}
+	}
+	return output
 }
 
 // GetOpTypeTests returns all the tests of the OpType passed as argument

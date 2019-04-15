@@ -4,7 +4,7 @@ import (
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 )
 
-func toOperationAttributes(attrs []*pb.AttributeProto) map[string]interface{} {
+func toOperationAttributes(attrs []*pb.AttributeProto) (map[string]interface{}, error) {
 	output := make(map[string]interface{}, len(attrs))
 	for _, attr := range attrs {
 		switch attr.GetType() {
@@ -19,15 +19,15 @@ func toOperationAttributes(attrs []*pb.AttributeProto) map[string]interface{} {
 		case pb.AttributeProto_TENSOR:
 			t, err := attr.GetT().Tensor()
 			if err != nil {
-				panic(err)
+				return nil, err
 			}
 			output[attr.Name] = t
 		case pb.AttributeProto_GRAPH:
-			panic(&ErrNotImplemented{
+			return nil, &ErrNotImplemented{
 				AttributeName:  attr.Name,
 				AttributeValue: attr,
 				Message:        "pb.AttributeProto_GRAPH not handled yet",
-			})
+			}
 		case pb.AttributeProto_FLOATS:
 			output[attr.Name] = attr.GetFloats()
 		case pb.AttributeProto_INTS:
@@ -35,24 +35,24 @@ func toOperationAttributes(attrs []*pb.AttributeProto) map[string]interface{} {
 		case pb.AttributeProto_STRINGS:
 			output[attr.Name] = attr.GetFloats()
 		case pb.AttributeProto_TENSORS:
-			panic(&ErrNotImplemented{
+			return nil, &ErrNotImplemented{
 				AttributeName:  attr.Name,
 				AttributeValue: attr,
 				Message:        "pb.AttributeProto_TENSORS not handled yet",
-			})
+			}
 		case pb.AttributeProto_GRAPHS:
-			panic(&ErrNotImplemented{
+			return nil, &ErrNotImplemented{
 				AttributeName:  attr.Name,
 				AttributeValue: attr,
 				Message:        "pb.AttributeProto_GRAPHS not handled yet",
-			})
+			}
 		default:
-			panic(&ErrNotImplemented{
+			return nil, &ErrNotImplemented{
 				AttributeName:  attr.Name,
 				AttributeValue: attr,
 				Message:        "undefined attributeproto type",
-			})
+			}
 		}
 	}
-	return output
+	return output, nil
 }
