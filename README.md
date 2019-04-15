@@ -11,6 +11,12 @@ for more information about onnx, please visit [onnx.ai](https://onnx.ai).
 
 The implementation of the [the spec of ONNX](https://github.com/onnx/onnx/blob/master/docs/IR.md) is partial on the import, and non-existent for the export.
 
+### Vision statement
+
+> For the Go developer who needs to add a machine learning capability to his/her code, 
+> onnx-go is a package that facilitates the use of neural network models (software 2.0) 
+> and unlike any other computation library, this package does not require special skills in data-science.
+
 **Warning** The API is experimental and may change.
 
 ### Disclaimer
