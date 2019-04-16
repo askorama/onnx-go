@@ -2,10 +2,12 @@ package gorgonnx
 
 import (
 	"os"
+	"sort"
 	"testing"
 
 	"github.com/owulveryck/onnx-go/backend/testbackend"
 	_ "github.com/owulveryck/onnx-go/backend/testbackend/onnx"
+	"github.com/owulveryck/onnx-go/backend/testbackend/testreport"
 )
 
 type report struct {
@@ -30,7 +32,9 @@ func TestONNX(t *testing.T) {
 		tests = append(tests, tc)
 		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 	}
-	testbackend.WriteCoverageReport(os.Stdout, tests)
+	sort.Sort(testreport.ByStatus(tests))
+	testreport.WriteCoverageReport(os.Stdout, tests, testreport.ReportTable)
+	t.Logf("Covering %v%% of the onnx operators", testreport.Coverage(tests))
 }
 
 func runner(t *testing.T, testConstuctors []func() *testbackend.TestCase) []report {
