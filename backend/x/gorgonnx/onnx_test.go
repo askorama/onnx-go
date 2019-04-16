@@ -1,6 +1,7 @@
 package gorgonnx
 
 import (
+	"fmt"
 	"os"
 	"sort"
 	"testing"
@@ -33,8 +34,8 @@ func TestONNX(t *testing.T) {
 		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 	}
 	sort.Sort(testreport.ByStatus(tests))
+	fmt.Printf("Covering %v%% of the onnx operators\n", testreport.Coverage(tests))
 	testreport.WriteCoverageReport(os.Stdout, tests, testreport.ReportTable)
-	t.Logf("Covering %v%% of the onnx operators", testreport.Coverage(tests))
 }
 
 func runner(t *testing.T, testConstuctors []func() *testbackend.TestCase) []report {
