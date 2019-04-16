@@ -114,6 +114,7 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 		err = b.Run()
 		if err != nil {
 			if _, ok := err.(*onnx.ErrNotImplemented); ok {
+				tc.Skipped = true
 				t.Skip(err)
 			}
 			tc.Failed = true
