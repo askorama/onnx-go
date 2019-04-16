@@ -58,15 +58,17 @@ func main() {
 		testcases = append(testcases, testCases{
 			optype, testtitle, ""})
 	}
-	output := os.Stdout
-	if *outputdir != "" {
-		output, err = os.Create(filepath.Join(*outputdir, "onnx_register_testcases.go"))
-		if err != nil {
-			log.Fatal(err)
+	/*
+		output := os.Stdout
+		if *outputdir != "" {
+			output, err = os.Create(filepath.Join(*outputdir, "onnx_register_testcases.go"))
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer output.Close()
 		}
-		defer output.Close()
-	}
-	processTemplate(testCasesTemplate, testcases, output)
+		processTemplate(testCasesTemplate, testcases, output)
+	*/
 }
 
 // returns the optype and the title
@@ -103,6 +105,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 			AttributeDump: spew.Sdump(model.Graph.Node[i].Attribute),
 		}
 	}
+	tv.OpType = model.Graph.Node[0].OpType
 	// There should be only one node
 	if len(model.GetGraph().GetNode()) > 1 {
 		return "", "", fmt.Errorf("graph with more than one node not supported by this utility")

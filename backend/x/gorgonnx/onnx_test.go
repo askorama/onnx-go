@@ -3,10 +3,12 @@ package gorgonnx
 import (
 	"fmt"
 	"os"
+	"sort"
 	"testing"
 
 	"github.com/owulveryck/onnx-go/backend/testbackend"
 	_ "github.com/owulveryck/onnx-go/backend/testbackend/onnx"
+	"github.com/owulveryck/onnx-go/backend/testbackend/testreport"
 )
 
 type report struct {
@@ -15,31 +17,29 @@ type report struct {
 	skipped bool
 }
 
-// TestONNX run the onnx's backend tests against all registered operatos
+// TestONNX run the onnx's backend testConstuctors against all registered operatos
 func TestONNX(t *testing.T) {
-	for optype := range operators {
-		optype := optype
-		for _, tc := range testbackend.GetOpTypeTests(optype) {
-			tc := *tc() // capture range variable
-			t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
+	var testConstuctors []func() *testbackend.TestCase
+	if testing.Short() {
+		for optype := range operators {
+			testConstuctors = append(testConstuctors, testbackend.GetOpTypeTests(optype)...)
 		}
+	} else {
+		testConstuctors = testbackend.GetAllRegisteredTests()
 	}
+	var tests []*testbackend.TestCase
+	for _, tc := range testConstuctors {
+		tc := tc() // capture range variable
+		tests = append(tests, tc)
+		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
+	}
+	sort.Sort(testreport.ByStatus(tests))
+	fmt.Printf("Covering %v%% of the onnx operators\n", testreport.Coverage(tests))
+	testreport.WriteCoverageReport(os.Stdout, tests, testreport.ReportTable)
 }
 
-func TestONNXCoverage(t *testing.T) {
-	if _, ok := os.LookupEnv("ONNX_COVERAGE"); !ok {
-		t.SkipNow()
-	}
+func runner(t *testing.T, testConstuctors []func() *testbackend.TestCase) []report {
+	t.Helper()
 	status := make([]report, 0)
-	for _, tc := range testbackend.GetAllRegisteredTests() {
-		tc := *tc() // capture range variable
-		failed := t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
-		status = append(status, report{tc.GetInfo(), failed, t.Skipped()})
-	}
-	for i := range status {
-		status := status[i]
-		fmt.Printf("|%-40v|%-10v|%-10v|\n", status.info, status.skipped, status.failed)
-
-	}
-
+	return status
 }
