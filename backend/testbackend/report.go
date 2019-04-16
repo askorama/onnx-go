@@ -14,7 +14,7 @@ func WriteCoverageReport(w io.Writer, test []*TestCase) {
 const reportTemplate = `
 |.| OpType      | Test                 | Tested | Skipped | Failed |
 |-|-------------|----------------------|--------|---------|--------|
-{{- range . -}}
+{{ range . -}}
 |{{template "flag" .}}|{{ .OpType }}|{{ .Title }}|{{ .Tested }}|{{ .Skipped }}|{{ .Failed }}|
 {{ end }}
 {{- define "flag"}}
