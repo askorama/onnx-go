@@ -1,7 +1,6 @@
 package gorgonnx
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -15,42 +14,27 @@ type report struct {
 	skipped bool
 }
 
-// TestONNX run the onnx's backend tests against all registered operatos
+// TestONNX run the onnx's backend testConstuctors against all registered operatos
 func TestONNX(t *testing.T) {
-	var tests []func() *testbackend.TestCase
+	var testConstuctors []func() *testbackend.TestCase
 	if testing.Short() {
 		for optype := range operators {
-			tests = append(tests, testbackend.GetOpTypeTests(optype)...)
+			testConstuctors = append(testConstuctors, testbackend.GetOpTypeTests(optype)...)
 		}
 	} else {
-		tests = testbackend.GetAllRegisteredTests()
+		testConstuctors = testbackend.GetAllRegisteredTests()
 	}
-	status := runner(t, tests)
-	output, ok := os.LookupEnv("ONNX_COVERAGE_FILE")
-	if ok {
-		fmt.Println(output)
-		f, err := os.Create(output)
-		if err != nil {
-			t.Log("Cannot open output file", err)
-			return
-		}
-		defer f.Close()
-		fmt.Fprintf(f, "|%-45v|%-10v|%-10v|\n", "Test", "Skipped", "Failed")
-		fmt.Fprintf(f, "|---------------------------------------------|----------|----------|\n")
-		for _, status := range status {
-			fmt.Fprintf(f, "|%-45v|%-10v|%-10v|\n", status.info, status.skipped, status.failed)
-		}
+	var tests []*testbackend.TestCase
+	for _, tc := range testConstuctors {
+		tc := *tc() // capture range variable
+		tests = append(tests, &tc)
+		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 	}
-
+	testbackend.WriteCoverageReport(os.Stdout, tests)
 }
 
-func runner(t *testing.T, tests []func() *testbackend.TestCase) []report {
+func runner(t *testing.T, testConstuctors []func() *testbackend.TestCase) []report {
 	t.Helper()
 	status := make([]report, 0)
-	for _, tc := range tests {
-		tc := *tc() // capture range variable
-		failed := t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
-		status = append(status, report{tc.GetInfo(), failed, t.Skipped()})
-	}
 	return status
 }

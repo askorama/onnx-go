@@ -58,10 +58,14 @@ func GetOpTypeTests(optype string) []func() *TestCase {
 
 // TestCase describes an integration test
 type TestCase struct {
+	OpType         string
 	Title          string
 	ModelB         []byte
 	Input          []tensor.Tensor
 	ExpectedOutput []tensor.Tensor
+	Tested         bool // true if the test has be executed
+	Skipped        bool // true if the test has been executed and skipped
+	Failed         bool // true if the test failed
 }
 
 // GetInfo ...
@@ -69,11 +73,23 @@ func (tc *TestCase) GetInfo() string {
 	return tc.Title
 }
 
+type testWrapper struct {
+	tc *TestCase
+	t  *testing.T
+}
+
+func (tw testWrapper) Errorf(format string, args ...interface{}) {
+	tw.tc.Failed = true
+	tw.t.Errorf(format, args...)
+
+}
+
 // RunTest Returns a function to be executed against the ComputationBackend.
 // The return function should be executed via a call to testing.Run(...)
 // If parallel is true, a t.Parallel() is added at the begining of the test
 func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t *testing.T) {
 	return func(t *testing.T) {
+		tc.Tested = true
 		if parallel {
 			t.Parallel()
 		}
@@ -81,13 +97,16 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 		err := m.UnmarshalBinary(tc.ModelB)
 		if err != nil {
 			if _, ok := err.(*onnx.ErrNotImplemented); ok {
+				tc.Skipped = true
 				t.Skip(err)
 			}
+			tc.Failed = true
 			t.Fatal(err)
 		}
 		for i := range tc.Input {
 			err := m.SetInput(i, tc.Input[i])
 			if err != nil {
+				tc.Failed = true
 				t.Fatal(err)
 			}
 		}
@@ -97,18 +116,22 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 			if _, ok := err.(*onnx.ErrNotImplemented); ok {
 				t.Skip(err)
 			}
+			tc.Failed = true
 			t.Fatal(err)
 		}
 		output, err := m.GetOutputTensors()
 		if err != nil {
+			tc.Failed = true
 			t.Fatal(err)
 		}
 
 		if len(output) != len(tc.ExpectedOutput) {
+			tc.Failed = true
 			t.Fatalf("expected %v output, got %v", len(tc.ExpectedOutput), len(output))
 		}
+		tw := testWrapper{tc, t}
 		for i := range output {
-			assert.InDeltaSlice(t, tc.ExpectedOutput[i].Data(), output[i].Data(), 1e-6, "the two tensors should be equal.")
+			assert.InDeltaSlice(tw, tc.ExpectedOutput[i].Data(), output[i].Data(), 1e-6, "the two tensors should be equal.")
 		}
 
 	}
