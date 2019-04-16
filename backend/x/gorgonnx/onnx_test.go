@@ -17,29 +17,40 @@ type report struct {
 
 // TestONNX run the onnx's backend tests against all registered operatos
 func TestONNX(t *testing.T) {
-	for optype := range operators {
-		optype := optype
-		for _, tc := range testbackend.GetOpTypeTests(optype) {
-			tc := *tc() // capture range variable
-			t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
+	var tests []func() *testbackend.TestCase
+	if testing.Short() {
+		for optype := range operators {
+			tests = append(tests, testbackend.GetOpTypeTests(optype)...)
+		}
+	} else {
+		tests = testbackend.GetAllRegisteredTests()
+	}
+	status := runner(t, tests)
+	output, ok := os.LookupEnv("ONNX_COVERAGE_FILE")
+	if ok {
+		fmt.Println(output)
+		f, err := os.Create(output)
+		if err != nil {
+			t.Log("Cannot open output file", err)
+			return
+		}
+		defer f.Close()
+		fmt.Fprintf(f, "|%-45v|%-10v|%-10v|\n", "Test", "Skipped", "Failed")
+		fmt.Fprintf(f, "|---------------------------------------------|----------|----------|\n")
+		for _, status := range status {
+			fmt.Fprintf(f, "|%-45v|%-10v|%-10v|\n", status.info, status.skipped, status.failed)
 		}
 	}
+
 }
 
-func TestONNXCoverage(t *testing.T) {
-	if _, ok := os.LookupEnv("ONNX_COVERAGE"); !ok {
-		t.SkipNow()
-	}
+func runner(t *testing.T, tests []func() *testbackend.TestCase) []report {
+	t.Helper()
 	status := make([]report, 0)
-	for _, tc := range testbackend.GetAllRegisteredTests() {
+	for _, tc := range tests {
 		tc := *tc() // capture range variable
-		failed := t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
+		failed := t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 		status = append(status, report{tc.GetInfo(), failed, t.Skipped()})
 	}
-	for i := range status {
-		status := status[i]
-		fmt.Printf("|%-40v|%-10v|%-10v|\n", status.info, status.skipped, status.failed)
-
-	}
-
+	return status
 }
