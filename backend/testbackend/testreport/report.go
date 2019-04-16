@@ -7,7 +7,7 @@ import (
 	"github.com/owulveryck/onnx-go/backend/testbackend"
 )
 
-// WriteCoverageReport on w
+// WriteCoverageReport on w, the template should take []*testbackend.TestCase as pipeline
 func WriteCoverageReport(w io.Writer, test []*testbackend.TestCase, t *template.Template) {
 	t.Execute(w, test)
 }
