@@ -33,9 +33,18 @@ func TestONNX(t *testing.T) {
 		tests = append(tests, tc)
 		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 	}
-	sort.Sort(testreport.ByStatus(tests))
-	fmt.Printf("Covering %v%% of the onnx operators\n", testreport.Coverage(tests))
-	testreport.WriteCoverageReport(os.Stdout, tests, testreport.ReportTable)
+	file, ok := os.LookupEnv("ONNX_COVERAGE")
+	if ok {
+		// TODO write the coverate to a file
+		f, err := os.Create(file)
+		if err != nil {
+			t.Fatal("cannot write report", err)
+		}
+		defer f.Close()
+		sort.Sort(testreport.ByStatus(tests))
+		fmt.Fprintf(f, "Covering %v%% of the onnx operators\n", testreport.Coverage(tests))
+		testreport.WriteCoverageReport(f, tests, testreport.ReportTable)
+	}
 }
 
 func runner(t *testing.T, testConstuctors []func() *testbackend.TestCase) []report {
