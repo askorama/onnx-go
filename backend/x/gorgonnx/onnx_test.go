@@ -26,8 +26,8 @@ func TestONNX(t *testing.T) {
 	}
 	var tests []*testbackend.TestCase
 	for _, tc := range testConstuctors {
-		tc := *tc() // capture range variable
-		tests = append(tests, &tc)
+		tc := tc() // capture range variable
+		tests = append(tests, tc)
 		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 	}
 	testbackend.WriteCoverageReport(os.Stdout, tests)
