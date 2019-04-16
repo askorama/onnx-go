@@ -9,15 +9,15 @@ import (
 func TestCoverage(t *testing.T) {
 	tests := []*testbackend.TestCase{
 		&testbackend.TestCase{
+			Skipped: false,
+			Tested:  true,
+		},
+		&testbackend.TestCase{
 			Skipped: true,
 			Tested:  true,
 		},
 		&testbackend.TestCase{
-			Skipped: false,
-			Tested:  true,
-		},
-		&testbackend.TestCase{
-			Skipped: false,
+			Skipped: true,
 			Tested:  true,
 		},
 	}
