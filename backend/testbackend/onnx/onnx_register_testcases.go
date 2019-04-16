@@ -182,7 +182,6 @@ func init() {
 	testbackend.Register("Neg", "TestNegExample", NewTestNegExample)
 	testbackend.Register("Pow", "TestPow", NewTestPow)
 	testbackend.Register("Pow", "TestPowBcastArray", NewTestPowBcastArray)
-	testbackend.Register("Pow", "TestPowBcastScalar", NewTestPowBcastScalar)
 	testbackend.Register("Pow", "TestPowExample", NewTestPowExample)
 	testbackend.Register("PRelu", "TestPreluBroadcast", NewTestPreluBroadcast)
 	testbackend.Register("PRelu", "TestPreluExample", NewTestPreluExample)
@@ -277,8 +276,6 @@ func init() {
 	testbackend.Register("Slice", "TestSlice", NewTestSlice)
 	testbackend.Register("Slice", "TestSliceDefaultAxes", NewTestSliceDefaultAxes)
 	testbackend.Register("Slice", "TestSliceDefaultSteps", NewTestSliceDefaultSteps)
-	testbackend.Register("Slice", "TestSliceEndOutOfBounds", NewTestSliceEndOutOfBounds)
-	testbackend.Register("Slice", "TestSliceNeg", NewTestSliceNeg)
 	testbackend.Register("Slice", "TestSliceNegSteps", NewTestSliceNegSteps)
 
 	testbackend.Register("Softmax", "TestSoftmaxAxis0", NewTestSoftmaxAxis0)
