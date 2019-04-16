@@ -8,6 +8,7 @@ var testCasesTemplate = template.Must(template.New("testCase").Parse(testCasesTm
 //var modelTemplate = template.Must(template.New("modelCase").Parse(modelTmpl))
 
 type testValue struct {
+	OpType         string
 	TestName       string
 	Description    string
 	ModelValue     modelValue
@@ -69,9 +70,15 @@ import (
   "github.com/owulveryck/onnx-go/backend/testbackend"
 )
 
+func init() {
+testbackend.Register("{{ .OpType }}","{{ .TestName }}",New{{ .TestName }})
+}
+
+
 // New{{ .TestName }} {{ .Description }}
 func New{{ .TestName }}() *testbackend.TestCase{
 return &testbackend.TestCase{
+	OpType: "{{ .OpType }}",
 	Title: "{{ .TestName }}",
 	ModelB: {{ .ModelB }},
 	{{ template "doc" .ModelValue }}
