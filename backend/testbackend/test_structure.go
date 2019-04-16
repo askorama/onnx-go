@@ -89,6 +89,11 @@ func (tw testWrapper) Errorf(format string, args ...interface{}) {
 // If parallel is true, a t.Parallel() is added at the begining of the test
 func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t *testing.T) {
 	return func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Fatal(r)
+			}
+		}()
 		tc.Tested = true
 		if parallel {
 			t.Parallel()
