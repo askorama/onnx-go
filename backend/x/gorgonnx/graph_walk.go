@@ -36,7 +36,7 @@ func (g *Graph) walk(node int64) error {
 		}
 		if n.operation != nil {
 			var err error
-			n.gorgoniaNode, err = g.applyOperation(n)
+			err = g.applyOperation(n)
 			if err != nil {
 				return err
 			}
@@ -47,49 +47,17 @@ func (g *Graph) walk(node int64) error {
 }
 
 // applyOperation creates a new node on the exprgraph
-func (g *Graph) applyOperation(n *Node) (*gorgonia.Node, error) {
+func (g *Graph) applyOperation(n *Node) error {
 	// Is this node already in the ExprGraph?
 	if n.gorgoniaNode != nil {
-		return nil, fmt.Errorf("unsupported case: node is already in the exprgraph")
+		return fmt.Errorf("unsupported case: node is already in the exprgraph")
 	}
-	switch n.operation.Name {
-	case "Add":
-		children := getOrderedChildren(g.g, n)
-		if len(children) != 2 {
-			return nil, fmt.Errorf("bad arity for add operation")
-		}
-		if children[0].gorgoniaNode == nil || children[1].gorgoniaNode == nil {
-			return nil, fmt.Errorf("at least one of the children node is nil")
-		}
-		if len(children[0].gorgoniaNode.Shape()) != len(children[1].gorgoniaNode.Shape()) {
-			return nil, &onnx.ErrNotImplemented{
-				Operator: n.operation.Name,
-				Message:  "broadcast not yet implemented",
-			}
-
-		}
-		return gorgonia.Add(children[0].gorgoniaNode, children[1].gorgoniaNode)
-	case "Cos":
-		children := getOrderedChildren(g.g, n)
-		if len(children) != 1 {
-			return nil, fmt.Errorf("bad arity for add operation")
-		}
-		if children[0].gorgoniaNode == nil {
-			return nil, fmt.Errorf("at least one of the children node is nil")
-		}
-		return gorgonia.Cos(children[0].gorgoniaNode)
-	case "Abs":
-		children := getOrderedChildren(g.g, n)
-		if len(children) != 1 {
-			return nil, fmt.Errorf("bad arity for add operation")
-		}
-		if children[0].gorgoniaNode == nil {
-			return nil, fmt.Errorf("at least one of the children node is nil")
-		}
-		return gorgonia.Abs(children[0].gorgoniaNode)
-	default:
-		return nil, &onnx.ErrNotImplemented{
+	var op operator
+	var ok bool
+	if op, ok = operators[n.operation.Name]; !ok {
+		return &onnx.ErrNotImplemented{
 			Operator: n.operation.Name,
 		}
 	}
+	return op.apply(g, n)
 }
