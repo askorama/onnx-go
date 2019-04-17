@@ -6,10 +6,6 @@ import (
 	"github.com/owulveryck/onnx-go"
 )
 
-func init() {
-	//operators = make(map[string]operator, 0)
-}
-
 func register(optype string, op operator) {
 	operators[optype] = op
 }
