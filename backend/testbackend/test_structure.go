@@ -13,11 +13,6 @@ import (
 	"gorgonia.org/tensor"
 )
 
-func init() {
-	allOpTypes = make(map[string][]func() *TestCase, 0)
-	allTests = make(map[string]func() *TestCase, 0)
-}
-
 // Register a test
 func Register(optype, testTitle string, constructor func() *TestCase) {
 	allOpTypes[optype] = append(allOpTypes[optype], constructor)
@@ -25,10 +20,10 @@ func Register(optype, testTitle string, constructor func() *TestCase) {
 }
 
 // allOpTypes returns all the tests for a given OpType
-var allOpTypes map[string][]func() *TestCase
+var allOpTypes = map[string][]func() *TestCase{}
 
 // allTests holds a reference of the test regarding their name
-var allTests map[string]func() *TestCase
+var allTests = map[string]func() *TestCase{}
 
 // GetAllRegisteredTests ...
 func GetAllRegisteredTests() []func() *TestCase {
