@@ -37,7 +37,6 @@ func (a *hadamardProd) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type hadamardDiv struct{}
 
 func init() {
@@ -69,7 +68,6 @@ func (a *hadamardDiv) apply(g *Graph, n *Node) error {
 func (a *hadamardDiv) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type sub struct{}
 
@@ -103,7 +101,6 @@ func (a *sub) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type add struct{}
 
 func init() {
@@ -136,7 +133,6 @@ func (a *add) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type cos struct{}
 
 func init() {
@@ -159,7 +155,6 @@ func (a *cos) apply(g *Graph, n *Node) error {
 func (a *cos) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type sin struct{}
 
@@ -184,7 +179,6 @@ func (a *sin) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type tanh struct{}
 
 func init() {
@@ -207,4 +201,3 @@ func (a *tanh) apply(g *Graph, n *Node) error {
 func (a *tanh) init(o onnx.Operation) error {
 	return nil
 }
-
