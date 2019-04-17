@@ -1,6 +1,8 @@
 package gorgonnx
 
 import (
+	"sort"
+
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/iterator"
 )
@@ -14,6 +16,7 @@ func getOrderedChildren(g graph.WeightedDirected, n *Node) []*Node {
 	for i := 0; children.Next(); i++ {
 		edges[i] = g.WeightedEdge(n.ID(), children.Node().ID())
 	}
+	sort.Sort(byWeight(edges))
 
 	orderWeightedEdges := iterator.NewOrderedWeightedEdges(edges)
 	nodes := make([]*Node, orderWeightedEdges.Len())
@@ -22,3 +25,9 @@ func getOrderedChildren(g graph.WeightedDirected, n *Node) []*Node {
 	}
 	return nodes
 }
+
+type byWeight []graph.WeightedEdge
+
+func (w byWeight) Len() int           { return len(w) }
+func (w byWeight) Swap(i, j int)      { w[i], w[j] = w[j], w[i] }
+func (w byWeight) Less(i, j int) bool { return w[i].Weight() < w[j].Weight() }
