@@ -13,26 +13,37 @@ import (
 	"gorgonia.org/tensor"
 )
 
-func init() {
-	allOpTypes = make(map[string][]func() *TestCase, 0)
-	allTests = make(map[string]func() *TestCase, 0)
-}
-
 // Register a test
 func Register(optype, testTitle string, constructor func() *TestCase) {
 	allOpTypes[optype] = append(allOpTypes[optype], constructor)
-	allTests[optype] = constructor
+	allTests[testTitle] = constructor
 }
 
 // allOpTypes returns all the tests for a given OpType
-var allOpTypes map[string][]func() *TestCase
+var allOpTypes = map[string][]func() *TestCase{}
 
 // allTests holds a reference of the test regarding their name
-var allTests map[string]func() *TestCase
+var allTests = map[string]func() *TestCase{}
 
-// TODO findAllTestsMatching tests matching the regexp
-func findAllTestsMatching(r *regexp.Regexp) []func() *TestCase {
-	return nil
+// GetAllRegisteredTests ...
+func GetAllRegisteredTests() []func() *TestCase {
+	output := make([]func() *TestCase, 0)
+	for _, v := range allTests {
+		output = append(output, v)
+	}
+	return output
+
+}
+
+// FindAllTestsMatching tests matching the regexp
+func FindAllTestsMatching(re *regexp.Regexp) []func() *TestCase {
+	output := make([]func() *TestCase, 0)
+	for k, v := range allTests {
+		if re.MatchString(k) {
+			output = append(output, v)
+		}
+	}
+	return output
 }
 
 // GetOpTypeTests returns all the tests of the OpType passed as argument
@@ -42,10 +53,14 @@ func GetOpTypeTests(optype string) []func() *TestCase {
 
 // TestCase describes an integration test
 type TestCase struct {
+	OpType         string
 	Title          string
 	ModelB         []byte
 	Input          []tensor.Tensor
 	ExpectedOutput []tensor.Tensor
+	Tested         bool // true if the test has be executed
+	Skipped        bool // true if the test has been executed and skipped
+	Failed         bool // true if the test failed
 }
 
 // GetInfo ...
@@ -53,11 +68,28 @@ func (tc *TestCase) GetInfo() string {
 	return tc.Title
 }
 
+type testWrapper struct {
+	tc *TestCase
+	t  *testing.T
+}
+
+func (tw testWrapper) Errorf(format string, args ...interface{}) {
+	tw.tc.Failed = true
+	tw.t.Errorf(format, args...)
+
+}
+
 // RunTest Returns a function to be executed against the ComputationBackend.
 // The return function should be executed via a call to testing.Run(...)
 // If parallel is true, a t.Parallel() is added at the begining of the test
 func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t *testing.T) {
 	return func(t *testing.T) {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Fatal(r)
+			}
+		}()
+		tc.Tested = true
 		if parallel {
 			t.Parallel()
 		}
@@ -65,13 +97,16 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 		err := m.UnmarshalBinary(tc.ModelB)
 		if err != nil {
 			if _, ok := err.(*onnx.ErrNotImplemented); ok {
+				tc.Skipped = true
 				t.Skip(err)
 			}
+			tc.Failed = true
 			t.Fatal(err)
 		}
 		for i := range tc.Input {
 			err := m.SetInput(i, tc.Input[i])
 			if err != nil {
+				tc.Failed = true
 				t.Fatal(err)
 			}
 		}
@@ -79,20 +114,25 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 		err = b.Run()
 		if err != nil {
 			if _, ok := err.(*onnx.ErrNotImplemented); ok {
+				tc.Skipped = true
 				t.Skip(err)
 			}
+			tc.Failed = true
 			t.Fatal(err)
 		}
 		output, err := m.GetOutputTensors()
 		if err != nil {
+			tc.Failed = true
 			t.Fatal(err)
 		}
 
 		if len(output) != len(tc.ExpectedOutput) {
+			tc.Failed = true
 			t.Fatalf("expected %v output, got %v", len(tc.ExpectedOutput), len(output))
 		}
+		tw := testWrapper{tc, t}
 		for i := range output {
-			assert.InDeltaSlice(t, tc.ExpectedOutput[i].Data(), output[i].Data(), 1e-6, "the two tensors should be equal.")
+			assert.InDeltaSlice(tw, tc.ExpectedOutput[i].Data(), output[i].Data(), 1e-6, "the two tensors should be equal.")
 		}
 
 	}
