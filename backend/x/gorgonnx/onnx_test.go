@@ -19,17 +19,17 @@ type report struct {
 
 // TestONNX run the onnx's backend testConstuctors against all registered operatos
 func TestONNX(t *testing.T) {
-	var testConstuctors []func() *testbackend.TestCase
+	var testConstructors []func() *testbackend.TestCase
 	if testing.Short() {
 		for optype := range operators {
-			testConstuctors = append(testConstuctors, testbackend.GetOpTypeTests(optype)...)
+			testConstructors = append(testConstructors, testbackend.GetOpTypeTests(optype)...)
 		}
 	} else {
-		testConstuctors = testbackend.GetAllRegisteredTests()
+		testConstructors = testbackend.GetAllRegisteredTests()
 	}
 	var tests []*testbackend.TestCase
-	for _, tc := range testConstuctors {
-		tc := tc() // capture range variable
+	for i := 0; i < len(testConstructors); i++ {
+		tc := testConstructors[i]() // capture range variable
 		tests = append(tests, tc)
 		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
 	}
