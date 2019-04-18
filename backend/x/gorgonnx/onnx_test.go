@@ -42,7 +42,7 @@ func TestONNX(t *testing.T) {
 		}
 		defer f.Close()
 		sort.Sort(testreport.ByStatus(tests))
-		fmt.Fprintf(f, "Covering %v%% of the onnx operators\n", testreport.Coverage(tests))
+		fmt.Fprintf(f, "Covering %.1f%% of the onnx integration tests\n", testreport.Coverage(tests))
 		testreport.WriteCoverageReport(f, tests, testreport.ReportTable)
 	}
 }
