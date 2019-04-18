@@ -36,7 +36,19 @@ var allOps = []operation{
 		Broadcastable: true,
 	},
 	operation{
-		ONNXOpType: "Cos",
+		ONNXOpType: "Abs",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Sign",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Ceil",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Floor",
 		Arity:      1,
 	},
 	operation{
@@ -44,10 +56,66 @@ var allOps = []operation{
 		Arity:      1,
 	},
 	operation{
+		ONNXOpType: "Cos",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Exp",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Log",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Log2",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Relu",
+		GorgoniaOp: "Rectify",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Neg",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Square",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Sqrt",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Inverse",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Cube",
+		Arity:      1,
+	},
+	operation{
 		ONNXOpType: "Tanh",
 		Arity:      1,
 	},
-}
+	operation{
+		ONNXOpType: "Sigmoid",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Log1p",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Expm1",
+		Arity:      1,
+	},
+	operation{
+		ONNXOpType: "Softplus",
+		Arity:      1,
+	}}
 
 func main() {
 	test := flag.Bool("test", false, "generate test file")
