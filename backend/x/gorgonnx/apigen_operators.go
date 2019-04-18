@@ -288,13 +288,13 @@ func (a *exp) init(o onnx.Operation) error {
 }
 
 
-type log struct{}
+type logarithm struct{}
 
 func init() {
-	register("Log", &log{})
+	register("Log", &logarithm{})
 }
 
-func (a *log) apply(g *Graph, n *Node) error {
+func (a *logarithm) apply(g *Graph, n *Node) error {
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {
@@ -308,7 +308,7 @@ func (a *log) apply(g *Graph, n *Node) error {
 	return err
 }
 
-func (a *log) init(o onnx.Operation) error {
+func (a *logarithm) init(o onnx.Operation) error {
 	return nil
 }
 
