@@ -22,7 +22,7 @@ func (a *hadamardProd) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.HadamardProd(x.gorgoniaNode, y.gorgoniaNode)
+	n.gorgoniaNode, err = gorgonia.HadamardProd(x, y)
 
 	return err
 }
@@ -49,7 +49,7 @@ func (a *hadamardDiv) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.HadamardDiv(x.gorgoniaNode, y.gorgoniaNode)
+	n.gorgoniaNode, err = gorgonia.HadamardDiv(x, y)
 
 	return err
 }
@@ -76,7 +76,7 @@ func (a *sub) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.Sub(x.gorgoniaNode, y.gorgoniaNode)
+	n.gorgoniaNode, err = gorgonia.Sub(x, y)
 
 	return err
 }
@@ -103,7 +103,7 @@ func (a *add) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.Add(x.gorgoniaNode, y.gorgoniaNode)
+	n.gorgoniaNode, err = gorgonia.Add(x, y)
 
 	return err
 }
