@@ -27,19 +27,18 @@ func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
 		return err
 	}
 	{{ if .Broadcastable }}
-	if len(children[0].gorgoniaNode.Shape()) != len(children[1].gorgoniaNode.Shape()) {
-		return &onnx.ErrNotImplemented{
-			Operator: n.operation.Name,
-			Message:  "broadcast not yet implemented",
-		}
-
+	x, y, err := broadcast(children[0], children[1])
+	if err != nil {
+		return err
 	}
-	{{ end }}
+	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(x,y)
+	{{ else }}
 	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(
 		{{- range $val := Iterate .Arity }}
 		children[{{ $val }}].gorgoniaNode, 
 		{{- end }}
 	)
+	{{ end }}
 	return err
 }
 
