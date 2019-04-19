@@ -37,6 +37,9 @@ go get github.com/owulveryck/onnx-go
 
 ## Example
 
+Those examples assumes that you have a pre-trained `model.onnx` file available.
+You can download pre-trained modles from the [onnx model zoo](https://github.com/onnx/models).
+
 ### Very simple example
 
 This example does nothing but decoding the graph into a simple backend.
@@ -55,7 +58,7 @@ Then you can do whatever you want with the generated graph.
 	err := model.UnmarshalBinary(b)
 ```
 
-### Runnable
+### Simple example to run a pre-trained model
 
 This example uses [Gorgonia](https://github.com/gorgonia/gorgonia) as a backend. 
 
@@ -63,7 +66,8 @@ This example uses [Gorgonia](https://github.com/gorgonia/gorgonia) as a backend.
 import "github.com/owulveryck/onnx-go/backend/x/gorgonnx"
 ```
 
-At the present time, Gorgonia does not implement all the operators of ONNX.
+At the present time, Gorgonia does not implement all the operators of ONNX. Therefore, most of the model from the model zoo will not work.
+Things will go better little by little by adding more operators to the backend.
 
 You can find a list of tested examples and a coverage [here](https://github.com/owulveryck/onnx-go/blob/master/backend/x/gorgonnx/ONNX_COVERAGE.md).
 
