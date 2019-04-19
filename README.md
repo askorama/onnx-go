@@ -71,7 +71,7 @@ Things will go better little by little by adding more operators to the backend.
 
 You can find a list of tested examples and a coverage [here](https://github.com/owulveryck/onnx-go/blob/master/backend/x/gorgonnx/ONNX_COVERAGE.md).
 
-[embedmd]:# (example_gorgonnx_test.go /func Ex/ /}/)
+[embedmd]:# (example_gorgonnx_test.go /func Ex/ /^}/)
 ```go
 func Example_gorgonia() {
 	// Create a backend receiver
@@ -86,6 +86,14 @@ func Example_gorgonia() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Set the first input, the number depends of the model
+	model.SetInput(0, input)
+	err = backend.Run()
+	// Check error
+	output, _ := model.GetOutputTensors()
+	// write the first output to stdout
+	fmt.Println(output[0])
+}
 ```
 
 ## Internal
