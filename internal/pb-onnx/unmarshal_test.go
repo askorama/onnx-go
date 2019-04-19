@@ -73,17 +73,17 @@ func TestUnmarshalAttributes(t *testing.T) {
 	}
 
 	simpleAttributes := []*AttributeProto{
-		&AttributeProto{
+		{
 			Name: simpleAttributeIName,
 			Type: simpleAttributeIType,
 			I:    simpleAttributeIValue,
 		},
-		&AttributeProto{
+		{
 			Name: simpleAttributeINTSName,
 			Type: simpleAttributeINTSType,
 			Ints: simpleAttributeINTSValue,
 		},
-		&AttributeProto{
+		{
 			Name: simpleAttributeTensorName,
 			Type: simpleAttributeTensorType,
 			T:    simpleAttributeTensorValue,
