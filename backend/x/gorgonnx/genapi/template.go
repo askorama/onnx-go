@@ -31,7 +31,7 @@ func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(x.gorgoniaNode,y.gorgoniaNode)
+	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(x,y)
 	{{ else }}
 	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(
 		{{- range $val := Iterate .Arity }}
