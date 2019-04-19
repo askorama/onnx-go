@@ -81,7 +81,7 @@ func (tw testWrapper) Errorf(format string, args ...interface{}) {
 
 // RunTest Returns a function to be executed against the ComputationBackend.
 // The return function should be executed via a call to testing.Run(...)
-// If parallel is true, a t.Parallel() is added at the begining of the test
+// If parallel is true, a t.Parallel() is added at the beginning of the test
 func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t *testing.T) {
 	return func(t *testing.T) {
 		defer func() {
