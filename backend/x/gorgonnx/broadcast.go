@@ -11,7 +11,7 @@ func broadcast(a, b *Node) (*gorgonia.Node, *gorgonia.Node, error) {
 	if sameDim(a.gorgoniaNode, b.gorgoniaNode) {
 		return a.gorgoniaNode, b.gorgoniaNode, nil
 	}
-	// for NCHW tensors, the first dimension may be ommited and must be broadcasted
+	// for NCHW tensors, the first dimension may be omited and must be broadcasted
 	// TODO find a smarter way to achieve this
 	switch {
 	case len(a.gorgoniaNode.Shape()) == 1 && len(b.gorgoniaNode.Shape()) != 1:
