@@ -37,7 +37,15 @@ go get github.com/owulveryck/onnx-go
 
 ## Example
 
-[embedmd]:# (example_test.go /\/\/ Create/ /model.Decode.*/)
+Those examples assumes that you have a pre-trained `model.onnx` file available.
+You can download pre-trained modles from the [onnx model zoo](https://github.com/onnx/models).
+
+### Very simple example
+
+This example does nothing but decoding the graph into a simple backend.
+Then you can do whatever you want with the generated graph.
+
+[embedmd]:# (example_test.go /\/\/ Create/ /model.UnmarshalBinary.*/)
 ```go
 // Create a backend receiver
 	backend := simple.NewSimpleGraph()
@@ -47,9 +55,46 @@ go get github.com/owulveryck/onnx-go
 	// read the onnx model
 	b, _ := ioutil.ReadFile("model.onnx")
 	// Decode it into the model
-	err := model.Decode(b)
+	err := model.UnmarshalBinary(b)
 ```
 
+### Simple example to run a pre-trained model
+
+This example uses [Gorgonia](https://github.com/gorgonia/gorgonia) as a backend. 
+
+```go
+import "github.com/owulveryck/onnx-go/backend/x/gorgonnx"
+```
+
+At the present time, Gorgonia does not implement all the operators of ONNX. Therefore, most of the model from the model zoo will not work.
+Things will go better little by little by adding more operators to the backend.
+
+You can find a list of tested examples and a coverage [here](https://github.com/owulveryck/onnx-go/blob/master/backend/x/gorgonnx/ONNX_COVERAGE.md).
+
+[embedmd]:# (example_gorgonnx_test.go /func Ex/ /^}/)
+```go
+func Example_gorgonia() {
+	// Create a backend receiver
+	backend := gorgonnx.NewGraph()
+	// Create a model and set the execution backend
+	model := onnx.NewModel(backend)
+
+	// read the onnx model
+	b, _ := ioutil.ReadFile("model.onnx")
+	// Decode it into the model
+	err := model.UnmarshalBinary(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Set the first input, the number depends of the model
+	model.SetInput(0, input)
+	err = backend.Run()
+	// Check error
+	output, _ := model.GetOutputTensors()
+	// write the first output to stdout
+	fmt.Println(output[0])
+}
+```
 
 ## Internal
 
@@ -112,6 +157,7 @@ To carry data, a *`Node`* of the graph should fulfill this interface:
 ```go
 type DataCarrier interface {
 	SetTensor(t tensor.Tensor) error
+	GetTensor() tensor.Tensor
 }
 ```
 
