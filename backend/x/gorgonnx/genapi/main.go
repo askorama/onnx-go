@@ -64,6 +64,8 @@ var allOps = []operation{
 		Arity:      1,
 	},
 	operation{
+		// avoid log as it may conflict with the package
+		GorgonnxOp: "logarithm",
 		ONNXOpType: "Log",
 		Arity:      1,
 	},
