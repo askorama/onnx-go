@@ -324,4 +324,3 @@ Covering 14.0% of the onnx integration tests
 |![#ffa500](https://placehold.it/15/FFA500/000000?text=+)|MaxPool|TestMaxpool2dDefault|true|true|false|
 |![#ffa500](https://placehold.it/15/FFA500/000000?text=+)|Elu|TestEluExample|true|true|false|
 |![#ffa500](https://placehold.it/15/FFA500/000000?text=+)|Slice|TestSlice|true|true|false|
-
