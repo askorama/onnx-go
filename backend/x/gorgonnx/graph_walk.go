@@ -59,5 +59,9 @@ func (g *Graph) applyOperation(n *Node) error {
 			Operator: n.operation.Name,
 		}
 	}
+	err := op.init(*n.operation)
+	if err != nil {
+		return err
+	}
 	return op.apply(g, n)
 }
