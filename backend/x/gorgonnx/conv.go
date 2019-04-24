@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	//register("Conv", &conv{})
+	register("Conv", &conv{})
 }
 
 // conv to be compatible with:
@@ -23,10 +23,19 @@ type conv struct {
 }
 
 func (c *conv) apply(g *Graph, n *Node) error {
-	return nil
+	return &onnx.ErrNotImplemented{
+		Operator: "Conv",
+	}
 }
 
 func (c *conv) init(o onnx.Operation) error {
+	autoPad, ok := o.Attributes["auto_pad"]
+	if ok && autoPad.(string) != "NOTSET" {
+		return &onnx.ErrNotImplemented{
+			Operator: "Conv",
+			Message:  "auto_pad " + autoPad.(string) + " not implemented",
+		}
+	}
 	// ex: "kernel_shape":[]int64{3, 3}, "pads":[]int64{1, 0, 1, 0}, "strides":[]int64{2, 2}, "auto_pad": string{"NOTSET"}
 	return nil
 }
