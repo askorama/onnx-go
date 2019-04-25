@@ -41,10 +41,14 @@ func (c *conv) apply(g *Graph, n *Node) error {
 
 func (c *conv) init(o onnx.Operation) error {
 	autoPad, ok := o.Attributes["auto_pad"]
-	if ok && autoPad.(string) != "NOTSET" {
-		return &onnx.ErrNotImplemented{
-			Operator: "Conv",
-			Message:  "auto_pad " + autoPad.(string) + " not implemented",
+	if ok {
+		switch autoPad.(string) {
+		case "NOTSET":
+		default:
+			return &onnx.ErrNotImplemented{
+				Operator: "Conv",
+				Message:  "auto_pad " + autoPad.(string) + " not implemented",
+			}
 		}
 	}
 	kernelShape, ok := o.Attributes["kernel_shape"]
