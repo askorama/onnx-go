@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -64,7 +65,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	assert.Equal(&testingT{}, outputT, m.Output[0])
+	computedOutputT, err := m.GetOutputTensors()
+	if err != nil {
+		log.Fatal(err)
+	}
+	assert.InDeltaSlice(&testingT{}, outputT.Data(), computedOutputT[0].Data(), 5e-3, "the two tensors should be equal.")
+	fmt.Println(computedOutputT[0].Data())
 }
 
 type testingT struct{}
