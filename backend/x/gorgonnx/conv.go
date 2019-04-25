@@ -1,6 +1,8 @@
 package gorgonnx
 
 import (
+	"math"
+
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 	"gorgonia.org/tensor"
@@ -16,6 +18,7 @@ func init() {
 //    https://godoc.org/gorgonia.org/gorgonia#Conv2d
 // test with go test -run=TestONNX/Conv
 type conv struct {
+	autopad     string
 	pad         []int
 	stride      []int
 	dilation    []int
@@ -28,6 +31,40 @@ func (c *conv) apply(g *Graph, n *Node) error {
 	err := checkCondition(children, 2)
 	if err != nil {
 		return err
+	}
+	// autopadding needs to be applied now because it needs to be aware of the shape of the nodes
+	switch c.autopad {
+	case "NOTSET":
+	case "":
+	case "SAME_UPPER":
+		outputHeight := int(
+			math.Ceil(
+				float64(children[0].gorgoniaNode.Shape()[2]) /
+					float64(c.stride[0])))
+		outputWidth := int(
+			math.Ceil(
+				float64(children[0].gorgoniaNode.Shape()[3]) /
+					float64(c.stride[1])))
+		c.pad[0] = int(
+			math.Max(
+				float64((outputHeight-1)*c.stride[0]+
+					c.kernelShape[0]-
+					children[0].gorgoniaNode.Shape()[2]),
+				float64(0))) /
+			2
+		c.pad[1] = int(
+			math.Max(
+				float64((outputWidth-1)*c.stride[1]+
+					c.kernelShape[1]-
+					children[0].gorgoniaNode.Shape()[3]),
+				float64(0))) /
+			2
+
+	default:
+		return &onnx.ErrNotImplemented{
+			Operator: "Conv",
+			Message:  "auto_pad " + c.autopad + " not implemented",
+		}
 	}
 	n.gorgoniaNode, err = gorgonia.Conv2d(
 		children[0].gorgoniaNode,
@@ -44,11 +81,10 @@ func (c *conv) init(o onnx.Operation) error {
 	if ok {
 		switch autoPad.(string) {
 		case "NOTSET":
+		case "VALID":
+			c.pad = []int{0, 0}
 		default:
-			return &onnx.ErrNotImplemented{
-				Operator: "Conv",
-				Message:  "auto_pad " + autoPad.(string) + " not implemented",
-			}
+			c.autopad = autoPad.(string)
 		}
 	}
 	kernelShape, ok := o.Attributes["kernel_shape"]
