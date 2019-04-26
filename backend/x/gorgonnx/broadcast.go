@@ -14,6 +14,15 @@ func broadcast(a, b *Node) (*gorgonia.Node, *gorgonia.Node, error) {
 	// for NCHW tensors, the first dimension may be omited and must be broadcasted
 	// TODO find a smarter way to achieve this
 	switch {
+	case len(a.gorgoniaNode.Shape()) == 0:
+		return a.gorgoniaNode, b.gorgoniaNode, &onnx.ErrNotImplemented{
+			Message: fmt.Sprintf("broadcast not yet implemented for scalar"),
+		}
+	case len(b.gorgoniaNode.Shape()) == 0:
+		return a.gorgoniaNode, b.gorgoniaNode, &onnx.ErrNotImplemented{
+			Message: fmt.Sprintf("broadcast not yet implemented for scalar"),
+		}
+
 	case len(a.gorgoniaNode.Shape()) == 1 && len(b.gorgoniaNode.Shape()) != 1:
 		// Make an educated guess: find the axis that has the same dimension
 		bShape := b.gorgoniaNode.Shape()
