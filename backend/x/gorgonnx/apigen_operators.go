@@ -20,6 +20,10 @@ func (a *hadamardProd) apply(g *Graph, n *Node) error {
 
 	x, y, err := broadcast(children[0], children[1])
 	if err != nil {
+		err, ok := err.(*onnx.ErrNotImplemented)
+		if ok {
+			err.Operator = "Mul / hadamardProd"
+		}
 		return err
 	}
 	n.gorgoniaNode, err = gorgonia.HadamardProd(x, y)
@@ -47,6 +51,10 @@ func (a *hadamardDiv) apply(g *Graph, n *Node) error {
 
 	x, y, err := broadcast(children[0], children[1])
 	if err != nil {
+		err, ok := err.(*onnx.ErrNotImplemented)
+		if ok {
+			err.Operator = "Div / hadamardDiv"
+		}
 		return err
 	}
 	n.gorgoniaNode, err = gorgonia.HadamardDiv(x, y)
@@ -74,6 +82,10 @@ func (a *sub) apply(g *Graph, n *Node) error {
 
 	x, y, err := broadcast(children[0], children[1])
 	if err != nil {
+		err, ok := err.(*onnx.ErrNotImplemented)
+		if ok {
+			err.Operator = "Sub / sub"
+		}
 		return err
 	}
 	n.gorgoniaNode, err = gorgonia.Sub(x, y)
@@ -101,6 +113,10 @@ func (a *add) apply(g *Graph, n *Node) error {
 
 	x, y, err := broadcast(children[0], children[1])
 	if err != nil {
+		err, ok := err.(*onnx.ErrNotImplemented)
+		if ok {
+			err.Operator = "Add / add"
+		}
 		return err
 	}
 	n.gorgoniaNode, err = gorgonia.Add(x, y)
