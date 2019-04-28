@@ -29,6 +29,10 @@ func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
 	{{ if .Broadcastable }}
 	x, y, err := broadcast(children[0], children[1])
 	if err != nil {
+		err, ok := err.(*onnx.ErrNotImplemented)
+		if ok {
+			err.Operator = "{{ .ONNXOpType }} / {{ .GorgonnxOp }}"
+		}
 		return err
 	}
 	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(x,y)

@@ -14,6 +14,28 @@ func broadcast(a, b *Node) (*gorgonia.Node, *gorgonia.Node, error) {
 	// for NCHW tensors, the first dimension may be omited and must be broadcasted
 	// TODO find a smarter way to achieve this
 	switch {
+	case len(a.gorgoniaNode.Shape()) == 0:
+		bDim := b.gorgoniaNode.Shape()
+		aRDim := make([]int, len(bDim))
+		for i := 0; i < len(bDim); i++ {
+			aRDim[i] = 1
+		}
+		aR, err := gorgonia.Reshape(a.gorgoniaNode, aRDim)
+		if err != nil {
+			return nil, nil, err
+		}
+		return gorgonia.Broadcast(aR, a.gorgoniaNode, getBroadcastPattern(aR, b.gorgoniaNode))
+	case len(b.gorgoniaNode.Shape()) == 0:
+		aDim := a.gorgoniaNode.Shape()
+		bRDim := make([]int, len(aDim))
+		for i := 0; i < len(aDim); i++ {
+			bRDim[i] = 1
+		}
+		bR, err := gorgonia.Reshape(b.gorgoniaNode, bRDim)
+		if err != nil {
+			return nil, nil, err
+		}
+		return gorgonia.Broadcast(a.gorgoniaNode, bR, getBroadcastPattern(a.gorgoniaNode, bR))
 	case len(a.gorgoniaNode.Shape()) == 1 && len(b.gorgoniaNode.Shape()) != 1:
 		// Make an educated guess: find the axis that has the same dimension
 		bShape := b.gorgoniaNode.Shape()
