@@ -3,7 +3,6 @@ package images
 import (
 	"errors"
 	"image/color"
-	"log"
 
 	"gorgonia.org/tensor"
 	"gorgonia.org/tensor/native"
@@ -31,13 +30,18 @@ func toTensor3(t tensor.Tensor) (*tensor3, error) {
 	if !ok {
 		return nil, errors.New("This function can only convert dense tensors")
 	}
+	originalShape := make([]int, 4)
 	newShape := make([]int, 3)
+	copy(originalShape, t.Shape())
 	copy(newShape, t.Shape()[1:4])
 	err := dense.Reshape(newShape...)
 	if err != nil {
-		log.Println("ERROR", err)
 		return nil, err
 	}
+	defer func() {
+		dense.Reshape(originalShape...)
+	}()
+
 	if f32, err := native.Tensor3F32(dense); err == nil {
 		return &tensor3{
 			c:   dense.Shape()[0],

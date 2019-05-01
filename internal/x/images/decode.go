@@ -29,7 +29,10 @@ func GrayToBCHW(img *image.Gray, dst tensor.Tensor) error {
 	if len(dst.Shape()) != 4 {
 		return fmt.Errorf("Expected a 4 dimension tensor, but receiver has only %v", len(dst.Shape()))
 	}
-	// Check the number of channel
+	// Check the batch size
+	if dst.Shape()[0] != 1 {
+		return errors.New("only batch size of one is supported")
+	}
 	if dst.Shape()[1] != 1 {
 		return errors.New("Cowardly refusing to insert a gray scale into a tensor with more than one channel")
 	}
@@ -43,16 +46,20 @@ func GrayToBCHW(img *image.Gray, dst tensor.Tensor) error {
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
 				color := img.GrayAt(x, y)
-				//TODO
-				dst.SetAt(float32(color.Y), x, y)
+				err := dst.SetAt(float32(color.Y), 0, 0, y, x)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	case tensor.Float64:
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
 				color := img.GrayAt(x, y)
-				//TODO
-				dst.SetAt(float64(color.Y), x, y)
+				err := dst.SetAt(float64(color.Y), x, y)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	default:
@@ -68,8 +75,14 @@ func TensorToImg(t tensor.Tensor) (image.Image, error) {
 		Set(x, y int, c color.Color)
 	}
 	var output img
+	if len(t.Shape()) != 4 {
+		return nil, errors.New("expected a BCHW")
+	}
+	if t.Shape()[0] != 1 {
+		return nil, errors.New("unhandled tensor with batch size > 1")
+	}
 	s := t.Shape()
-	c, h, w := s[0], s[1], s[2]
+	c, h, w := s[1], s[2], s[3]
 	var rect = image.Rect(0, 0, w, h)
 	t3, err := toTensor3(t)
 	if err != nil {
