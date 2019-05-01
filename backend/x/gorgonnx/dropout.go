@@ -4,7 +4,7 @@ import (
 	"github.com/owulveryck/onnx-go"
 )
 
-// dropout is a void function that does nothing because we are supposed to be in training mode
+// dropout is a void function that does nothing because we are supposed to be in test mode
 
 type dropout struct{}
 
