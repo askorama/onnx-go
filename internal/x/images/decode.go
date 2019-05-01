@@ -19,7 +19,7 @@ import (
 //   - dst's third dimension != i.Bounds().Dy()
 //   - dst's fourth dimension != i.Bounds().Dx()
 //   - dst's type is not float32 or float64 (temporarly)
-func GrayToBCHW(img image.Gray, dst tensor.Tensor) error {
+func GrayToBCHW(img *image.Gray, dst tensor.Tensor) error {
 	// check if tensor is a pointer
 	rv := reflect.ValueOf(dst)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
@@ -61,7 +61,7 @@ func GrayToBCHW(img image.Gray, dst tensor.Tensor) error {
 	return nil
 }
 
-// TensorToImg turn a CHW tensor into an image (BCHW with B=1)
+// TensorToImg turn a BCHW tensor into an image (BCHW with B=1)
 func TensorToImg(t tensor.Tensor) (image.Image, error) {
 	type img interface {
 		image.Image

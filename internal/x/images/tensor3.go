@@ -3,6 +3,7 @@ package images
 import (
 	"errors"
 	"image/color"
+	"log"
 
 	"gorgonia.org/tensor"
 	"gorgonia.org/tensor/native"
@@ -20,44 +21,54 @@ type tensor3 struct {
 }
 
 func toTensor3(t tensor.Tensor) (*tensor3, error) {
-	if len(t.Shape()) != 3 {
-		return nil, errors.New("TensorToImg: expected a 3D tensor (CHW)")
+	if len(t.Shape()) != 4 {
+		return nil, errors.New("TensorToImg: expected a 4D tensor (BCHW)")
+	}
+	if t.Shape()[0] != 1 {
+		return nil, errors.New("batch >1 not implemented")
 	}
 	dense, ok := t.(*tensor.Dense)
 	if !ok {
 		return nil, errors.New("This function can only convert dense tensors")
 	}
+	newShape := make([]int, 3)
+	copy(newShape, t.Shape()[1:4])
+	err := dense.Reshape(newShape...)
+	if err != nil {
+		log.Println("ERROR", err)
+		return nil, err
+	}
 	if f32, err := native.Tensor3F32(dense); err == nil {
 		return &tensor3{
-			c:   t.Shape()[0],
-			h:   t.Shape()[1],
-			w:   t.Shape()[2],
+			c:   dense.Shape()[0],
+			h:   dense.Shape()[1],
+			w:   dense.Shape()[2],
 			f32: f32,
 		}, nil
 	}
 	if f64, err := native.Tensor3F64(dense); err == nil {
 		return &tensor3{
-			c:   t.Shape()[0],
-			h:   t.Shape()[1],
-			w:   t.Shape()[2],
+			c:   dense.Shape()[0],
+			h:   dense.Shape()[1],
+			w:   dense.Shape()[2],
 			f64: f64,
 		}, nil
 	}
 
 	if i32, err := native.Tensor3I32(dense); err == nil {
 		return &tensor3{
-			c:   t.Shape()[0],
-			h:   t.Shape()[1],
-			w:   t.Shape()[2],
+			c:   dense.Shape()[0],
+			h:   dense.Shape()[1],
+			w:   dense.Shape()[2],
 			i32: i32,
 		}, nil
 	}
 
 	if i64, err := native.Tensor3I64(dense); err == nil {
 		return &tensor3{
-			c:   t.Shape()[0],
-			h:   t.Shape()[1],
-			w:   t.Shape()[2],
+			c:   dense.Shape()[0],
+			h:   dense.Shape()[1],
+			w:   dense.Shape()[2],
 			i64: i64,
 		}, nil
 	}

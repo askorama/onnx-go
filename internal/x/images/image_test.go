@@ -1,6 +1,7 @@
 package images
 
 import (
+	"image"
 	"image/png"
 	"os"
 	"testing"
@@ -9,23 +10,36 @@ import (
 )
 
 func TestEncodeDecode(t *testing.T) {
-	happyTensor := tensor.New(tensor.WithShape(1, 64, 64), tensor.WithBacking(happyFace))
-	img, err := TensorToImg(happyTensor)
+	sampleT := tensor.New(tensor.WithShape(sampleGrayTensor.Shape...), tensor.WithBacking(sampleGrayTensor.Data))
+	decodedImg, err := TensorToImg(sampleT)
 	if err != nil {
 		t.Fatal(err)
 	}
-	f, err := os.Create("image.png")
+	grayImg, ok := decodedImg.(*image.Gray)
+	if !ok {
+		t.Fail()
+	}
+	// Check size
+	generatedT := tensor.New(tensor.WithShape(sampleGrayTensor.Shape...), tensor.Of(tensor.Float32))
+	err = GrayToBCHW(grayImg, generatedT)
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func savePic(img image.Image) error {
+	f, err := os.Create("image.png")
+	if err != nil {
+		return err
 	}
 
 	if err := png.Encode(f, img); err != nil {
 		f.Close()
-		t.Fatal(err)
+		return err
 	}
 
 	if err := f.Close(); err != nil {
-		t.Fatal(err)
+		return err
 	}
-
+	return nil
 }
