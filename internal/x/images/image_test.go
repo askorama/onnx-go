@@ -27,4 +27,5 @@ func TestEncodeDecode(t *testing.T) {
 	if err := f.Close(); err != nil {
 		t.Fatal(err)
 	}
+
 }

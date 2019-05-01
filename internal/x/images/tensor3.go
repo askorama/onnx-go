@@ -112,23 +112,23 @@ func (t *tensor3) getColor(h, w int) (color.Color, error) {
 			Y: y,
 		}, err
 	case 3:
-		r, err := t.getUint16(0, h, w)
+		r, err := t.getUint8(0, h, w)
 		if err != nil {
 			return nil, err
 		}
-		g, err := t.getUint16(1, h, w)
+		g, err := t.getUint8(1, h, w)
 		if err != nil {
 			return nil, err
 		}
-		b, err := t.getUint16(2, h, w)
+		b, err := t.getUint8(2, h, w)
 		if err != nil {
 			return nil, err
 		}
-		return color.RGBA64{
+		return color.RGBA{
 			R: r,
 			G: g,
 			B: b,
-			A: uint16(255),
+			A: uint8(255),
 		}, nil
 	default:
 		return nil, errors.New("unhandled number of channel")
