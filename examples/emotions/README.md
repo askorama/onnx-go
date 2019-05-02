@@ -23,3 +23,10 @@ You can convert a picture to the expected format with:
 ```
 > convert source.jpg -resize 64 -set colorspace Gray -separate -average dest.png
 ```
+
+You can also pipe the result directly into the command:
+
+```
+convert ~/Downloads/download.png -resize 64 -set colorspace Gray -separate -average png:- | \
+    go run main.go -model /path/to/model.onnx -input -
+```
