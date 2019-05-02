@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"log"
 	"math"
@@ -43,11 +44,13 @@ func main() {
 		flag.Usage()
 		os.Exit(0)
 	}
-	for _, f := range []string{*model, *input} {
-		if _, err := os.Stat(f); err != nil && os.IsNotExist(err) {
-			log.Fatalf("%v does not exist", f)
-		}
+	if _, err := os.Stat(*model); err != nil && os.IsNotExist(err) {
+		log.Fatalf("%v does not exist", *model)
 	}
+	if _, err := os.Stat(*input); err != nil && *input != "-" && os.IsNotExist(err) {
+		log.Fatalf("%v does not exist", *input)
+	}
+
 	// Create a backend receiver
 	backend := gorgonnx.NewGraph()
 	// Create a model and set the execution backend
@@ -65,12 +68,18 @@ func main() {
 	}
 	// Set the first input, the number depends of the model
 	// TODO
-	inputFile, err := os.Open(*input)
-	if err != nil {
-		log.Fatal(err)
+	var inputStream io.Reader
+	if *input != "-" {
+		imgContent, err := os.Open(*input)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer imgContent.Close()
+		inputStream = imgContent
+	} else {
+		inputStream = os.Stdin
 	}
-	defer inputFile.Close()
-	img, err := png.Decode(inputFile)
+	img, err := png.Decode(inputStream)
 	if err != nil {
 		log.Fatal(err)
 	}
