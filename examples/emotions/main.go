@@ -7,8 +7,10 @@ import (
 	"image/png"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
@@ -82,23 +84,37 @@ func main() {
 		log.Fatal(err)
 	}
 	m.SetInput(0, inputT)
+	start := time.Now()
 	err = backend.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("Computation time: %v\n", time.Since(start))
 	computedOutputT, err := m.GetOutputTensors()
 	if err != nil {
 		log.Fatal(err)
 	}
-	result := classify(computedOutputT[0].Data().([]float32))
-	fmt.Println(result[0].emotion)
-	fmt.Println(result[1].emotion)
+	result := classify(softmax(computedOutputT[0].Data().([]float32)))
+	fmt.Printf("%v / %2.2f%%\n", result[0].emotion, result[0].weight*100)
+	fmt.Printf("%v / %2.2f%%\n", result[1].emotion, result[1].weight*100)
 }
 
 type testingT struct{}
 
 func (t *testingT) Errorf(format string, args ...interface{}) {
 	log.Fatalf(format, args...)
+}
+
+func softmax(input []float32) []float32 {
+	var sumExp float64
+	output := make([]float32, len(input))
+	for i := 0; i < len(input); i++ {
+		sumExp += math.Exp(float64(input[i]))
+	}
+	for i := 0; i < len(input); i++ {
+		output[i] = float32(math.Exp(float64(input[i]))) / float32(sumExp)
+	}
+	return output
 }
 
 func classify(input []float32) emotions {
