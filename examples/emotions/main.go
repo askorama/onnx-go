@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
@@ -41,11 +44,13 @@ func main() {
 		flag.Usage()
 		os.Exit(0)
 	}
-	for _, f := range []string{*model, *input} {
-		if _, err := os.Stat(f); err != nil && os.IsNotExist(err) {
-			log.Fatalf("%v does not exist", f)
-		}
+	if _, err := os.Stat(*model); err != nil && os.IsNotExist(err) {
+		log.Fatalf("%v does not exist", *model)
 	}
+	if _, err := os.Stat(*input); err != nil && *input != "-" && os.IsNotExist(err) {
+		log.Fatalf("%v does not exist", *input)
+	}
+
 	// Create a backend receiver
 	backend := gorgonnx.NewGraph()
 	// Create a model and set the execution backend
@@ -63,12 +68,18 @@ func main() {
 	}
 	// Set the first input, the number depends of the model
 	// TODO
-	inputFile, err := os.Open(*input)
-	if err != nil {
-		log.Fatal(err)
+	var inputStream io.Reader
+	if *input != "-" {
+		imgContent, err := os.Open(*input)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer imgContent.Close()
+		inputStream = imgContent
+	} else {
+		inputStream = os.Stdin
 	}
-	defer inputFile.Close()
-	img, err := png.Decode(inputFile)
+	img, err := png.Decode(inputStream)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,23 +93,37 @@ func main() {
 		log.Fatal(err)
 	}
 	m.SetInput(0, inputT)
+	start := time.Now()
 	err = backend.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("Computation time: %v\n", time.Since(start))
 	computedOutputT, err := m.GetOutputTensors()
 	if err != nil {
 		log.Fatal(err)
 	}
-	result := classify(computedOutputT[0].Data().([]float32))
-	fmt.Println(result[0].emotion)
-	fmt.Println(result[1].emotion)
+	result := classify(softmax(computedOutputT[0].Data().([]float32)))
+	fmt.Printf("%v / %2.2f%%\n", result[0].emotion, result[0].weight*100)
+	fmt.Printf("%v / %2.2f%%\n", result[1].emotion, result[1].weight*100)
 }
 
 type testingT struct{}
 
 func (t *testingT) Errorf(format string, args ...interface{}) {
 	log.Fatalf(format, args...)
+}
+
+func softmax(input []float32) []float32 {
+	var sumExp float64
+	output := make([]float32, len(input))
+	for i := 0; i < len(input); i++ {
+		sumExp += math.Exp(float64(input[i]))
+	}
+	for i := 0; i < len(input); i++ {
+		output[i] = float32(math.Exp(float64(input[i]))) / float32(sumExp)
+	}
+	return output
 }
 
 func classify(input []float32) emotions {
