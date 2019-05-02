@@ -14,3 +14,6 @@ doc/doc
 example/gorgonia/numpy
 example/gorgonia/gorgonia
 examples/model_zoo_executor/model_zoo_executor
+examples/emotions/emotions
+examples/emotions/wasm/model.onnx
+examples/emotions/wasm/emotions.wasm
