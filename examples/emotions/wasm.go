@@ -18,6 +18,17 @@ import (
 	"github.com/vincent-petithory/dataurl"
 )
 
+var (
+	canvas js.Value
+	ctx    js.Value
+)
+
+func init() {
+	canvas = js.Global().Get("document").Call("getElementById", canvasElementID)
+	ctx = canvas.Call("getContext", "2d")
+
+}
+
 func logInfo(s interface{}) {
 	log.Println(s)
 	js.Global().Get("document").
@@ -45,7 +56,10 @@ func getModel() ([]byte, error) {
 
 func getImage() (*image.Gray, error) {
 	logInfo("Getting picture from the DOM")
-	pic := js.Global().Get("document").Call("getElementById", canvasElementID).Call("toDataURL")
+	video := js.Global().Get("document").Call("getElementById", videoElementID)
+	ctx.Call("drawImage", video, 0, 0)
+
+	pic := canvas.Call("toDataURL")
 	dataURL, err := dataurl.DecodeString(pic.String())
 	if err != nil {
 		return nil, err
@@ -80,7 +94,11 @@ func getImage() (*image.Gray, error) {
 }
 
 func displayResult(e emotions) {
-	logInfo(e[0].emotion)
+	result := fmt.Sprintf("%v / %2.2f%%<br>%v / %2.2f%%",
+		e[0].emotion, e[0].weight*100,
+		e[1].emotion, e[1].weight*100,
+	)
+	logInfo(result)
 }
 
 func run() error {
@@ -106,6 +124,12 @@ func run() error {
 			return nil
 
 		}
+		logInfo("displaying the result")
+
+		err = displayPic(img)
+		if err != nil {
+			logInfo(err.Error())
+		}
 		logInfo("processing element")
 		output, err := process(img)
 		runtime.GC()
@@ -123,5 +147,20 @@ func run() error {
 		Call("addEventListener", "click", cb)
 	c := make(chan struct{}, 0)
 	<-c
+	return nil
+}
+
+func displayPic(i *image.Gray) error {
+	// encode in png
+	var output bytes.Buffer
+	err := png.Encode(&output, i)
+	if err != nil {
+		return err
+	}
+
+	processed := js.Global().Get("document").Call("createElement", "img")
+	processed.Set("src", dataurl.EncodeBytes(output.Bytes()))
+
+	ctx.Call("drawImage", processed, 0, 0)
 	return nil
 }
