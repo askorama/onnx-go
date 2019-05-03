@@ -31,6 +31,18 @@ convert ~/Downloads/download.png -resize 64 -set colorspace Gray -separate -aver
     ./emotions -model /path/to/model.onnx -input -
 ```
 
+On MacOS good results are obtained with this configuration:
+
+```
+> imagesnap # brew install imagesnap
+> convert snapshot.jpg -gravity center -crop 300x300+0+0 -resize 64x64 -set colorspace Gray -separate -average -gamma 0.8 png:-  | tee output.png | ./emotions -model model.onnx -input -
+```
+
+```
+> open snapshot.jpg
+> open output.png
+```
+
 ### Wasm experiment
 
 This utility can be compiled in wasm, but it is highly experimental and may fail in out-of-memory very often...
