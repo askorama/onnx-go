@@ -73,7 +73,7 @@ func getImage() (*image.Gray, error) {
 	if err != nil {
 		return nil, err
 	}
-	if m.Bounds().Dx() != m.Bounds().Dy() && m.Bounds().Dx() != width {
+	if m.Bounds().Dx() != width && m.Bounds().Dy() != height {
 		// resize
 		logInfo(fmt.Sprintf("image is %vx%v, resizing...", m.Bounds().Dx(), m.Bounds().Dy()))
 		m = imaging.Resize(m, height, width, imaging.Lanczos)
