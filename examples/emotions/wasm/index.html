@@ -7,69 +7,34 @@
 
     <title>Smile</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css">
     <link rel="stylesheet" href="app.css">
   </head>
 
   <body class="content">
 
 
-    <section class="hero is-medium is-info is-bold">
-      <div class="hero-body">
-        <div class="columns">
-          <div class="column">
-            Download the model
-          </div>
-          <div class="column">
-            <a href="emotion-fer-plus.onnx">model.onnx</a></br>
-          </div>
-        </div>
-        <div class="columns">
-          <div class="column">
-            Upload it into this webpage
-          </div>
-          <div class="column">
-            <input type="file" id="knowledgeFile" multiple size="1" style="width:250px" accept=".onnx" onChange="fileOK();">
-          </div>
-        </div>
-        <div class="columns">
-          <div class="column">
-            Load the WASM interpreter (onnx-go)
-          </div>
-          <div class="column">
-            <button onClick="load();" id="loadButton" style="width:125px;color:grey;" disabled>Load</button>
-          </div>
-        </div>
-        <div class="columns">
-          <div class="column">
-            Wait until the button is green and RUN!
-          </div>
-          <div class="column">
-            <button onClick="run();" id="runButton" style="width:125px;color:grey" disabled>Run</button>
-          </div>
-        </div>
-        <br>
-        <br>
+    <center>
+      Download the model: <a href="emotion-fer-plus.onnx">model.onnx</a></br>
+      <br>
+      Upload it into this webpage: <input type="file" id="knowledgeFile" multiple size="1" style="width:250px" accept=".onnx" onChange="fileOK();">
+      <br>
+      Load the WASM interpreter (onnx-go): <button onClick="load();" id="loadButton" style="width:125px;color:grey;" disabled>Load</button>
+      <br>
+      Wait until the button is green and RUN!:  <button onClick="run();" id="runButton" style="width:125px;color:grey" disabled>Run</button>
+      <br>
 
-        <!-- Then draw a digit (around the center of the square)... and the machine will tell you what it is -->
-
-        <div class="columns">
-          <div class="column">
-            <video autoplay id="video" style="width:320px;height:240px"></video>
-            <br>
-            <p>...</p>
-          </div>
-
-          <div class="column">
-            <canvas id="canvas" style="width:320px;height:240px"></canvas>
-            <br>
-            <p id="info">...</p>
-          </div>
-        </div>
-
-        <button id="smile" class="button is-large is-primary">Souriez :)</button>
+      <div class="camera">
+        <video autoplay id="video"></video>
       </div>
-    </section>
+      <br>
+      <div class="camera">
+        <canvas id="canvas"></canvas>
+      </div>
+      <br>
+      <p id="info">...</p>
+
+      <button id="smile" class="button is-large is-primary" disabled>smile...</button>
+    </center>
 
     <script src="app.js"></script>
     <script src="wasm_exec.js"></script>

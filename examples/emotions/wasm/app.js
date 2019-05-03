@@ -3,12 +3,14 @@ const context = canvas.getContext('2d');
 const video = document.getElementById('video');
 
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        video.srcObject = stream;
-        video.play();
-    });
+  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+    video.srcObject = stream;
+    video.play();
+  });
+  video.onloadedmetadata = () => {
+    canvas.width = 500;
+    canvas.height = 500;
+  }
 }
 
-document.getElementById('smile').addEventListener('click', () => {
-    context.drawImage(video, 0, 0, 320, 240);
-});
+

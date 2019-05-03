@@ -1,13 +1,27 @@
 *, *:before, *:after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #FFFFFF;
-    margin: 0;
-    text-align: center;
+  background-color: #FFFFFF;
+  margin: 0;
+  text-align: center;
 }
 
 #canvas {
-    background-color: black;
+  background-color: black;
 }
+
+video {
+  width: 256px;
+  height: 256px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.camera {
+  width: 256px;
+  height: 256px;
+  overflow: hidden;
+}
+
