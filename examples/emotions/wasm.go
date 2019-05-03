@@ -56,6 +56,7 @@ func getModel() ([]byte, error) {
 
 func getImage() (*image.Gray, error) {
 	logInfo("Getting picture from the DOM")
+	// Load image and wait until it's ready.
 	video := js.Global().Get("document").Call("getElementById", videoElementID)
 	ctx.Call("drawImage", video, 0, 0)
 
@@ -125,7 +126,6 @@ func run() error {
 
 		}
 		logInfo("displaying the result")
-
 		err = displayPic(img)
 		if err != nil {
 			logInfo(err.Error())
@@ -158,9 +158,15 @@ func displayPic(i *image.Gray) error {
 		return err
 	}
 
-	processed := js.Global().Get("document").Call("createElement", "img")
-	processed.Set("src", dataurl.EncodeBytes(output.Bytes()))
+	// https://github.com/gopherjs/gopherjs/issues/716
+	player := js.Global().Get("document").Call("createElement", "img")
+	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		ctx.Call("drawImage", player, 0, 0)
+		return nil
+	})
 
-	ctx.Call("drawImage", processed, 0, 0)
+	// Load image and wait until it's ready.
+	player.Set("src", dataurl.EncodeBytes(output.Bytes()))
+	player.Call("addEventListener", "load", cb)
 	return nil
 }
