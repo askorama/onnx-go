@@ -10,5 +10,5 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 }
 
 document.getElementById('smile').addEventListener('click', () => {
-    context.drawImage(video, 0, 0, 640, 480);
+    context.drawImage(video, 0, 0, 64, 64);
 });
