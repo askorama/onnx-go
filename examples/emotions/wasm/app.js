@@ -8,8 +8,8 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     video.play();
   });
   video.onloadedmetadata = () => {
-    canvas.width = 256;
-    canvas.height = 256;
+    canvas.width = 500;
+    canvas.height = 500;
   }
 }
 
