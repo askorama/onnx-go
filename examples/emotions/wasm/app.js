@@ -8,7 +8,3 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         video.play();
     });
 }
-
-document.getElementById('smile').addEventListener('click', () => {
-    context.drawImage(video, 0, 0, 320, 240);
-});
