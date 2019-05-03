@@ -5,17 +5,21 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"image"
 	"image/png"
+	"log"
 	"runtime"
 	"time"
 
 	"syscall/js"
 
+	"github.com/disintegration/imaging"
 	"github.com/vincent-petithory/dataurl"
 )
 
 func logInfo(s interface{}) {
+	log.Println(s)
 	js.Global().Get("document").
 		Call("getElementById", infoBoxElementID).
 		Set("innerHTML", s)
@@ -40,6 +44,7 @@ func getModel() ([]byte, error) {
 }
 
 func getImage() (*image.Gray, error) {
+	logInfo("Getting picture from the DOM")
 	pic := js.Global().Get("document").Call("getElementById", canvasElementID).Call("toDataURL")
 	dataURL, err := dataurl.DecodeString(pic.String())
 	if err != nil {
@@ -48,19 +53,34 @@ func getImage() (*image.Gray, error) {
 	if dataURL.ContentType() != "image/png" {
 		return nil, errors.New("not a png image")
 	}
+	logInfo("Decoding the PNG file")
 	m, err := png.Decode(bytes.NewReader(dataURL.Data))
 	if err != nil {
 		return nil, err
 	}
+	if m.Bounds().Dx() != m.Bounds().Dy() && m.Bounds().Dx() != width {
+		// resize
+		logInfo(fmt.Sprintf("image is %vx%v, resizing...", m.Bounds().Dx(), m.Bounds().Dy()))
+		m = imaging.Resize(m, height, width, imaging.Lanczos)
+	}
 
-	imgGray, ok := m.(*image.Gray)
+	var imgGray *image.Gray
+	var ok bool
+	imgGray, ok = m.(*image.Gray)
 	if !ok {
-		return nil, errors.New("Not a gray image")
+		// convert to gray
+		logInfo("convert picture to grayscale...")
+		gray := imaging.Grayscale(m)
+		imgGray = image.NewGray(gray.Bounds())
+		for i := 0; i < len(imgGray.Pix); i++ {
+			imgGray.Pix[i] = gray.Pix[i*4]
+		}
 	}
 	return imgGray, nil
 }
 
 func displayResult(e emotions) {
+	logInfo(e[0].emotion)
 }
 
 func run() error {
@@ -74,11 +94,11 @@ func run() error {
 		logInfo(err)
 		return err
 	}
+	logInfo("Ready to process")
 	// Declare callback
 	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		// handle event
 		// Get the picture
-		logInfo("processing element")
 		img, err := getImage()
 		runtime.GC()
 		if err != nil {
@@ -86,6 +106,7 @@ func run() error {
 			return nil
 
 		}
+		logInfo("processing element")
 		output, err := process(img)
 		runtime.GC()
 		if err != nil {

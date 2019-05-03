@@ -30,3 +30,7 @@ You can also pipe the result directly into the command:
 convert ~/Downloads/download.png -resize 64 -set colorspace Gray -separate -average png:- | \
     ./emotions -model /path/to/model.onnx -input -
 ```
+
+### Wasm experiment
+
+This utility can be compiled in wasm, but it is highly experimental and may fail in out-of-memory very often...
