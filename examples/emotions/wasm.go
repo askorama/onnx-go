@@ -117,10 +117,25 @@ func run() error {
 	js.Global().Get("document").
 		Call("getElementById", boutonSubmit).
 		Set("disabled", false)
-	c := make(chan *image.Gray, 0)
-	go func() {
-		for {
-			img := <-c
+
+	// Declare callback
+	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		js.Global().Get("document").
+			Call("getElementById", boutonSubmit).
+			Set("disabled", true)
+		go func() {
+			// handle event
+			// Get the picture
+			img, err := getImage()
+			runtime.GC()
+			if err != nil {
+				logInfo(err.Error())
+
+			}
+			err = displayPic(img)
+			if err != nil {
+				logInfo(err.Error())
+			}
 			logInfo("processing element")
 			output, err := process(img)
 			runtime.GC()
@@ -132,28 +147,7 @@ func run() error {
 			js.Global().Get("document").
 				Call("getElementById", boutonSubmit).
 				Set("disabled", false)
-		}
-	}()
-
-	// Declare callback
-	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		js.Global().Get("document").
-			Call("getElementById", boutonSubmit).
-			Set("disabled", true)
-		// handle event
-		// Get the picture
-		img, err := getImage()
-		runtime.GC()
-		if err != nil {
-			logInfo(err.Error())
-			return nil
-
-		}
-		err = displayPic(img)
-		if err != nil {
-			logInfo(err.Error())
-		}
-		c <- img
+		}()
 		return nil
 	})
 	// Hook it up with a DOM event
@@ -176,12 +170,16 @@ func displayPic(i *image.Gray) error {
 	// https://github.com/gopherjs/gopherjs/issues/716
 	player := js.Global().Get("document").Call("createElement", "img")
 	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-		ctx.Call("drawImage", player, 0, 0)
+		go func() {
+			ctx.Call("drawImage", player, 0, 0)
+		}()
 		return nil
+
 	})
 
 	// Load image and wait until it's ready.
 	player.Set("src", dataurl.EncodeBytes(output.Bytes()))
 	player.Call("addEventListener", "load", cb)
+	cb.Release()
 	return nil
 }
