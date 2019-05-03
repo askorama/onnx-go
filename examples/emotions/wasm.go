@@ -114,8 +114,32 @@ func run() error {
 		return err
 	}
 	logInfo("Ready to process")
+	js.Global().Get("document").
+		Call("getElementById", boutonSubmit).
+		Set("disabled", false)
+	c := make(chan *image.Gray, 0)
+	go func() {
+		for {
+			img := <-c
+			logInfo("processing element")
+			output, err := process(img)
+			runtime.GC()
+			if err != nil {
+				logInfo(err.Error())
+				return
+			}
+			displayResult(output)
+			js.Global().Get("document").
+				Call("getElementById", boutonSubmit).
+				Set("disabled", false)
+		}
+	}()
+
 	// Declare callback
 	cb := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		js.Global().Get("document").
+			Call("getElementById", boutonSubmit).
+			Set("disabled", true)
 		// handle event
 		// Get the picture
 		img, err := getImage()
@@ -125,28 +149,19 @@ func run() error {
 			return nil
 
 		}
-		logInfo("displaying the result")
 		err = displayPic(img)
 		if err != nil {
 			logInfo(err.Error())
 		}
-		logInfo("processing element")
-		output, err := process(img)
-		runtime.GC()
-		if err != nil {
-			logInfo(err.Error())
-			return nil
-		}
-
-		displayResult(output)
+		c <- img
 		return nil
 	})
 	// Hook it up with a DOM event
 	js.Global().Get("document").
 		Call("getElementById", boutonSubmit).
 		Call("addEventListener", "click", cb)
-	c := make(chan struct{}, 0)
-	<-c
+	done := make(chan struct{}, 0)
+	<-done
 	return nil
 }
 
