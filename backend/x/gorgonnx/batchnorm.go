@@ -3,7 +3,9 @@ package gorgonnx
 import (
 	"errors"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/owulveryck/onnx-go"
+	"gorgonia.org/gorgonia"
 )
 
 // SPEC: https://github.com/onnx/onnx/blob/master/docs/Operators.md#BatchNormalization
@@ -19,15 +21,20 @@ func init() {
 }
 
 func (b *batchnorm) apply(g *Graph, n *Node) error {
-	return &onnx.ErrNotImplemented{
-		Operator: "BatchNormalization",
-	}
 	children := getOrderedChildren(g.g, n)
-	err := checkCondition(children, 1)
+	err := checkCondition(children, 5)
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode = children[0].gorgoniaNode
+	return &onnx.ErrNotImplemented{
+		Operator: "BatchNormalization",
+	}
+	spew.Dump(children[1].t.Data())
+	n.gorgoniaNode, _, _, _, err = gorgonia.BatchNorm(children[0].gorgoniaNode,
+		children[1].gorgoniaNode,
+		children[2].gorgoniaNode,
+		b.momentum,
+		b.epsilon)
 	return err
 }
 
