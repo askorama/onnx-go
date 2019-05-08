@@ -42,12 +42,16 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		res, err = process(img, md.height, md.width, md.table)
+		output, err := process(img, md.height, md.width, md.table)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Println(err)
 			return
 		}
+		if md.postProcessing != nil {
+			output = md.postProcessing(output)
+		}
+		res = classify(output, md.table)
 	}
 	fmt.Printf("%v", res)
 	fmt.Fprintf(w, "%v", res)

@@ -37,15 +37,17 @@ var (
 			table:  mnistTable,
 		},
 		"emotion": modelDemo{
-			height: 64,
-			width:  64,
-			table:  emotionTable,
+			height:         64,
+			width:          64,
+			table:          emotionTable,
+			postProcessing: softmax,
 		},
 	}
 )
 
 type modelDemo struct {
-	height int
-	width  int
-	table  []string
+	height         int
+	width          int
+	table          []string
+	postProcessing func([]float32) []float32
 }
