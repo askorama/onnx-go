@@ -8,6 +8,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/owulveryck/onnx-go"
+	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
 )
 
 func init() {
@@ -16,8 +19,8 @@ func init() {
 }
 
 type img struct {
-	Image interface{}
-	Bla   string `json:"bla"`
+	Image string
+	Model string `json:"model"`
 }
 
 func imagePostHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,15 +33,42 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	fmt.Fprintf(w, `{result: "ok"}`)
+
+	var res results
+	if md, ok := models[payload.Model]; ok {
+		img, err := processPicture(payload.Image, md.height, md.width)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
+			return
+		}
+		res, err = process(img, md.height, md.width, md.table)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
+			return
+		}
+	}
+	fmt.Printf("%v", res)
+	fmt.Fprintf(w, "%v", res)
 }
 func modelPostHandler(w http.ResponseWriter, r *http.Request) {
-	_, err := ioutil.ReadAll(r.Body)
+	// reset the backend and the model
+	// Create a backend receiver
+	backend = gorgonnx.NewGraph()
+	// Create a model and set the execution backend
+	model = onnx.NewModel(backend)
+	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
-
+	err = model.UnmarshalBinary(b)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
 }
