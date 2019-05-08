@@ -10,7 +10,33 @@ https://github.com/owulveryck/onnx-go
 
 * Introduction
 
+* About Machine learning
+
+* Equations
+
+* Learnable
+
+* Equations are graphs
+
+* About ONNX
+
+* A representation of a computation graph in protocol buffers
+
+* About onnx-go
+
+* Unmarshaler into a gonum's DirectedWeigthed graph
+
+* Backend
+
+* Gorgonia
+
+* Test of ONNX-Go
+
 * Demo time
+
+* MNIST
+
+* Emotion fer+
 
 .html demos/htdocs/emotion/index.html
 
