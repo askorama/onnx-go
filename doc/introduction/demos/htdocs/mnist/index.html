@@ -1,8 +1,125 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
+<!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, user-scalable=no, minimal-ui">
+
+    <title>Smile</title>
+
+    <style>
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html, body {height:100%;}
+html {display:table; width:100%;}
+
+body {
+  background-color: #FFFFFF;
+  margin: 0;
+  text-align: center;
+  display: table-cell; 
+  vertical-align:middle;
+}
+
+
+    </style>
+  </head>
+
+  <body class="content">
+    <input id="image-file" type="file"  accept=".onnx" onchange="uploadModel(this)" >
+    <br>
+    <div class="container">
+      <canvas style="touch-action: none;" id="canvas" width="280" height="280"></canvas>
+    </div>
+    <br>
+    <p id="info">...</p>
+
+    <button id="go" class="button is-large is-primary" disabled>submit</button>
+    <button onclick="reset()">Reset</button>
+
+
+
+
+    <script src="demos/htdocs/js/fabric.min.js"></script>
+    <script src="demos/htdocs/js/jquery-3.4.0.min.js"></script>
+
+    <script>
+
+      var canvas;
+      var image;
+      var bThick = 20;
+      var cColour = '#FFFFFF'; // #black
+
+      //Initialize  fabric
+      function initCanvas(){
+        canvas = new fabric.Canvas('canvas');
+        canvas.isDrawingMode = true;
+        canvas.freeDrawingBrush.width = bThick;
+        canvas.freeDrawingBrush.color = cColour;
+        canvas.backgroundColor = '#000000';
+        canvas.allowTouchScrolling = false;
+        canvas.ontouchstart = function(e) {
+          if (e.touches) e = e.touches[0];
+          return false;
+        }
+        $('.canvas-container').on('touchmove', function(evt){ evt.preventDefault(); });
+      }
+
+      window.onload = function(){
+        initCanvas();
+        reset();
+      };
+
+      //reset canvas
+      function reset() {
+        canvas.clear();
+        document.getElementById("info").innerHTML = "...";
+      }
+
+
+      document.getElementById('go').addEventListener('click', () => {
+        //context.drawImage(canvasElem, -80, 0, 640  , 480);
+
+        const dataURL = canvas.toDataURL();
+        $.ajax({
+          type: 'POST',
+          url: '/image',
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          data: JSON.stringify({image: dataURL, model: "mnist"}),
+          success: function(data){
+            console.log(data);
+            $( ".info" ).html( data );
+          },
+          failure: function(errMsg) {
+            alert(errMsg);
+          }
+        })
+      });
+      async function uploadModel(e)
+      {
+        let name = { modelname:'emotionfer+' };
+        let formData = new FormData();
+        let model = e.files[0];
+
+        formData.append("model", model);
+        formData.append("name", JSON.stringify(name));
+
+        try {
+          //let r = await fetch('/model', {method: "POST", body: formData});
+          let r = await fetch('/model', {method: "POST", body: e.files[0]});
+          document.getElementById("go").disabled = false;
+          activateVideo();
+
+
+          console.log('HTTP response code:',r.status);
+        } catch(e) {
+          console.log('Huston we have problem...:', e);
+        }
+
+      }
+    </script>
+  </body>
 </html>

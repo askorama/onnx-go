@@ -36,6 +36,8 @@ https://github.com/owulveryck/onnx-go
 
 * MNIST
 
+.html demos/htdocs/mnist/index.html
+
 * Emotion fer+
 
 .html demos/htdocs/emotion/index.html

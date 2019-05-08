@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"log"
 
 	"github.com/disintegration/imaging"
 	"github.com/vincent-petithory/dataurl"
@@ -46,5 +47,6 @@ func processPicture(data string, height, width int) (*image.Gray, error) {
 			imgGray.Pix[i] = gray.Pix[i*4]
 		}
 	}
+	log.Println("image processed")
 	return imgGray, nil
 }
