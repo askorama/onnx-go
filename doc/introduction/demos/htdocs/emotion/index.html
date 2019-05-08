@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, user-scalable=no, minimal-ui">
+
+    <title>Smile</title>
+
+    <link rel="stylesheet" href="app.css">
+    <style>
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html, body {height:100%;}
+html {display:table; width:100%;}
+
+body {
+  background-color: #FFFFFF;
+  margin: 0;
+  text-align: center;
+  display: table-cell; 
+  vertical-align:middle;
+}
+
+#canvas {
+  width: 256px;
+  height: 256px;
+  object-fit: cover;
+  object-position: center;
+  background-color: black;
+}
+
+video {
+  width: 256px;
+  height: 256px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.container div {
+  display: inline-block;
+  background-color: #eee;
+  height: auto;
+}
+.camera {
+  width: 256px;
+  height: 256px;
+  overflow: hidden;
+}
+    </style>
+  </head>
+
+  <body class="content">
+
+    <div class="container">
+      <div class="camera">
+        <video autoplay id="video"></video>
+      </div>
+      <div class="camera">
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
+    <br>
+    <p id="info">...</p>
+
+    <button id="smile" class="button is-large is-primary">smile...</button>
+
+
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+    <script>
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      const video = document.getElementById('video');
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+          video.srcObject = stream;
+          video.play();
+        });
+        video.onloadedmetadata = () => {
+          canvas.width = 480;
+          canvas.height = 480;
+        }
+      }
+
+      document.getElementById('smile').addEventListener('click', () => {
+        context.drawImage(video, -80, 0, 640  , 480);
+
+        const dataURL = canvas.toDataURL();
+        $.ajax({
+          type: 'POST',
+          url: '/image',
+          data: { img: dataURL },
+        }).done(msg => {
+          //alert(msg);
+        });
+      });
+    </script>
+  </body>
+</html>
