@@ -15,28 +15,27 @@
 html, body {height:100%;}
 html {display:table; width:100%;}
 
-body {
-  background-color: #FFFFFF;
+.demo-content {
+  background-color: #AAAAAA;
   margin: 0;
   text-align: center;
   display: table-cell; 
   vertical-align:middle;
 }
 
-
     </style>
   </head>
 
   <body class="content">
-    <input id="image-file" type="file"  accept=".onnx" onchange="uploadModel(this)" >
+    <input id="modelMnist" type="file"  accept=".onnx" onchange="uploadModelMnist(this)" >
     <br>
     <div class="container">
-      <canvas style="touch-action: none;" id="canvas" width="280" height="280"></canvas>
+      <canvas style="touch-action: none;" id="canvasMnist" width="280" height="280"></canvas>
     </div>
     <br>
-    <p id="info">...</p>
+    <p id="infoMnist">...</p>
 
-    <button id="go" class="button is-large is-primary" disabled>submit</button>
+    <button id="gomnist" class="button is-large is-primary" disabled>submit</button>
     <button onclick="reset()">Reset</button>
 
 
@@ -46,43 +45,36 @@ body {
     <script src="demos/htdocs/js/jquery-3.4.0.min.js"></script>
 
     <script>
-
-      var canvas;
+      var canvasMnist;
       var image;
       var bThick = 20;
       var cColour = '#FFFFFF'; // #black
 
       //Initialize  fabric
-      function initCanvas(){
-        canvas = new fabric.Canvas('canvas');
-        canvas.isDrawingMode = true;
-        canvas.freeDrawingBrush.width = bThick;
-        canvas.freeDrawingBrush.color = cColour;
-        canvas.backgroundColor = '#000000';
-        canvas.allowTouchScrolling = false;
-        canvas.ontouchstart = function(e) {
-          if (e.touches) e = e.touches[0];
-          return false;
-        }
-        $('.canvas-container').on('touchmove', function(evt){ evt.preventDefault(); });
+      function initcanvasMnist(){
+        canvasMnist = new fabric.Canvas('canvasMnist');
+        canvasMnist.isDrawingMode = true;
+        canvasMnist.freeDrawingBrush.width = bThick;
+        canvasMnist.freeDrawingBrush.color = cColour;
+        canvasMnist.backgroundColor = '#000000';
       }
 
       window.onload = function(){
-        initCanvas();
+        initcanvasMnist();
         reset();
       };
 
-      //reset canvas
+      //reset canvasMnist
       function reset() {
-        canvas.clear();
-        document.getElementById("info").innerHTML = "...";
+        canvasMnist.clear();
+        document.getElementById("infoMnist").innerHTML = "...";
       }
 
 
-      document.getElementById('go').addEventListener('click', () => {
-        //context.drawImage(canvasElem, -80, 0, 640  , 480);
+      document.getElementById('gomnist').addEventListener('click', () => {
+        //context.drawImage(canvasMnistElem, -80, 0, 640  , 480);
 
-        const dataURL = canvas.toDataURL();
+        const dataURL = canvasMnist.toDataURL();
         $.ajax({
           type: 'POST',
           url: '/image',
@@ -91,16 +83,16 @@ body {
           data: JSON.stringify({image: dataURL, model: "mnist"}),
           success: function(data){
             console.log(data);
-            $( ".info" ).html( data );
+            $( ".infoMnist" ).html( data );
           },
           failure: function(errMsg) {
             alert(errMsg);
           }
         })
       });
-      async function uploadModel(e)
+      async function uploadModelMnist(e)
       {
-        let name = { modelname:'emotionfer+' };
+        let name = { modelname:'mnist' };
         let formData = new FormData();
         let model = e.files[0];
 
@@ -110,9 +102,7 @@ body {
         try {
           //let r = await fetch('/model', {method: "POST", body: formData});
           let r = await fetch('/model', {method: "POST", body: e.files[0]});
-          document.getElementById("go").disabled = false;
-          activateVideo();
-
+          document.getElementById("gomnist").disabled = false;
 
           console.log('HTTP response code:',r.status);
         } catch(e) {

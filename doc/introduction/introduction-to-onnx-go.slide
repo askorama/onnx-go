@@ -8,9 +8,19 @@ olivier.wulveryck@gmail.com
 https://github.com/owulveryck/onnx-go
 @owulveryck
 
-* Introduction
+* 
 
-* About Machine learning
+.background assets/slide2-fs8.png
+
+* 
+
+.background assets/slide3-fs8.png
+
+* 
+
+.background assets/slide4-fs8.png
+
+* About Neural Networks
 
 * Equations
 
@@ -20,26 +30,76 @@ https://github.com/owulveryck/onnx-go
 
 * About ONNX
 
+* 
+
+.background assets/slide8-fs8.png
+
 * A representation of a computation graph in protocol buffers
 
 * About onnx-go
 
-* Unmarshaler into a gonum's DirectedWeigthed graph
+* What is it exactly?
+
+A package that unmarshal a binary representation of a graph into a Graph structure.
+
+* 
+
+.background assets/slide9-fs8.png
+
+* 
+
+.background assets/slide10-fs8.png
 
 * Backend
 
 * Gorgonia
 
-* Test of ONNX-Go
+
+* The CODE!
+
+* Example
+
+* Init the model
+
+- First, you choose and instanciate a backend;
+- Then you instanciate the onnx-go top structure and associate it the backend
+- And then you can unmarshal your `model.onnx` file into the backend:
+
+.code -numbers onnx-demo.go /START_MODEL OMIT/,/END_MODEL OMIT/
+
+*Warning* this reads the model but does not execute it
+
+* Evaluation phase
+
+.code -numbers process.go /START_PROCESS OMIT/,/END_PROCESS OMIT/
 
 * Demo time
 
+.background assets/demo-time-fs8.png
+
 * MNIST
 
+This model predicts handwritten digits using a convolutional neural network (CNN).
+
+*Dataset*
+
+The model has been trained on the popular MNIST dataset.
+
+*Source*
+
+The model is trained in CNTK following the tutorial CNTK 103D: Convolutional Neural Network with MNIST. Note that the specific architecture used is the model with alternating convolution and max pooling layers (found under the "Solution" section at the end of the tutorial).
+
+.link https://github.com/onnx/models/tree/master/mnist model from the zoo
+
+* MNIST
+
+.background assets/demo-fs8.png
 .html demos/htdocs/mnist/index.html
 
 * Emotion fer+
 
+.background assets/demo-fs8.png
 .html demos/htdocs/emotion/index.html
 
 * Conclusion
+

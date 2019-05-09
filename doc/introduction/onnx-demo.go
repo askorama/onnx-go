@@ -58,18 +58,23 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 }
 func modelPostHandler(w http.ResponseWriter, r *http.Request) {
 	// reset the backend and the model
+	// START_MODEL OMIT
+	var b []byte
+	var err error
 	// Create a backend receiver
 	backend = gorgonnx.NewGraph()
 	// Create a model and set the execution backend
 	model = onnx.NewModel(backend)
-	b, err := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
+	// ...
+	b, err = ioutil.ReadAll(r.Body) // OMIT
+	defer r.Body.Close()            // OMIT
+	if err != nil {                 // OMIT
+		http.Error(w, err.Error(), http.StatusInternalServerError) // OMIT
+		log.Println(err)                                           // OMIT
+		return                                                     // OMIT
+	} // OMIT
 	err = model.UnmarshalBinary(b)
+	// END_MODEL OMIT
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Println(err)
