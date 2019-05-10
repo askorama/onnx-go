@@ -220,8 +220,8 @@
   }
 
   .MathJax {
-font-size: 1.3em;
-}
+    font-size: 1.3em;
+  }
   video {
     width: 256px;
     height: 256px;
@@ -246,8 +246,6 @@ font-size: 1.3em;
     display: table-cell; 
     vertical-align:middle;
   }
-
-
 }
 
 @media print {

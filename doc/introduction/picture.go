@@ -32,11 +32,14 @@ func processPicture(data string, height, width int) (*image.Gray, error) {
 	}
 	if m.Bounds().Dx() != width && m.Bounds().Dy() != height {
 		// resize
-		// Crop the original image to 300x300px size using the center anchor.
-		croppedX := m.Bounds().Dx() / 3
-		croppedY := m.Bounds().Dy() / 3
-		m = imaging.CropAnchor(m, croppedX, croppedY, imaging.Center)
-		m = imaging.AdjustContrast(m, 20)
+		// Cheating... only process video pictures
+		if width != 28 {
+			// Crop the original image to 300x300px size using the center anchor.
+			croppedX := m.Bounds().Dx() / 3
+			croppedY := m.Bounds().Dy() / 3
+			m = imaging.CropAnchor(m, croppedX, croppedY, imaging.Center)
+			//m = imaging.AdjustContrast(m, 20)
+		}
 
 		m = imaging.Resize(m, height, width, imaging.Lanczos)
 	}
