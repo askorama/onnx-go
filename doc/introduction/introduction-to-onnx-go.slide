@@ -119,7 +119,7 @@ Several libraries exists to do this:
 - Pytorch
 - Gorgonia!
 
-Thos libraries allows to compute the graph, in both directions; so you can use them
+Those libraries allow to compute the graph, in both directions; so you can use them
 to evaluate a "trained" neural network, as well as to train a neural network
 
 * Interoperability
@@ -137,28 +137,31 @@ If it's just a *model* and some *tensors*, can you train the model for me so I c
 
 A representation of a computation graph in protocol buffers.
 
-It is therefore independent of the language. You need to write an Encoder/Decoder in order 
-to read the binary files and create a structure for your target language.
+It is therefore independent of the tools used (Tensorflow, Keras, PyTorch, tvm...).
+
+You need to write an Encoder/Decoder in order to read the binary files and create a structure for the targeted tools.
 
 * ONNX Operators
 
 We've seen that a neural network is composed of *operators* (remember \(\sigma\), \(+\), \(\cdot\),...).
 
-Many operators exists nowadays in the world of machine learning; 
+Many operators exist nowadays in the world of machine learning.
+
 On top of describing the graph, ONNX describes most of the operators in a design document:
 
 .link https://github.com/onnx/onnx/blob/master/docs/Operators.md
 
 * ONNX
 
-So ONNX is a _DSL_ that describes a neural network in term of a computation graph.
+So ONNX have _DSL_ that describes a neural network in term of a computation graph.
 It also describes the mathematical operators and their expected behavior.
 
 An ONNX interpreter should understand the DSL and implement the behavior of the operators.
 
 * Model zoo
 
-The ONNX Model Zoo is a collection of pre-trained models for state-of-the-art models in deep learning, available in the ONNX format.
+The ONNX Model Zoo is a collection of pre-trained models for state-of-the-art models in deep learning.
+There are available in the ONNX format.
 
 .link https://github.com/onnx/models
 
