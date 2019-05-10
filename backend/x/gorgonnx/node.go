@@ -24,6 +24,12 @@ func (n *Node) ID() int64 {
 // SetTensor assign the tensor N to the underlying node
 func (n *Node) SetTensor(t tensor.Tensor) error {
 	n.t = t
+	if n.gorgoniaNode != nil {
+		err := gorgonia.Let(n.gorgoniaNode, t)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
