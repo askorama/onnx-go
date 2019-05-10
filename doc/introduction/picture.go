@@ -8,15 +8,14 @@ import (
 	"fmt"
 	"image"
 	"image/png"
-	"log"
 
 	"github.com/disintegration/imaging"
 	"github.com/vincent-petithory/dataurl"
 )
 
 func displayResult(r results) {
-	fmt.Printf("%v / %2.2f%%\n", r[0].result, r[0].weight*100)
-	fmt.Printf("%v / %2.2f%%\n", r[1].result, r[1].weight*100)
+	fmt.Printf("%v / %2.2f%%\n", r[0].Result, r[0].Weight*100)
+	fmt.Printf("%v / %2.2f%%\n", r[1].Result, r[1].Weight*100)
 }
 
 func processPicture(data string, height, width int) (*image.Gray, error) {
@@ -47,6 +46,5 @@ func processPicture(data string, height, width int) (*image.Gray, error) {
 			imgGray.Pix[i] = gray.Pix[i*4]
 		}
 	}
-	log.Println("image processed")
 	return imgGray, nil
 }

@@ -21,8 +21,8 @@ func classify(input []float32, resultTable []string) results {
 	res := make(results, len(input))
 	for i := 0; i < len(input); i++ {
 		res[i] = result{
-			result: resultTable[i],
-			weight: input[i],
+			Result: resultTable[i],
+			Weight: input[i],
 		}
 	}
 	sort.Sort(sort.Reverse(res))

@@ -53,8 +53,12 @@ video {
         <canvas id="canvas"></canvas>
       </div>
     </div>
+    <label id="infoEmotion1"></label>
+    <label id="infoEmotion11"></label>
     <br>
-    <p id="info">...</p>
+    <label id="infoEmotion2"></label>
+    <label id="infoEmotion21"></label>
+    <br>
 
     <button id="go" class="button is-large is-primary" disabled>submit</button>
 
@@ -90,8 +94,11 @@ video {
           dataType: "json",
           data: JSON.stringify({image: dataURL, model: "emotion"}),
           success: function(data){
-            console.log(data);
-            $( ".info" ).html( data );
+            console.log(data[0]);
+            $("#infoEmotion1").html(data[0].Result);
+            $("#infoEmotion11").html(parseFloat(data[0].Weight*100).toFixed(2)+"%");
+            $("#infoEmotion2").html(data[2].Result);
+            $("#infoEmotion21").html(parseFloat(data[1].Weight*100).toFixed(2)+"%");
           },
           failure: function(errMsg) {
             alert(errMsg);

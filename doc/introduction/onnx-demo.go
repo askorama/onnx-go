@@ -4,7 +4,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -53,8 +52,8 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		res = classify(output, md.table)
 	}
-	fmt.Printf("%v", res)
-	fmt.Fprintf(w, "%v", res)
+	enc := json.NewEncoder(w)
+	enc.Encode(res)
 }
 func modelPostHandler(w http.ResponseWriter, r *http.Request) {
 	// reset the backend and the model

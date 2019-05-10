@@ -33,7 +33,7 @@ html {display:table; width:100%;}
       <canvas style="touch-action: none;" id="canvasMnist" width="280" height="280"></canvas>
     </div>
     <br>
-    <p id="infoMnist">...</p>
+    <p id="infoMnist" style="color:green;font-weigth=900;">...</p>
 
     <button id="gomnist" class="button is-large is-primary" disabled>submit</button>
     <button onclick="reset()">Reset</button>
@@ -83,7 +83,7 @@ html {display:table; width:100%;}
           data: JSON.stringify({image: dataURL, model: "mnist"}),
           success: function(data){
             console.log(data);
-            $( ".infoMnist" ).html( data );
+            $( "#infoMnist" ).html( data[0].Result );
           },
           failure: function(errMsg) {
             alert(errMsg);
