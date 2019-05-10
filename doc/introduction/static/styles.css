@@ -205,6 +205,49 @@
     -moz-transform: translate(2260px);
     -webkit-transform: translate3d(2260px, 0, 0);
   }
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  html, body {height:100%;}
+
+  #canvas {
+    width: 256px;
+    height: 256px;
+    object-fit: cover;
+    object-position: center;
+    background-color: black;
+  }
+
+  .MathJax {
+font-size: 1.3em;
+}
+  video {
+    width: 256px;
+    height: 256px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .container div {
+    display: inline-block;
+    background-color: #000000;
+    height: auto;
+  }
+  .camera {
+    width: 256px;
+    height: 256px;
+    overflow: hidden;
+  }
+  .demo-content {
+    background-color: #AAAAAA;
+    margin: 0;
+    text-align: center;
+    display: table-cell; 
+    vertical-align:middle;
+  }
+
+
 }
 
 @media print {
@@ -240,8 +283,8 @@
 
   /* Add explicit links */
   a:link:after, a:visited:after {
-   content: " (" attr(href) ") ";
-   font-size: 50%;
+    content: " (" attr(href) ") ";
+    font-size: 50%;
   }
 
   #help {

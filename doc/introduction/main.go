@@ -7,7 +7,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go/build"
 	"log"
 	"net"
 	"net/http"
@@ -51,13 +50,11 @@ func main() {
 	}
 
 	if *basePath == "" {
-		p, err := build.Default.Import(basePkg, "", build.FindOnly)
+		pwd, err := os.Getwd()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Couldn't find gopresent files: %v\n", err)
-			fmt.Fprintf(os.Stderr, basePathMessage, basePkg)
-			os.Exit(1)
+			log.Fatalf("Couldn't get pwd: %v\n", err)
 		}
-		*basePath = p.Dir
+		*basePath = pwd
 	}
 	err := initTemplates(*basePath)
 	if err != nil {
