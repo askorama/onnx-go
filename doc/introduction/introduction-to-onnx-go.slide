@@ -255,7 +255,12 @@ Having 10 taggers for each image enables researchers to estimate an emotion prob
 
 * Conclusion
 
-- Get involve, nobody is a nobody
-- Let's make programming with neural network fun again!
+- Neural Network can now be used like any other regular library.
+- Go's self contained binary makes it easy to run model at scale.
+- Let the data-scientist do their job and play with data, and let the developer have fun with it!
+
+
+> Get involve, nobody is a nobody
+> Let's make programming with neural network fun again!
 
 
