@@ -79,9 +79,31 @@ A simple example is a black and white picture. It can easily be represented with
 of a pixel.
 
 If you want to add gray scale, make it a matrix of value in 0..255 
+
+$$\begin{pmatrix}0 & ... & 24\\\ 33 & ... & 204\\\ ... & ... & ... \\\ 125 & ... & 201\end{pmatrix}$$
+
+* 
+
 If you want to add color, turn it into 3 matrices (R,G,B).
 
+.image assets/rgb-matrix-fs8.png
+
 Let's call those multidimentional arrays _tensors_ 
+
+* Output
+
+Output is also an array of value, that can be interpreted by a human:
+
+Ex, one-hot-encoded value for the alphabet:
+
+- [1 0 0 ... 0] = 'a'
+- [0 1 0 ... 0] = 'b'
+- ...
+- [0 0 0 ... 1] = 'z'
+
+or by probablility:
+
+- [0.98 0.02 0 ... 0] = 98% probability that it is an 'a'
 
 * Conlusion about neural network
 
@@ -133,6 +155,12 @@ So ONNX is a _DSL_ that describes a neural network in term of a computation grap
 It also describes the mathematical operators and their expected behavior.
 
 An ONNX interpreter should understand the DSL and implement the behavior of the operators.
+
+* Model zoo
+
+The ONNX Model Zoo is a collection of pre-trained models for state-of-the-art models in deep learning, available in the ONNX format.
+
+.link https://github.com/onnx/models
 
 * About onnx-go
 
@@ -245,6 +273,7 @@ In FER+, each image has been labeled by 10 crowd-sourced taggers, which provide 
 Having 10 taggers for each image enables researchers to estimate an emotion probability distribution per face. This allows constructing algorithms that produce statistical distributions or multi-label outputs instead of the conventional single-label output.
 
 .link https://arxiv.org/abs/1608.01041
+.link https://github.com/onnx/models/tree/master/emotion_ferplus
 
 .image https://raw.githubusercontent.com/Microsoft/FERPlus/master/FER+vsFER.png
 
