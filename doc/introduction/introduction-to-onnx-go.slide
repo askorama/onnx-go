@@ -174,19 +174,65 @@ It allows to read the binary file (encoded by another framework/language) and re
 
 * onnx-go's target
 
-* 
+* Vision statement
+
+.code ../../README.md /For the Go/,/\./
 
 .background assets/slide9-fs8.png
 
-* Receiver of the Graph
+* onnx-go's interface
 
-`onnx-go` does not impose the receiver. It's just a parser.
+* The Model
+
+.link https://godoc.org/github.com/owulveryck/onnx-go
+
+The "entrypoint" of onnx-go is the `Model`; 
+
+It's the receiver of the computation graph (the neural network).
+
+.code ../../decoder.go /type Model/,/}/
+
+* onnx-go decoding
+
+The `Model` is compatible with the interface encoding.BinaryUnmarshaler of Go's std library:
+
+.code ../../decoder.go /func.*UnmarshalBinary/,/{/
+
+So to decode a `model.onnx` file, you simply need to create a Model and call this method.
+
+* Model creation
+
+The model is a "wrapper" around an actual graph receiver that should implement the gonum's Graph
+interface. This structure is itself an interface called `Backend`.
+
+To create the Model, you need to assign it a `Backend`.
+
+.code ../../decoder.go /func NewModel/,/{/
+
+.link https://godoc.org/gonum.org/v1/gonum/graph
+
+* Input and output of the Graph
+
+Once the graph has been decoded, you need to set input and get output.
+
+onnx-go provides those convenient methods to do that:
+
+.code ../../io.go /.*SetInput/,/{/
+
+.code ../../io.go /.*GetOutput/,/{/
+
+* onnx-go's backend mechanism
+
+* Backend of the graph
+
+The gonum's Graph is an interface{}. 
+`onnx-go` does not impose the graph receiver. It's just a parser. 
 The receiver implementation can be anything that fullfils the `backend` interface
 
 .code ../../backend.go /type Backend/,/}/ 
 .code ../../backend.go /type OperationCarrier/,/}/ 
 
-.link https://godoc.org/gonum.org/v1/gonum/graph
+This gives the capacity to use different execution engines (Tensorflow, Gorgonia,...)
 
 * Carrying data
 
