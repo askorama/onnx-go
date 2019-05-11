@@ -1,0 +1,93 @@
+<input id="image-file" type="file"  accept=".onnx" onchange="uploadModel(this)" >
+<br>
+<div class="container">
+  <div class="camera">
+    <video autoplay id="video"></video>
+  </div>
+  <div class="camera">
+    <canvas id="canvas"></canvas>
+  </div>
+</div>
+<label id="infoEmotion1"></label>
+<label id="infoEmotion11"></label>
+<br>
+<label id="infoEmotion2"></label>
+<label id="infoEmotion21"></label>
+<br>
+
+<button id="go" class="button is-large is-primary" disabled>submit</button>
+
+
+<!--
+  <script src="demos/htdocs/js/jquery-3.4.0.min.js"></script>
+  -->
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const video = document.getElementById('video');
+
+    function activateVideo() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+          video.srcObject = stream;
+          video.play();
+        });
+        video.onloadedmetadata = () => {
+          canvas.width = 480;
+          canvas.height = 480;
+        }
+      }
+    }
+
+    document.getElementById('go').addEventListener('click', () => {
+      context.drawImage(video, -80, 0, 640  , 480);
+
+      const dataURL = canvas.toDataURL();
+      $.ajax({
+        type: 'POST',
+        url: '/image',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({image: dataURL, model: "emotion"}),
+        success: function(data){
+          console.log(data[0]);
+          $("#infoEmotion1").html(data[0].Result);
+          $("#infoEmotion11").html(parseFloat(data[0].Weight*100).toFixed(2)+"%");
+          $("#infoEmotion2").html(data[1].Result);
+          $("#infoEmotion21").html(parseFloat(data[1].Weight*100).toFixed(2)+"%");
+          emotion = data[0].Result;
+          if(data[0].Result == 'neutral') {
+            emotion = data[1].Result;
+          }
+          msg.text = emotion;
+          speechSynthesis.speak(msg);
+        },
+        failure: function(errMsg) {
+          alert(errMsg);
+        }
+      })
+    });
+    async function uploadModel(e)
+    {
+      let name = { modelname:'emotionfer+' };
+      let formData = new FormData();
+      let model = e.files[0];
+
+      formData.append("model", model);
+      formData.append("name", JSON.stringify(name));
+
+      try {
+        //let r = await fetch('/model', {method: "POST", body: formData});
+        let r = await fetch('/model', {method: "POST", body: e.files[0]});
+        document.getElementById("go").disabled = false;
+        activateVideo();
+
+
+        console.log('HTTP response code:',r.status);
+      } catch(e) {
+        console.log('Huston we have problem...:', e);
+      }
+
+    }
+  </script>
