@@ -1,6 +1,7 @@
 package gorgonnx
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/owulveryck/onnx-go"
@@ -41,7 +42,14 @@ func (g *Graph) Run() error {
 	}
 	// Now sets the output tensor
 	root := g.Node(g.roots[0]).(*Node)
-	root.t = root.gorgoniaNode.Value().(tensor.Tensor)
+	var ok bool
+	if root.gorgoniaNode == nil {
+		return errors.New("root node is nil")
+	}
+	root.t, ok = root.gorgoniaNode.Value().(tensor.Tensor)
+	if !ok {
+		return errors.New("root node is not a tensor")
+	}
 	return nil
 }
 
