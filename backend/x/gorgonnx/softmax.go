@@ -58,7 +58,7 @@ func (s *softmax) apply(g *Graph, n *Node) error {
 			if err != nil {
 				return err
 			}
-			n.gorgoniaNode, err = gorgonia.Div(a, b)
+			n.gorgoniaNode, err = gorgonia.HadamardDiv(a, b)
 			return err
 		}
 		return err
