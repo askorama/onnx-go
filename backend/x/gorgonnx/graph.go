@@ -3,7 +3,6 @@ package gorgonnx
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
@@ -37,8 +36,6 @@ func (g *Graph) Run() error {
 		}
 	}
 	t := gorgonia.NewTapeMachine(g.exprgraph)
-	log.Println(g)
-	log.Println(g.exprgraph)
 	err := t.RunAll()
 	if err != nil {
 		return err
