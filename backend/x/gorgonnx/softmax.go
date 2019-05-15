@@ -22,7 +22,7 @@ func (s *softmax) apply(g *Graph, n *Node) error {
 		return err
 	}
 	a := children[0].gorgoniaNode
-	var reshaped *gorgonia.Node
+	var max, reshaped *gorgonia.Node
 	if len(a.Shape()) > 2 {
 		if s.axis > len(a.Shape()) {
 			return errors.New("softmax cannot be applied on an axis > len(shape()) of the input")
@@ -43,8 +43,19 @@ func (s *softmax) apply(g *Graph, n *Node) error {
 	} else {
 		reshaped = a
 	}
+	if max, err = gorgonia.Max(reshaped); err != nil {
+		return err
+	}
+	a2, b2, err := gorgonia.Broadcast(reshaped, max, gorgonia.NewBroadcastPattern(nil, []byte{0, 1}))
+	if err != nil {
+		return err
+	}
+	output, err := gorgonia.Sub(a2, b2)
+	if err != nil {
+		return err
+	}
 	var exp, sum *gorgonia.Node
-	if exp, err = gorgonia.Exp(reshaped); err == nil {
+	if exp, err = gorgonia.Exp(output); err == nil {
 		axis := 1
 		if exp.IsScalar() {
 			axis = 0
