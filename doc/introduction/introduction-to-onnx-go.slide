@@ -1,0 +1,343 @@
+ONNX-Go
+Neural network made easy
+00:00 14 May 2019
+
+Olivier Wulveryck
+Gopher
+olivier.wulveryck@gmail.com
+https://github.com/owulveryck/onnx-go
+@owulveryck
+
+* 
+
+.background assets/slide2-fs8.png
+
+* 
+
+.background assets/slide3-fs8.png
+
+* 
+
+.background assets/slide4-fs8.png
+
+* About Neural Networks
+
+Neural networks are equations.
+
+There can be seen as a "complex" function that apply several operations to an input \(X\) 
+to give the output \(Y\) such as:
+
+$$f(X) = Y$$
+
+* Neural networks' typical expressions
+
+A typical mathematical expression is in the form:
+
+$$f(X) = \sigma(W \cdot X+b)$$
+
+Where
+
+- \(\cdot\) and \(+\) are linear transformation and
+- \(\sigma\) is a non-linear transformation
+
+This equation is what we call a *model*
+
+* What are \(W\) and \(B\)?
+
+\(W\) and \(B\) are the _learnable_ parameters.
+
+The goal of a machine learning algorithm is to find _by_ _itself_ the correct values of \(W\) and \(B\) to make the equation \(f(X) = Y\) true for several *known* *values* of \(X\) and \(Y\).
+
+This is the training phase.
+
+* Evaluation phase (aka test phase)
+
+Once those values are found, it's possible to use the *model* and the *learnable* to *predict* the output for a new value of \(X\).
+
+* Equations are graphs
+
+Let's transform this equation:
+$$f(X) = \sigma(W \cdot X+b)$$
+
+into something mode "functional":
+$$f(X) = \sigma(add(mul(W,X),B))$$
+
+* Equations are graphs
+
+This equation can easily be represented into a graph:
+
+.image assets/graph1.png
+
+And depending on the phase (testing or training), it is evaluated in a way or the other.
+
+* About the values
+
+To use a neural network onto an asset (a picture for example), the assets must be encoded into a numerical representation.
+
+A simple example is a black and white picture. It can easily be represented with a "matrix" of 0 and 1 where each element is the color
+of a pixel.
+
+If you want to add gray scale, make it a matrix of value in 0..255 
+
+$$\begin{pmatrix}0 & ... & 24\\\ 33 & ... & 204\\\ ... & ... & ... \\\ 125 & ... & 201\end{pmatrix}$$
+
+* 
+
+If you want to add color, turn it into 3 matrices (R,G,B).
+
+.image assets/rgb-matrix-fs8.png
+
+Let's call those multidimentional arrays _tensors_ 
+
+* Output
+
+Output is also an array of value, that can be interpreted by a human:
+
+Ex, one-hot-encoded value for the alphabet:
+
+- [1 0 0 ... 0] = 'a'
+- [0 1 0 ... 0] = 'b'
+- ...
+- [0 0 0 ... 1] = 'z'
+
+or by probablility:
+
+- [0.98 0.02 0 ... 0] = 98% probability that it is an 'a'
+
+* Conlusion about neural network
+
+Neural networks are *Graphs* and *values*. The values are multidimentional arrays called _tensors_.
+
+* How do you "code" neural networks?
+
+To use a neural network, you need to encode the graph into a language and to compute it.
+Several libraries exists to do this:
+
+- Tensorflow
+- Caffe
+- Pytorch
+- Gorgonia!
+
+Those libraries allow to compute the graph, in both directions; so you can use them
+to evaluate a "trained" neural network, as well as to train a neural network
+
+* Interoperability
+
+If it's just a *model* and some *tensors*, can you train the model for me so I can use it?
+
+
+* About ONNX
+
+* 
+
+.background assets/slide8-fs8.png
+
+* ONNX briefly
+
+A representation of a computation graph in protocol buffers.
+
+It is therefore independent of the tools used (Tensorflow, Keras, PyTorch, tvm...).
+
+You need to write an Encoder/Decoder in order to read the binary files and create a structure for the targeted tools.
+
+* ONNX Operators
+
+We've seen that a neural network is composed of *operators* (remember \(\sigma\), \(+\), \(\cdot\),...).
+
+Many operators exist nowadays in the world of machine learning.
+
+On top of describing the graph, ONNX describes most of the operators in a design document:
+
+.link https://github.com/onnx/onnx/blob/master/docs/Operators.md
+
+* ONNX
+
+So ONNX have _DSL_ that describes a neural network in term of a computation graph.
+It also describes the mathematical operators and their expected behavior.
+
+An ONNX interpreter should understand the DSL and implement the behavior of the operators.
+
+* Model zoo
+
+The ONNX Model Zoo is a collection of pre-trained models for state-of-the-art models in deep learning.
+There are available in the ONNX format.
+
+.link https://github.com/onnx/models
+
+* About onnx-go
+
+* What is it exactly?
+
+A package that unmarshal a binary representation of a graph into a Go structure
+
+It allows to read the binary file (encoded by another framework/language) and recreates a Graph in a Go structure.
+
+* onnx-go's target
+
+* Vision statement
+
+.code ../../README.md /For the Go/,/\./
+
+.background assets/slide9-fs8.png
+
+* onnx-go's interface
+
+* The Model
+
+.link https://godoc.org/github.com/owulveryck/onnx-go
+
+The "entrypoint" of onnx-go is the `Model`; 
+
+It's the receiver of the computation graph (the neural network).
+
+.code ../../decoder.go /type Model/,/}/
+
+* onnx-go decoding
+
+The `Model` is compatible with the interface encoding.BinaryUnmarshaler of Go's std library:
+
+.code ../../decoder.go /func.*UnmarshalBinary/,/{/
+
+So to decode a `model.onnx` file, you simply need to create a Model and call this method.
+
+* Model creation
+
+The model is a "wrapper" around an actual graph receiver that should implement the gonum's Graph
+interface. This structure is itself an interface called `Backend`.
+
+To create the Model, you need to assign it a `Backend`.
+
+.code ../../decoder.go /func NewModel/,/{/
+
+.link https://godoc.org/gonum.org/v1/gonum/graph
+
+* Input and output of the Graph
+
+Once the graph has been decoded, you need to set input and get output.
+
+onnx-go provides those convenient methods to do that:
+
+.code ../../io.go /.*SetInput/,/{/
+
+.code ../../io.go /.*GetOutput/,/{/
+
+* onnx-go's backend mechanism
+
+* Backend of the graph
+
+The gonum's Graph is an interface{}. 
+`onnx-go` does not impose the graph receiver. It's just a parser. 
+The receiver implementation can be anything that fullfils the `backend` interface
+
+.code ../../backend.go /type Backend/,/}/ 
+.code ../../backend.go /type OperationCarrier/,/}/ 
+
+This gives the capacity to use different execution engines (Tensorflow, Gorgonia,...)
+
+* Carrying data
+
+The backend may decide or not to carry data on its node.
+It's not mandatory, as it let the flexibility to just play with the structure of the graph.
+
+To carry data, the node generated by the graph of the backend should fulfil the interface
+
+.code ../../node.go /type DataCarrier/,/}/
+
+This links onnx-go with the `tensor` package of Gorgonia. It's one of its only dependencies.
+
+* Existing backend: Gorgonia
+
+Gorgonia is a library that helps facilitate machine learning in Go. Write and evaluate mathematical equations involving multidimensional arrays easily. If this sounds like Theano or TensorFlow, it's because the idea is quite similar. Specifically, the library is pretty low-level, like Theano, but has higher goals like Tensorflow.
+
+.link gorgonia.org/gorgonia
+
+* 
+
+Gorgonia is "compatible" with onnx-go expected backend through the `gorgonnx` package.
+
+.code ../../backend/x/gorgonnx/graph.go /package/,/$/
+.code ../../backend/x/gorgonnx/graph.go /type Graph/,/}/
+.code ../../backend/x/gorgonnx/graph.go /func/,/}/
+
+* 
+
+.background assets/slide10-fs8.png
+
+* Tests and coverage
+
+A package `testbackend` is also part of the `onnx-go` project; 
+it allows to test a backend against the functional tests of the onnx-project.
+
+A package `testbackend` is also part of the `onnx-go` project; 
+it allows to test a backend against the functional tests of the onnx-project.
+
+.code ../../backend/x/gorgonnx/onnx_test.go /package/,/\)/
+
+* The CODE!
+
+* Example
+
+* Init the model
+
+- First, you choose and instanciate a backend;
+- Then you instanciate the onnx-go top structure and associate it the backend
+- And then you can unmarshal your `model.onnx` file into the backend:
+
+.code -numbers onnx-demo.go /START_MODEL OMIT/,/END_MODEL OMIT/
+
+*Warning* this reads the model but does not execute it
+
+* Evaluation phase
+
+.code -numbers process.go /START_PROCESS OMIT/,/END_PROCESS OMIT/
+
+* Demo time
+
+.background assets/demo-time-fs8.png
+
+* MNIST
+
+This model predicts handwritten digits using a convolutional neural network (CNN).
+
+*Dataset*
+
+The model has been trained on the popular MNIST dataset.
+
+*Source*
+
+The model is trained in CNTK following the tutorial CNTK 103D: Convolutional Neural Network with MNIST. Note that the specific architecture used is the model with alternating convolution and max pooling layers (found under the "Solution" section at the end of the tutorial).
+
+.link https://github.com/onnx/models/tree/master/mnist model from the zoo
+
+* MNIST
+
+.background assets/demo-fs8.png
+.html demos/htdocs/mnist/index.html
+
+* Emotion fer+
+
+The FER+ annotations provide a set of new labels for the standard Emotion FER dataset. 
+In FER+, each image has been labeled by 10 crowd-sourced taggers, which provide better quality ground truth for still image emotion than the original FER labels.
+Having 10 taggers for each image enables researchers to estimate an emotion probability distribution per face. This allows constructing algorithms that produce statistical distributions or multi-label outputs instead of the conventional single-label output.
+
+.link https://arxiv.org/abs/1608.01041
+.link https://github.com/onnx/models/tree/master/emotion_ferplus
+
+.image https://raw.githubusercontent.com/Microsoft/FERPlus/master/FER+vsFER.png
+
+* Emotion fer+
+
+.background assets/demo-fs8.png
+.html demos/htdocs/emotion/index.html
+
+* Conclusion
+
+- Neural Network can now be used like any other regular library.
+- Go's self contained binary makes it easy to run model at scale.
+- Let the data-scientist do their job and play with data, and let the developer have fun with it!
+
+
+> Get involve, nobody is a nobody
+> Let's make programming with neural network fun again!
+
+
