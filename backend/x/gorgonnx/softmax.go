@@ -43,8 +43,34 @@ func (s *softmax) apply(g *Graph, n *Node) error {
 	} else {
 		reshaped = a
 	}
+	var output *gorgonia.Node
+	ax := 1
+	if reshaped.Shape()[0] == 1 {
+		ax = 0
+	}
+
+	m1, err := gorgonia.Max(reshaped, ax)
+	if err != nil {
+		return err
+	}
+
+	if reshaped.Shape()[0] == 1 {
+		output, err = gorgonia.Sub(reshaped, m1)
+		if err != nil {
+			return err
+		}
+	} else {
+		a1, b1, err := gorgonia.Broadcast(reshaped, m1, gorgonia.NewBroadcastPattern(nil, []byte{1}))
+		if err != nil {
+			return err
+		}
+		output, err = gorgonia.Sub(a1, b1)
+		if err != nil {
+			return err
+		}
+	}
 	var exp, sum *gorgonia.Node
-	if exp, err = gorgonia.Exp(reshaped); err == nil {
+	if exp, err = gorgonia.Exp(output); err == nil {
 		axis := 1
 		if exp.IsScalar() {
 			axis = 0
