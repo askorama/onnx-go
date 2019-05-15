@@ -22,9 +22,34 @@ func (s *softmax) apply(g *Graph, n *Node) error {
 		return err
 	}
 	a := children[0].gorgoniaNode
+	var reshaped *gorgonia.Node
+	if len(a.Shape()) > 2 {
+		if s.axis > len(a.Shape()) {
+			return errors.New("softmax cannot be applied on an axis > len(shape()) of the input")
+		}
+		row := 1
+		col := 1
+		for i, shape := range a.Shape() {
+			if i < s.axis {
+				row = row * shape
+			} else {
+				col = col * shape
+			}
+		}
+		reshaped, err = gorgonia.Reshape(a, []int{row, col})
+		if err != nil {
+			return err
+		}
+	} else {
+		reshaped = a
+	}
 	var exp, sum *gorgonia.Node
-	if exp, err = gorgonia.Exp(a); err == nil {
-		if sum, err = gorgonia.Sum(exp, s.axis); err == nil {
+	if exp, err = gorgonia.Exp(reshaped); err == nil {
+		axis := 1
+		if exp.IsScalar() {
+			axis = 0
+		}
+		if sum, err = gorgonia.Sum(exp, axis); err == nil {
 			if sum.IsScalar() {
 				n.gorgoniaNode, err = gorgonia.HadamardDiv(exp, sum)
 				return err
