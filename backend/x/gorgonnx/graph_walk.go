@@ -31,6 +31,9 @@ func (g *Graph) walk(node int64) error {
 	// for each node, if nil, and if hold an operation, add the graph
 	for i := len(nodes) - 1; i >= 0; i-- {
 		n := g.g.Node(nodes[i]).(*Node)
+		if n.t == nil && n.operation == nil {
+			return fmt.Errorf("node %v is not a tensor nor an operation", n)
+		}
 		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
 			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
 		}
