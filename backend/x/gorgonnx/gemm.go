@@ -91,9 +91,13 @@ func (m *gemm) apply(g *Graph, n *Node) error {
 			return err
 		}
 	} else {
-		return &onnx.ErrNotImplemented{
-			Operator: "Gemm",
-			Message:  "tensor C should be unidirectional broadcastable to tensor A * B",
+		alphaABB, betaCB, err := ggnBroadcast(alphaAB, betaC)
+		if err != nil {
+			return err
+		}
+		n.gorgoniaNode, err = gorgonia.Add(alphaABB, betaCB)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
