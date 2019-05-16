@@ -11,7 +11,11 @@ import (
 type reshape struct{}
 
 func init() {
-	register("Reshape", &reshape{})
+	register("Reshape", newReshape)
+}
+
+func newReshape() operator {
+	return &reshape{}
 }
 
 func (a *reshape) apply(g *Graph, n *Node) error {

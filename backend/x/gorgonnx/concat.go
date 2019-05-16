@@ -12,7 +12,11 @@ type concat struct {
 }
 
 func init() {
-	register("Concat", &concat{})
+	register("Concat", newConcat)
+}
+
+func newConcat() operator {
+	return &concat{}
 }
 
 func (a *concat) apply(g *Graph, n *Node) error {

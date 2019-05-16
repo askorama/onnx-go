@@ -9,7 +9,11 @@ import (
 type dropout struct{}
 
 func init() {
-	register("Dropout", &dropout{})
+	register("Dropout", newDropout)
+}
+
+func newDropout() operator {
+	return &dropout{}
 }
 
 func (a *dropout) apply(g *Graph, n *Node) error {

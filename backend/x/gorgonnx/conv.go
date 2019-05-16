@@ -9,7 +9,11 @@ import (
 )
 
 func init() {
-	register("Conv", &conv{})
+	register("Conv", newConv)
+}
+
+func newConv() operator {
+	return &conv{}
 }
 
 // conv to be compatible with:
