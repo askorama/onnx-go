@@ -8,7 +8,11 @@ import (
 type hadamardProd struct{}
 
 func init() {
-	register("Mul", &hadamardProd{})
+	register("Mul", newhadamardProd)
+}
+
+func newhadamardProd() operator {
+	return &hadamardProd{}
 }
 
 func (a *hadamardProd) apply(g *Graph, n *Node) error {
@@ -39,7 +43,11 @@ func (a *hadamardProd) init(o onnx.Operation) error {
 type hadamardDiv struct{}
 
 func init() {
-	register("Div", &hadamardDiv{})
+	register("Div", newhadamardDiv)
+}
+
+func newhadamardDiv() operator {
+	return &hadamardDiv{}
 }
 
 func (a *hadamardDiv) apply(g *Graph, n *Node) error {
@@ -70,7 +78,11 @@ func (a *hadamardDiv) init(o onnx.Operation) error {
 type sub struct{}
 
 func init() {
-	register("Sub", &sub{})
+	register("Sub", newsub)
+}
+
+func newsub() operator {
+	return &sub{}
 }
 
 func (a *sub) apply(g *Graph, n *Node) error {
@@ -101,7 +113,11 @@ func (a *sub) init(o onnx.Operation) error {
 type add struct{}
 
 func init() {
-	register("Add", &add{})
+	register("Add", newadd)
+}
+
+func newadd() operator {
+	return &add{}
 }
 
 func (a *add) apply(g *Graph, n *Node) error {
@@ -132,7 +148,11 @@ func (a *add) init(o onnx.Operation) error {
 type abs struct{}
 
 func init() {
-	register("Abs", &abs{})
+	register("Abs", newabs)
+}
+
+func newabs() operator {
+	return &abs{}
 }
 
 func (a *abs) apply(g *Graph, n *Node) error {
@@ -157,7 +177,11 @@ func (a *abs) init(o onnx.Operation) error {
 type sign struct{}
 
 func init() {
-	register("Sign", &sign{})
+	register("Sign", newsign)
+}
+
+func newsign() operator {
+	return &sign{}
 }
 
 func (a *sign) apply(g *Graph, n *Node) error {
@@ -182,7 +206,11 @@ func (a *sign) init(o onnx.Operation) error {
 type ceil struct{}
 
 func init() {
-	register("Ceil", &ceil{})
+	register("Ceil", newceil)
+}
+
+func newceil() operator {
+	return &ceil{}
 }
 
 func (a *ceil) apply(g *Graph, n *Node) error {
@@ -207,7 +235,11 @@ func (a *ceil) init(o onnx.Operation) error {
 type floor struct{}
 
 func init() {
-	register("Floor", &floor{})
+	register("Floor", newfloor)
+}
+
+func newfloor() operator {
+	return &floor{}
 }
 
 func (a *floor) apply(g *Graph, n *Node) error {
@@ -232,7 +264,11 @@ func (a *floor) init(o onnx.Operation) error {
 type sin struct{}
 
 func init() {
-	register("Sin", &sin{})
+	register("Sin", newsin)
+}
+
+func newsin() operator {
+	return &sin{}
 }
 
 func (a *sin) apply(g *Graph, n *Node) error {
@@ -257,7 +293,11 @@ func (a *sin) init(o onnx.Operation) error {
 type cos struct{}
 
 func init() {
-	register("Cos", &cos{})
+	register("Cos", newcos)
+}
+
+func newcos() operator {
+	return &cos{}
 }
 
 func (a *cos) apply(g *Graph, n *Node) error {
@@ -282,7 +322,11 @@ func (a *cos) init(o onnx.Operation) error {
 type exp struct{}
 
 func init() {
-	register("Exp", &exp{})
+	register("Exp", newexp)
+}
+
+func newexp() operator {
+	return &exp{}
 }
 
 func (a *exp) apply(g *Graph, n *Node) error {
@@ -307,7 +351,11 @@ func (a *exp) init(o onnx.Operation) error {
 type logarithm struct{}
 
 func init() {
-	register("Log", &logarithm{})
+	register("Log", newlogarithm)
+}
+
+func newlogarithm() operator {
+	return &logarithm{}
 }
 
 func (a *logarithm) apply(g *Graph, n *Node) error {
@@ -332,7 +380,11 @@ func (a *logarithm) init(o onnx.Operation) error {
 type log2 struct{}
 
 func init() {
-	register("Log2", &log2{})
+	register("Log2", newlog2)
+}
+
+func newlog2() operator {
+	return &log2{}
 }
 
 func (a *log2) apply(g *Graph, n *Node) error {
@@ -357,7 +409,11 @@ func (a *log2) init(o onnx.Operation) error {
 type relu struct{}
 
 func init() {
-	register("Relu", &relu{})
+	register("Relu", newrelu)
+}
+
+func newrelu() operator {
+	return &relu{}
 }
 
 func (a *relu) apply(g *Graph, n *Node) error {
@@ -382,7 +438,11 @@ func (a *relu) init(o onnx.Operation) error {
 type neg struct{}
 
 func init() {
-	register("Neg", &neg{})
+	register("Neg", newneg)
+}
+
+func newneg() operator {
+	return &neg{}
 }
 
 func (a *neg) apply(g *Graph, n *Node) error {
@@ -407,7 +467,11 @@ func (a *neg) init(o onnx.Operation) error {
 type square struct{}
 
 func init() {
-	register("Square", &square{})
+	register("Square", newsquare)
+}
+
+func newsquare() operator {
+	return &square{}
 }
 
 func (a *square) apply(g *Graph, n *Node) error {
@@ -432,7 +496,11 @@ func (a *square) init(o onnx.Operation) error {
 type sqrt struct{}
 
 func init() {
-	register("Sqrt", &sqrt{})
+	register("Sqrt", newsqrt)
+}
+
+func newsqrt() operator {
+	return &sqrt{}
 }
 
 func (a *sqrt) apply(g *Graph, n *Node) error {
@@ -457,7 +525,11 @@ func (a *sqrt) init(o onnx.Operation) error {
 type inverse struct{}
 
 func init() {
-	register("Inverse", &inverse{})
+	register("Inverse", newinverse)
+}
+
+func newinverse() operator {
+	return &inverse{}
 }
 
 func (a *inverse) apply(g *Graph, n *Node) error {
@@ -482,7 +554,11 @@ func (a *inverse) init(o onnx.Operation) error {
 type cube struct{}
 
 func init() {
-	register("Cube", &cube{})
+	register("Cube", newcube)
+}
+
+func newcube() operator {
+	return &cube{}
 }
 
 func (a *cube) apply(g *Graph, n *Node) error {
@@ -507,7 +583,11 @@ func (a *cube) init(o onnx.Operation) error {
 type tanh struct{}
 
 func init() {
-	register("Tanh", &tanh{})
+	register("Tanh", newtanh)
+}
+
+func newtanh() operator {
+	return &tanh{}
 }
 
 func (a *tanh) apply(g *Graph, n *Node) error {
@@ -532,7 +612,11 @@ func (a *tanh) init(o onnx.Operation) error {
 type sigmoid struct{}
 
 func init() {
-	register("Sigmoid", &sigmoid{})
+	register("Sigmoid", newsigmoid)
+}
+
+func newsigmoid() operator {
+	return &sigmoid{}
 }
 
 func (a *sigmoid) apply(g *Graph, n *Node) error {
@@ -557,7 +641,11 @@ func (a *sigmoid) init(o onnx.Operation) error {
 type log1p struct{}
 
 func init() {
-	register("Log1p", &log1p{})
+	register("Log1p", newlog1p)
+}
+
+func newlog1p() operator {
+	return &log1p{}
 }
 
 func (a *log1p) apply(g *Graph, n *Node) error {
@@ -582,7 +670,11 @@ func (a *log1p) init(o onnx.Operation) error {
 type expm1 struct{}
 
 func init() {
-	register("Expm1", &expm1{})
+	register("Expm1", newexpm1)
+}
+
+func newexpm1() operator {
+	return &expm1{}
 }
 
 func (a *expm1) apply(g *Graph, n *Node) error {
@@ -607,7 +699,11 @@ func (a *expm1) init(o onnx.Operation) error {
 type softplus struct{}
 
 func init() {
-	register("Softplus", &softplus{})
+	register("Softplus", newsoftplus)
+}
+
+func newsoftplus() operator {
+	return &softplus{}
 }
 
 func (a *softplus) apply(g *Graph, n *Node) error {

@@ -7,7 +7,11 @@ import (
 )
 
 func init() {
-	register("MaxPool", &maxpool{})
+	register("MaxPool", newMaxpool)
+}
+
+func newMaxpool() operator {
+	return &maxpool{}
 }
 
 // maxpool to be compatible with:

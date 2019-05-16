@@ -12,7 +12,11 @@ type stableSoftmax struct {
 }
 
 func init() {
-	register("Softmax", &stableSoftmax{})
+	register("Softmax", newStableSoftmax)
+}
+
+func newStableSoftmax() operator {
+	return &stableSoftmax{}
 }
 
 func (s *stableSoftmax) apply(g *Graph, n *Node) error {

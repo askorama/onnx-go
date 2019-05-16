@@ -17,7 +17,11 @@ const opTemplate = `
 type {{ .GorgonnxOp }} struct{}
 
 func init() {
-	register("{{ .ONNXOpType }}", &{{ .GorgonnxOp }}{})
+	register("{{ .ONNXOpType }}", new{{ .GorgonnxOp }})
+}
+
+func new{{ .GorgonnxOp }}() operator {
+	return &{{ .GorgonnxOp }}{}
 }
 
 func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
