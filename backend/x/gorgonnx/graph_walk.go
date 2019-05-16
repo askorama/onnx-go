@@ -56,12 +56,14 @@ func (g *Graph) applyOperation(n *Node) error {
 		return fmt.Errorf("unsupported case: node is already in the exprgraph")
 	}
 	var op operator
+	var opC func() operator
 	var ok bool
-	if op, ok = operators[n.operation.Name]; !ok {
+	if opC, ok = operators[n.operation.Name]; !ok {
 		return &onnx.ErrNotImplemented{
 			Operator: n.operation.Name,
 		}
 	}
+	op = opC()
 	err := op.init(*n.operation)
 	if err != nil {
 		return err
