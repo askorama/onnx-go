@@ -28,7 +28,7 @@ func TestSoftmax_LargeNumbers(t *testing.T) {
 		Name:       "Softmax",
 		Attributes: nil,
 	}, output)
-	s := &softmax{
+	s := &stableSoftmax{
 		axis: 1,
 	}
 	s.apply(g, output.(*Node))

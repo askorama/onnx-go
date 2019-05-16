@@ -7,15 +7,15 @@ import (
 	"gorgonia.org/gorgonia"
 )
 
-type softmax struct {
+type stableSoftmax struct {
 	axis int
 }
 
 func init() {
-	register("Softmax", &softmax{})
+	register("Softmax", &stableSoftmax{})
 }
 
-func (s *softmax) apply(g *Graph, n *Node) error {
+func (s *stableSoftmax) apply(g *Graph, n *Node) error {
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {
@@ -85,7 +85,7 @@ func coerceInto2D(n *gorgonia.Node, k int) (*gorgonia.Node, error) {
 // this function returns an error is the input is not a tensor or a matrix
 func stabilizeNode(n *gorgonia.Node) (*gorgonia.Node, error) {
 	switch {
-	case len(n.Shape()) == 2:
+	case len(n.Shape()) == 2 && n.Shape()[0] != 1:
 		m1, err := gorgonia.Max(n, 1)
 		if err != nil {
 			return nil, err
@@ -96,12 +96,22 @@ func stabilizeNode(n *gorgonia.Node) (*gorgonia.Node, error) {
 			return nil, err
 		}
 		return gorgonia.Sub(a1, b1)
+	case len(n.Shape()) == 2 && n.Shape()[0] == 1:
+		m1, err := gorgonia.Max(n)
+		if err != nil {
+			return nil, err
+		}
+		a1, b1, err := gorgonia.Broadcast(n, m1, gorgonia.NewBroadcastPattern(nil, []byte{1}))
+		if err != nil {
+			return nil, err
+		}
+		return gorgonia.Sub(a1, b1)
 	default:
 		return nil, errors.New("can only stabilize a vector or a matrix")
 	}
 }
 
-func (s *softmax) init(o onnx.Operation) error {
+func (s *stableSoftmax) init(o onnx.Operation) error {
 	axis, ok := o.Attributes["axis"]
 	if !ok {
 		s.axis = 1

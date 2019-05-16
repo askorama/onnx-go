@@ -18,7 +18,7 @@ func TestGraph_badnode(t *testing.T) {
 	g.AddNode(output)
 	g.SetWeightedEdge(g.NewWeightedEdge(output, input, 0))
 	input.(*Node).SetTensor(inputT)
-	s := &softmax{
+	s := &stableSoftmax{
 		axis: 1,
 	}
 	s.apply(g, output.(*Node))
