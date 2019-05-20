@@ -94,6 +94,9 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 	if len(model.Graph.Node) == 0 {
 		return errEmptyGraph
 	}
+	if len(model.Graph.Output) == 0 {
+		return errGraphNoIO
+	}
 	if len(model.Graph.Input)+len(model.Graph.Output) == 0 {
 		return errGraphNoIO
 	}

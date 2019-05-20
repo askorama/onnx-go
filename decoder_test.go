@@ -75,9 +75,14 @@ var tests = []testGraph{
 						Input: []string{"A"},
 					},
 				},
-				Input: []*pb.ValueInfoProto{
+				Output: []*pb.ValueInfoProto{
 					&pb.ValueInfoProto{
 						Name: "A",
+					},
+				},
+				Input: []*pb.ValueInfoProto{
+					&pb.ValueInfoProto{
+						Name: "B",
 					},
 				},
 			},
