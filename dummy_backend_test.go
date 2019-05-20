@@ -16,7 +16,7 @@ type testBackend struct {
 }
 
 // Node of the graph
-type node struct {
+type nodeTest struct {
 	id          int64
 	name        string
 	description string
@@ -26,12 +26,12 @@ type node struct {
 }
 
 // ID to fulfil the graph.Node interface
-func (n *node) ID() int64 {
+func (n *nodeTest) ID() int64 {
 	return n.id
 }
 
 // Attributes it a method to fulfil the encoding/dot package
-func (n *node) Attributes() []encoding.Attribute {
+func (n *nodeTest) Attributes() []encoding.Attribute {
 	var value string
 	value = fmt.Sprintf(`%v`, n.name)
 	if n.opType != "" {
@@ -54,27 +54,27 @@ func (n *node) Attributes() []encoding.Attribute {
 }
 
 // SetName to fulfil the Namer interface
-func (n *node) SetName(desc string) {
+func (n *nodeTest) SetName(desc string) {
 	n.name = desc
 }
 
 // GetName to fulfil the Namer interface
-func (n *node) GetName() string {
+func (n *nodeTest) GetName() string {
 	return n.name
 }
 
 // SetDescription to fulfil the Namer interface
-func (n *node) SetDescription(desc string) {
+func (n *nodeTest) SetDescription(desc string) {
 	n.description = desc
 }
 
 // GetDescription to fulfil the Namer interface
-func (n *node) GetDescription() string {
+func (n *nodeTest) GetDescription() string {
 	return n.description
 }
 
 // ApplyTensor to fulfil the TensorCarrier interface
-func (n *node) ApplyTensor(t tensor.Tensor) error {
+func (n *nodeTest) ApplyTensor(t tensor.Tensor) error {
 	n.value = t
 	return nil
 }
@@ -100,7 +100,7 @@ func (g *testBackend) AddNode(n graph.Node) {
 }
 func (g *testBackend) NewNode() graph.Node {
 	n := g.g.NewNode()
-	return &node{
+	return &nodeTest{
 		id: n.ID(),
 	}
 }
