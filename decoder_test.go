@@ -122,5 +122,36 @@ func graphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 	if itSrc.Len() != itDst.Len() {
 		t.Fatalf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len())
 	}
-	// TODO compare the graphs
+	dstNodes := make(map[string]*nodeTest, itDst.Len())
+	for i := 0; itDst.Next(); i++ {
+		n := itDst.Node().(*nodeTest)
+		dstNodes[n.name] = n
+	}
+	for i := 0; itSrc.Next(); i++ {
+		srcNode := itSrc.Node().(*nodeTest)
+		var dstNode *nodeTest
+		var ok bool
+		if dstNode, ok = dstNodes[srcNode.name]; !ok {
+			t.Fatalf("node %v not found in generated graph", srcNode.name)
+		}
+		assertNodeEqual(t, srcNode, dstNode)
+		srcTo := src.To(srcNode.ID())
+		dstTo := dst.To(dstNode.ID())
+		if srcTo.Len() != dstTo.Len() {
+			t.Fatalf("expected node %v has %v parents but %v only have %v", srcNode, srcTo.Len(), srcTo, dstTo.Len())
+		}
+	}
+}
+
+func assertNodeEqual(t *testing.T, a, b *nodeTest) {
+	if a.opType != b.opType {
+		t.Fatalf("nodes %v and %v differs", a, b)
+	}
+	if a.value != b.value {
+		t.Fatalf("nodes %v and %v differs", a, b)
+	}
+	if a.name != b.name {
+		t.Fatalf("nodes %v and %v differs", a, b)
+	}
+
 }
