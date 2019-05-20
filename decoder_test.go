@@ -3,22 +3,26 @@ package onnx
 import (
 	"testing"
 
-	"github.com/owulveryck/onnx-go"
-	"github.com/owulveryck/onnx-go/backend/simple"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"github.com/stretchr/testify/assert"
 )
 
-type testsGraph struct {
+type testGraph struct {
 	onnx     *pb.ModelProto
-	expected *simple.Graph
+	expected *testBackend
 	err      error
 }
 
-var tests = []testGraph{}
+var tests = []testGraph{
+	testGraph{
+		onnx:     &pb.ModelProto{},
+		expected: &testBackend{},
+		err:      errGraphIsNil,
+	},
+}
 
 func TestDecodeProto(t *testing.T) {
-	m := NewModel(simple.NewSimpleGraph())
+	m := NewModel(newTestBackend())
 	for _, test := range tests {
 		err := m.decodeProto(test.onnx)
 		assert.Equal(t, test.err, err)
@@ -26,6 +30,6 @@ func TestDecodeProto(t *testing.T) {
 	}
 }
 
-func graphEqual(t *testing.T, src, dst onnx.Backend) {
-	// TODO compare teh graphs
+func graphEqual(t *testing.T, src, dst Backend) {
+	// TODO compare the graphs
 }

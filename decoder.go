@@ -88,6 +88,9 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
 	}
 
+	if model.Graph == nil {
+		return errGraphIsNil
+	}
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
 	// OLWU

@@ -12,6 +12,8 @@ var (
 	ErrNoDataFound = errors.New("No data found")
 	// ErrCorruptedData ...
 	ErrCorruptedData = errors.New("Unable to decode data")
+	// errGraphIsNil
+	errGraphIsNil = errors.New("Graph is nil")
 )
 
 // ErrNotImplemented is returned for any operator or attribute
