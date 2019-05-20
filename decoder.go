@@ -88,9 +88,20 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
 	}
 
+	if model.Graph == nil {
+		return errGraphIsNil
+	}
+	if len(model.Graph.Node) == 0 {
+		return errEmptyGraph
+	}
+	if len(model.Graph.Output) == 0 {
+		return errGraphNoIO
+	}
+	if len(model.Graph.Input)+len(model.Graph.Output) == 0 {
+		return errGraphNoIO
+	}
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
-	// OLWU
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
 	dst := m.backend
 	// Well...
