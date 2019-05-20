@@ -1,9 +1,5 @@
 package onnx
 
-// Copyright ©2014 The Gonum Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 import (
 	"math"
 
@@ -16,8 +12,32 @@ const (
 	self, absent = math.MaxFloat64, float64(-1)
 )
 
-// testWeightedDirectedGraph implements a generalized weighted directed graph.
-type testWeightedDirectedGraph struct {
+type edge struct {
+	from   *nodeTest
+	to     *nodeTest
+	weight float64
+}
+
+func newExpectedGraph(e []edge) *testExpectedGraph {
+	g := &testExpectedGraph{
+		nodes: make(map[int64]*nodeTest),
+		from:  make(map[int64]map[int64]graph.WeightedEdge),
+		to:    make(map[int64]map[int64]graph.WeightedEdge),
+	}
+	for _, e := range e {
+		if _, ok := g.nodes[e.from.id]; !ok {
+			g.nodes[e.from.id] = e.from
+		}
+		if _, ok := g.nodes[e.to.id]; !ok {
+			g.nodes[e.to.id] = e.to
+		}
+		g.SetWeightedEdge(g.NewWeightedEdge(e.from, e.to, e.weight))
+	}
+	return g
+}
+
+// testExpectedGraph implements a generalized weighted directed graph.
+type testExpectedGraph struct {
 	nodes map[int64]*nodeTest
 	from  map[int64]map[int64]graph.WeightedEdge
 	to    map[int64]map[int64]graph.WeightedEdge
@@ -25,12 +45,12 @@ type testWeightedDirectedGraph struct {
 
 // Edge returns the edge from u to v if such an edge exists and nil otherwise.
 // The node v must be directly reachable from u as defined by the From method.
-func (g *testWeightedDirectedGraph) Edge(uid, vid int64) graph.Edge {
+func (g *testExpectedGraph) Edge(uid, vid int64) graph.Edge {
 	return g.WeightedEdge(uid, vid)
 }
 
 // Edges returns all the edges in the graph.
-func (g *testWeightedDirectedGraph) Edges() graph.Edges {
+func (g *testExpectedGraph) Edges() graph.Edges {
 	var edges []graph.Edge
 	for _, u := range g.nodes {
 		for _, e := range g.from[u.ID()] {
@@ -44,7 +64,7 @@ func (g *testWeightedDirectedGraph) Edges() graph.Edges {
 }
 
 // From returns all nodes in g that can be reached directly from n.
-func (g *testWeightedDirectedGraph) From(id int64) graph.Nodes {
+func (g *testExpectedGraph) From(id int64) graph.Nodes {
 	if _, ok := g.from[id]; !ok {
 		return graph.Empty
 	}
@@ -63,7 +83,7 @@ func (g *testWeightedDirectedGraph) From(id int64) graph.Nodes {
 
 // HasEdgeBetween returns whether an edge exists between nodes x and y without
 // considering direction.
-func (g *testWeightedDirectedGraph) HasEdgeBetween(xid, yid int64) bool {
+func (g *testExpectedGraph) HasEdgeBetween(xid, yid int64) bool {
 	if _, ok := g.from[xid][yid]; ok {
 		return true
 	}
@@ -72,7 +92,7 @@ func (g *testWeightedDirectedGraph) HasEdgeBetween(xid, yid int64) bool {
 }
 
 // HasEdgeFromTo returns whether an edge exists in the graph from u to v.
-func (g *testWeightedDirectedGraph) HasEdgeFromTo(uid, vid int64) bool {
+func (g *testExpectedGraph) HasEdgeFromTo(uid, vid int64) bool {
 	if _, ok := g.from[uid][vid]; !ok {
 		return false
 	}
@@ -80,18 +100,18 @@ func (g *testWeightedDirectedGraph) HasEdgeFromTo(uid, vid int64) bool {
 }
 
 // NewWeightedEdge returns a new weighted edge from the source to the destination node.
-func (g *testWeightedDirectedGraph) NewWeightedEdge(from, to graph.Node, weight float64) graph.WeightedEdge {
+func (g *testExpectedGraph) NewWeightedEdge(from, to graph.Node, weight float64) graph.WeightedEdge {
 	return &simple.WeightedEdge{F: from, T: to, W: weight}
 }
 
 // Node returns the node with the given ID if it exists in the graph,
 // and nil otherwise.
-func (g *testWeightedDirectedGraph) Node(id int64) graph.Node {
+func (g *testExpectedGraph) Node(id int64) graph.Node {
 	return g.nodes[id]
 }
 
 // Nodes returns all the nodes in the graph.
-func (g *testWeightedDirectedGraph) Nodes() graph.Nodes {
+func (g *testExpectedGraph) Nodes() graph.Nodes {
 	if len(g.from) == 0 {
 		return graph.Empty
 	}
@@ -105,7 +125,7 @@ func (g *testWeightedDirectedGraph) Nodes() graph.Nodes {
 }
 
 // To returns all nodes in g that can reach directly to n.
-func (g *testWeightedDirectedGraph) To(id int64) graph.Nodes {
+func (g *testExpectedGraph) To(id int64) graph.Nodes {
 	if _, ok := g.from[id]; !ok {
 		return graph.Empty
 	}
@@ -126,7 +146,7 @@ func (g *testWeightedDirectedGraph) To(id int64) graph.Nodes {
 // If x and y are the same node or there is no joining edge between the two nodes the weight
 // value returned is either the graph's absent or self value. Weight returns true if an edge
 // exists between x and y or if x and y have the same ID, false otherwise.
-func (g *testWeightedDirectedGraph) Weight(xid, yid int64) (w float64, ok bool) {
+func (g *testExpectedGraph) Weight(xid, yid int64) (w float64, ok bool) {
 	if xid == yid {
 		return self, true
 	}
@@ -140,7 +160,7 @@ func (g *testWeightedDirectedGraph) Weight(xid, yid int64) (w float64, ok bool) 
 
 // WeightedEdge returns the weighted edge from u to v if such an edge exists and nil otherwise.
 // The node v must be directly reachable from u as defined by the From method.
-func (g *testWeightedDirectedGraph) WeightedEdge(uid, vid int64) graph.WeightedEdge {
+func (g *testExpectedGraph) WeightedEdge(uid, vid int64) graph.WeightedEdge {
 	edge, ok := g.from[uid][vid]
 	if !ok {
 		return nil
@@ -149,7 +169,7 @@ func (g *testWeightedDirectedGraph) WeightedEdge(uid, vid int64) graph.WeightedE
 }
 
 // WeightedEdges returns all the weighted edges in the graph.
-func (g *testWeightedDirectedGraph) WeightedEdges() graph.WeightedEdges {
+func (g *testExpectedGraph) WeightedEdges() graph.WeightedEdges {
 	var edges []graph.WeightedEdge
 	for _, u := range g.nodes {
 		for _, e := range g.from[u.ID()] {
@@ -160,4 +180,29 @@ func (g *testWeightedDirectedGraph) WeightedEdges() graph.WeightedEdges {
 		return graph.Empty
 	}
 	return iterator.NewOrderedWeightedEdges(edges)
+}
+
+// SetWeightedEdge adds a weighted edge from one node to another. If the nodes do not exist, they are added
+// and are set to the nodes of the edge otherwise.
+// It will panic if the IDs of the e.From and e.To are equal.
+func (g *testExpectedGraph) SetWeightedEdge(e graph.WeightedEdge) {
+	var (
+		from = e.From()
+		fid  = from.ID()
+		to   = e.To()
+		tid  = to.ID()
+	)
+
+	if fid == tid {
+		panic("simple: adding self edge")
+	}
+
+	if g.from[fid] == nil {
+		g.from[fid] = make(map[int64]graph.WeightedEdge)
+	}
+	if g.to[tid] == nil {
+		g.to[tid] = make(map[int64]graph.WeightedEdge)
+	}
+	g.from[fid][tid] = e
+	g.to[tid][fid] = e
 }

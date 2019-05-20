@@ -17,14 +17,14 @@ type testGraph struct {
 var tests = []testGraph{
 	testGraph{
 		onnxModelProto: &pb.ModelProto{},
-		expected:       &testWeightedDirectedGraph{},
+		expected:       &testExpectedGraph{},
 		err:            errGraphIsNil,
 	},
 	testGraph{
 		onnxModelProto: &pb.ModelProto{
 			Graph: &pb.GraphProto{},
 		},
-		expected: &testWeightedDirectedGraph{},
+		expected: &testExpectedGraph{},
 		err:      nil,
 	},
 	testGraph{
@@ -52,6 +52,7 @@ var tests = []testGraph{
 					id:   1,
 					name: "B",
 				},
+				weight: 0,
 			},
 		}),
 		err: nil,
@@ -70,20 +71,8 @@ func TestDecodeProto(t *testing.T) {
 func graphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 	itSrc := src.Nodes()
 	itDst := dst.Nodes()
-	t.Logf("src has %v nodes and Dst has %v nodes", itSrc.Len(), itDst.Len())
 	if itSrc.Len() != itDst.Len() {
-		t.Fatalf("graphs differs: src has %v nodes and Dst has %v nodes", itSrc.Len(), itDst.Len())
+		t.Fatalf("graphs differs: expected %v nodes but graph has %v nodes", itSrc.Len(), itDst.Len())
 	}
 	// TODO compare the graphs
-}
-
-type edge struct {
-	from *nodeTest
-	to   *nodeTest
-}
-
-func newExpectedGraph(e []edge) *testWeightedDirectedGraph {
-	return &testWeightedDirectedGraph{
-		//TODO
-	}
 }
