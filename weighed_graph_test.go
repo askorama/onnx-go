@@ -32,6 +32,7 @@ func newExpectedGraph(e []edge) *testExpectedGraph {
 			g.nodes[e.to.id] = e.to
 		}
 		g.SetWeightedEdge(g.NewWeightedEdge(e.from, e.to, e.weight))
+
 	}
 	return g
 }

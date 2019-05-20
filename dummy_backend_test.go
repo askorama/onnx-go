@@ -136,3 +136,9 @@ func (g *testBackend) To(id int64) graph.Nodes {
 func (g *testBackend) ApplyOperation(o Operation, n graph.Node) error {
 	return nil
 }
+
+// WeightedEdge returns the weighted edge from u to v if such an edge exists and nil otherwise.
+// The node v must be directly reachable from u as defined by the From method.
+func (g *testBackend) WeightedEdge(uid, vid int64) graph.WeightedEdge {
+	return g.g.WeightedEdge(uid, vid)
+}
