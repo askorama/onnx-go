@@ -43,7 +43,7 @@ var tests = []testGraph{
 			},
 		},
 		expected: &testExpectedGraph{},
-		err:      errGraphNoInput,
+		err:      errGraphNoIO,
 	},
 	testGraph{
 		// A
@@ -59,7 +59,7 @@ var tests = []testGraph{
 			},
 		},
 		expected: &testExpectedGraph{},
-		err:      errGraphNoInput,
+		err:      errGraphNoIO,
 	},
 	testGraph{
 		// A -> B
