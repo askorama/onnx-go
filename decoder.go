@@ -91,9 +91,17 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 	if model.Graph == nil {
 		return errGraphIsNil
 	}
+	if len(model.Graph.Node) == 0 {
+		return errEmptyGraph
+	}
+	if len(model.Graph.Input) == 0 {
+		return errGraphNoInput
+	}
+	if len(model.Graph.Input) == 0 {
+		return errGraphNoOutput
+	}
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
-	// OLWU
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
 	dst := m.backend
 	// Well...
