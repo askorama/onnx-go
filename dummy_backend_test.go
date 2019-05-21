@@ -25,6 +25,15 @@ type nodeTest struct {
 	//attributes  []*pb.Attribute
 }
 
+func (n *nodeTest) SetTensor(t tensor.Tensor) error {
+	n.value = t
+	return nil
+}
+
+func (n *nodeTest) GetTensor() tensor.Tensor {
+	return n.value
+}
+
 // ID to fulfil the graph.Node interface
 func (n *nodeTest) ID() int64 {
 	return n.id
