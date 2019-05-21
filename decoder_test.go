@@ -4,9 +4,11 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/graph"
+	"gorgonia.org/tensor"
 )
 
 type testGraph struct {
@@ -19,6 +21,12 @@ type testGraph struct {
 var tests = []testGraph{
 	testGraph{
 		name:           "nil_graph",
+		onnxModelProto: nil,
+		expected:       &testExpectedGraph{},
+		err:            errModelIsNil,
+	},
+	testGraph{
+		name:           "empty model",
 		onnxModelProto: &pb.ModelProto{},
 		expected:       &testExpectedGraph{},
 		err:            errGraphIsNil,
@@ -105,6 +113,14 @@ var tests = []testGraph{
 	},
 }
 
+func TestDecodeProto_badBackend(t *testing.T) {
+	m := NewModel(nil)
+	err := m.decodeProto(nil)
+	if _, ok := err.(*InvalidUnmarshalError); !ok {
+		t.Fatalf("Expected an InvalidUnmarshalError, but got %#v", err)
+	}
+}
+
 func TestDecodeProto(t *testing.T) {
 	m := NewModel(newTestBackend())
 	for _, test := range tests {
@@ -118,7 +134,79 @@ func TestDecodeProto(t *testing.T) {
 	}
 }
 
+func TestUnmarshalBinary(t *testing.T) {
+	m := NewModel(newTestBackend())
+	b := []byte{0}
+	err := m.UnmarshalBinary(b)
+	if err == nil {
+		t.Fatal("expected an error")
+	}
+	model := &pb.ModelProto{}
+	b, err = proto.Marshal(model)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = m.UnmarshalBinary(b)
+	if err != errGraphIsNil {
+		t.Fatalf("bad error, expected errGraphIsNil, got %v", err)
+	}
+}
+
+func TestProcessValue(t *testing.T) {
+	m := NewModel(newTestBackend())
+	_, err := m.processValue(nil)
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	io := &pb.ValueInfoProto{
+		Name: "name",
+		Type: &pb.TypeProto{
+			Value: &pb.TypeProto_TensorType{
+				TensorType: &pb.TypeProto_Tensor{
+					ElemType: pb.AttributeProto_AttributeType_value["FLOAT"],
+					Shape: &pb.TensorShapeProto{
+						Dim: []*pb.TensorShapeProto_Dimension{
+							{
+								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+							},
+							{
+								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 2},
+							},
+							{
+								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 3},
+							},
+							{
+								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 4},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	n, err := m.processValue(io)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedNode := &nodeTest{
+		name:  "name",
+		value: tensor.New(tensor.WithShape(1, 2, 3, 4), tensor.Of(tensor.Float32)),
+	}
+	assertNodeEqual(t, expectedNode, n.(*nodeTest))
+
+}
+
 func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
+	if src == nil && dst == nil {
+		return
+	}
+	if src == nil && dst != nil {
+		t.Fatalf("expected a nil graph, but result is %#v", dst)
+	}
+	if src != nil && dst == nil {
+		t.Fatal("expected a non nil graph, but result is nil")
+	}
 	itSrc := src.Nodes()
 	itDst := dst.Nodes()
 	if itSrc.Len() != itDst.Len() {
@@ -175,7 +263,14 @@ func assertNodeEqual(t *testing.T, a, b *nodeTest) {
 	if a.opType != b.opType {
 		t.Fatalf("nodes %v and %v differs", a, b)
 	}
-	if a.value != b.value {
+	if a.value != nil && b.value != nil {
+		_, err := tensor.ElEq(a.value, b.value)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	if (a.value == nil && b.value != nil) ||
+		(a.value != nil && b.value == nil) {
 		t.Fatalf("nodes %v and %v differs", a, b)
 	}
 	if a.name != b.name {
