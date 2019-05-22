@@ -26,7 +26,7 @@ func NewTestReduceLogSumExpDefaultAxesKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceLogSumExp",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc002952a00)(name:"keepdims" type:INT i:1 )
+		    (*pb.AttributeProto)(0xc000132d00)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

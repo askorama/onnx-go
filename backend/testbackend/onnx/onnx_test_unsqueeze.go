@@ -26,7 +26,7 @@ func NewTestUnsqueeze() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unsqueeze",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00013d600)(name:"axes" type:INTS ints:0 )
+		    (*pb.AttributeProto)(0xc000127800)(name:"axes" type:INTS ints:0 )
 		   }
 		   ,
 		   },

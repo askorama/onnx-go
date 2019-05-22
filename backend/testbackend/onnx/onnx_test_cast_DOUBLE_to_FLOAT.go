@@ -26,7 +26,7 @@ func NewTestCastDOUBLEToFLOAT() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Cast",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011d800)(name:"to" type:INT i:1 )
+		    (*pb.AttributeProto)(0xc000132400)(name:"to" type:INT i:1 )
 		   }
 		   ,
 		   },

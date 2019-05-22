@@ -26,8 +26,8 @@ func NewTestAveragepool2dPrecomputedStrides() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00011cf00)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
-		    (*pb.AttributeProto)(0xc00011d000)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*pb.AttributeProto)(0xc000133000)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
+		    (*pb.AttributeProto)(0xc000133100)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

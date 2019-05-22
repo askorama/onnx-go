@@ -26,8 +26,8 @@ func NewTestReduceL2DoNotKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceL2",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc001e63100)(name:"axes" type:INTS ints:2 ),
-		    (*pb.AttributeProto)(0xc001e63200)(name:"keepdims" type:INT )
+		    (*pb.AttributeProto)(0xc000119600)(name:"axes" type:INTS ints:2 ),
+		    (*pb.AttributeProto)(0xc000119700)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

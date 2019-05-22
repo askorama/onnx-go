@@ -26,7 +26,7 @@ func NewTestDepthtospace() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "DepthToSpace",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc002729e00)(name:"blocksize" type:INT i:2 )
+		    (*pb.AttributeProto)(0xc000118c00)(name:"blocksize" type:INT i:2 )
 		   }
 		   ,
 		   },

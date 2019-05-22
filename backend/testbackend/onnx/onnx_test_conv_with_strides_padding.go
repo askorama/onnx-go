@@ -26,9 +26,9 @@ func NewTestConvWithStridesPadding() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Conv",
 		     Attributes: ([]*pb.AttributeProto) (len=3 cap=4) {
-		    (*pb.AttributeProto)(0xc001e3d600)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*pb.AttributeProto)(0xc001e3d700)(name:"pads" type:INTS ints:1 ints:1 ints:1 ints:1 ),
-		    (*pb.AttributeProto)(0xc001e3d800)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*pb.AttributeProto)(0xc000126500)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*pb.AttributeProto)(0xc000126600)(name:"pads" type:INTS ints:1 ints:1 ints:1 ints:1 ),
+		    (*pb.AttributeProto)(0xc000126700)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

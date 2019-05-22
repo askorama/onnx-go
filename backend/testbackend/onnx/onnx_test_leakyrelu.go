@@ -26,7 +26,7 @@ func NewTestLeakyrelu() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "LeakyRelu",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011de00)(name:"alpha" type:FLOAT f:0.1 )
+		    (*pb.AttributeProto)(0xc0004ce900)(name:"alpha" type:FLOAT f:0.1 )
 		   }
 		   ,
 		   },

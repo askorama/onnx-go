@@ -26,7 +26,7 @@ func NewTestResizeUpsampleLinear() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Resize",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00013de00)(name:"mode" type:STRING s:"linear" )
+		    (*pb.AttributeProto)(0xc000119500)(name:"mode" type:STRING s:"linear" )
 		   }
 		   ,
 		   },

@@ -26,8 +26,8 @@ func NewTestMaxpool2dStrides() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00011c100)(name:"kernel_shape" type:INTS ints:5 ints:5 ),
-		    (*pb.AttributeProto)(0xc00011c500)(name:"strides" type:INTS ints:3 ints:3 )
+		    (*pb.AttributeProto)(0xc000126300)(name:"kernel_shape" type:INTS ints:5 ints:5 ),
+		    (*pb.AttributeProto)(0xc000126400)(name:"strides" type:INTS ints:3 ints:3 )
 		   }
 		   ,
 		   },

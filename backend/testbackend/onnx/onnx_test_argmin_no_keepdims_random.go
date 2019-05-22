@@ -26,8 +26,8 @@ func NewTestArgminNoKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00039ab00)(name:"axis" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc00039ac00)(name:"keepdims" type:INT )
+		    (*pb.AttributeProto)(0xc000132600)(name:"axis" type:INT i:1 ),
+		    (*pb.AttributeProto)(0xc000132700)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },
