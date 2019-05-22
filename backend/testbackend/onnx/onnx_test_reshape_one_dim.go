@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	testbackend.Register("Reshape", "TestReshapeOneDim", NewTestReshapeOneDim)
+	//	testbackend.Register("Reshape", "TestReshapeOneDim", NewTestReshapeOneDim)
 }
 
 // NewTestReshapeOneDim version: 3.
@@ -41,7 +41,7 @@ func NewTestReshapeOneDim() *testbackend.TestCase {
 
 			tensor.New(
 				tensor.WithShape(1),
-				tensor.WithBacking([]float32{24}),
+				tensor.WithBacking([]int{24}),
 			),
 		},
 		ExpectedOutput: []tensor.Tensor{
