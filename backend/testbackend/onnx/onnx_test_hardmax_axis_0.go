@@ -26,7 +26,7 @@ func NewTestHardmaxAxis0() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Hardmax",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011c500)(name:"axis" type:INT )
+		    (*pb.AttributeProto)(0xc000126100)(name:"axis" type:INT )
 		   }
 		   ,
 		   },

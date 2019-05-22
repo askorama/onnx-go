@@ -26,8 +26,8 @@ func NewTestClipSplitbounds() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Clip",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc0007db500)(name:"max" type:FLOAT f:5 ),
-		    (*pb.AttributeProto)(0xc0007db600)(name:"min" type:FLOAT f:-5 )
+		    (*pb.AttributeProto)(0xc000274000)(name:"max" type:FLOAT f:5 ),
+		    (*pb.AttributeProto)(0xc000274100)(name:"min" type:FLOAT f:-5 )
 		   }
 		   ,
 		   },

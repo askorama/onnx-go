@@ -26,7 +26,7 @@ func NewTestReduceMeanDefaultAxesKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMean",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc001eb1f00)(name:"keepdims" type:INT i:1 )
+		    (*pb.AttributeProto)(0xc000254300)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

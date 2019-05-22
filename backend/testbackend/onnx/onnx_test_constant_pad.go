@@ -26,9 +26,9 @@ func NewTestConstantPad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Pad",
 		     Attributes: ([]*pb.AttributeProto) (len=3 cap=4) {
-		    (*pb.AttributeProto)(0xc001de3300)(name:"mode" type:STRING s:"constant" ),
-		    (*pb.AttributeProto)(0xc001de3400)(name:"pads" type:INTS ints:0 ints:0 ints:1 ints:3 ints:0 ints:0 ints:2 ints:4 ),
-		    (*pb.AttributeProto)(0xc001de3500)(name:"value" type:FLOAT f:1.2 )
+		    (*pb.AttributeProto)(0xc0003a0b00)(name:"mode" type:STRING s:"constant" ),
+		    (*pb.AttributeProto)(0xc0003a0c00)(name:"pads" type:INTS ints:0 ints:0 ints:1 ints:3 ints:0 ints:0 ints:2 ints:4 ),
+		    (*pb.AttributeProto)(0xc0003a0d00)(name:"value" type:FLOAT f:1.2 )
 		   }
 		   ,
 		   },

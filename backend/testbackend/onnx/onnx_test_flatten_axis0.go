@@ -26,7 +26,7 @@ func NewTestFlattenAxis0() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Flatten",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00013cf00)(name:"axis" type:INT )
+		    (*pb.AttributeProto)(0xc000119d00)(name:"axis" type:INT )
 		   }
 		   ,
 		   },

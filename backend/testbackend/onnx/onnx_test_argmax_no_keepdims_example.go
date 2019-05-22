@@ -26,8 +26,8 @@ func NewTestArgmaxNoKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00013d600)(name:"axis" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc00013d700)(name:"keepdims" type:INT )
+		    (*pb.AttributeProto)(0xc000127400)(name:"axis" type:INT i:1 ),
+		    (*pb.AttributeProto)(0xc000127500)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

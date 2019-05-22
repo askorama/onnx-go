@@ -26,7 +26,7 @@ func NewTestTransposeAllPermutations4() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Transpose",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011c100)(name:"perm" type:INTS ints:2 ints:0 ints:1 )
+		    (*pb.AttributeProto)(0xc000132e00)(name:"perm" type:INTS ints:2 ints:0 ints:1 )
 		   }
 		   ,
 		   },

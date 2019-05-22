@@ -140,9 +140,19 @@ func processFile(file os.FileInfo) (string, string, error) {
 		if err != nil {
 			return "", "", err
 		}
+		data := fmt.Sprintf("%#v", t.Data())
+		shape := fmt.Sprintf("%#v", t.Shape())
+		if len(t.Shape()) == 1 && t.Shape()[0] == 1 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+		}
+		if len(t.Shape()) == 0 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+			shape = "(1)"
+		}
 		tv.Input[i] = iO{
-			Shape: fmt.Sprintf("%#v", t.Shape()),
-			Data:  fmt.Sprintf("%#v", t.Data()),
+			Shape: shape,
+			//Data:  fmt.Sprintf("%#v", t.Data()),
+			Data: data,
 		}
 	}
 	mv.Output = make([]valueInfoProto, len(model.Graph.Output))
@@ -174,9 +184,18 @@ func processFile(file os.FileInfo) (string, string, error) {
 		if err != nil {
 			return "", "", err
 		}
+		shape := fmt.Sprintf("%#v", t.Shape())
+		data := fmt.Sprintf("%#v", t.Data())
+		if len(t.Shape()) == 1 && t.Shape()[0] == 1 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+		}
+		if len(t.Shape()) == 0 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+			shape = "(1)"
+		}
 		tv.ExpectedOutput[i] = iO{
-			Shape: fmt.Sprintf("%#v", t.Shape()),
-			Data:  fmt.Sprintf("%#v", t.Data()),
+			Shape: shape,
+			Data:  data,
 		}
 	}
 	mv.ValueInfo = make([]valueInfoProto, len(model.Graph.ValueInfo))
@@ -194,15 +213,25 @@ func processFile(file os.FileInfo) (string, string, error) {
 
 	// TestTemplate
 	output := os.Stdout
+	outputTest := os.Stdout
 	if *outputdir != "" {
 		output, err = os.Create(filepath.Join(*outputdir, "onnx_"+file.Name()+".go"))
 		if err != nil {
 			return "", "", err
 		}
 		defer output.Close()
+		outputTest, err = os.Create(filepath.Join(*outputdir, "onnx_"+file.Name()+"_test.go"))
+		if err != nil {
+			return "", "", err
+		}
+		defer outputTest.Close()
 	}
 	tv.ModelValue = mv
 	err = processTemplate(testTemplate, tv, output)
+	if err != nil {
+		return "", "", err
+	}
+	err = processTemplate(testTestTemplate, tv, outputTest)
 	if err != nil {
 		return "", "", err
 	}

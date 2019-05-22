@@ -26,8 +26,8 @@ func NewTestMaxpool2dPads() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00011c700)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*pb.AttributeProto)(0xc00011c800)(name:"pads" type:INTS ints:2 ints:2 ints:2 ints:2 )
+		    (*pb.AttributeProto)(0xc000126600)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*pb.AttributeProto)(0xc000126700)(name:"pads" type:INTS ints:2 ints:2 ints:2 ints:2 )
 		   }
 		   ,
 		   },

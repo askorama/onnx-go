@@ -26,7 +26,7 @@ func NewTestAveragepool1dDefault() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00013cb00)(name:"kernel_shape" type:INTS ints:2 )
+		    (*pb.AttributeProto)(0xc000133b00)(name:"kernel_shape" type:INTS ints:2 )
 		   }
 		   ,
 		   },

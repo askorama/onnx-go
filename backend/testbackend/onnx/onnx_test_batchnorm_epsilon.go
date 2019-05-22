@@ -26,7 +26,7 @@ func NewTestBatchnormEpsilon() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "BatchNormalization",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011d400)(name:"epsilon" type:FLOAT f:0.01 )
+		    (*pb.AttributeProto)(0xc000132f00)(name:"epsilon" type:FLOAT f:0.01 )
 		   }
 		   ,
 		   },

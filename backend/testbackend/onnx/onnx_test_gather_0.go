@@ -26,7 +26,7 @@ func NewTestGather0() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gather",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00013dd00)(name:"axis" type:INT )
+		    (*pb.AttributeProto)(0xc000133c00)(name:"axis" type:INT )
 		   }
 		   ,
 		   },

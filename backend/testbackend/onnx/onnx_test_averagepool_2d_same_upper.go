@@ -26,8 +26,8 @@ func NewTestAveragepool2dSameUpper() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00013c400)(name:"auto_pad" type:STRING s:"SAME_UPPER" ),
-		    (*pb.AttributeProto)(0xc00013c500)(name:"kernel_shape" type:INTS ints:2 ints:2 )
+		    (*pb.AttributeProto)(0xc000132300)(name:"auto_pad" type:STRING s:"SAME_UPPER" ),
+		    (*pb.AttributeProto)(0xc000132400)(name:"kernel_shape" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },
