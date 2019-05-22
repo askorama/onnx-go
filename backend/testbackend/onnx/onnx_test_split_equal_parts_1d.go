@@ -26,7 +26,7 @@ func NewTestSplitEqualParts1d() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Split",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00013d100)(name:"axis" type:INT )
+		    (*pb.AttributeProto)(0xc000127700)(name:"axis" type:INT )
 		   }
 		   ,
 		   },

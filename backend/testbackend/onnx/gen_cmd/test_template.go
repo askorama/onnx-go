@@ -3,9 +3,7 @@ package main
 import "text/template"
 
 var testTemplate = template.Must(template.New("testCase").Parse(testTmpl))
-var testCasesTemplate = template.Must(template.New("testCase").Parse(testCasesTmpl))
-
-//var modelTemplate = template.Must(template.New("modelCase").Parse(modelTmpl))
+var testTestTemplate = template.Must(template.New("testTestCase").Parse(testTestTmpl))
 
 type testValue struct {
 	OpType         string
@@ -57,6 +55,35 @@ type attribute struct {
 	Floats  string
 	Strings string
 }
+
+const testTestTmpl = `
+package onnxtest
+
+import (
+	"testing"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/owulveryck/onnx-go/internal/pb-onnx"
+)
+
+func TestNew{{ .TestName }}(t *testing.T) {
+	mytest := New{{ .TestName }}()
+	var model pb.ModelProto
+	err := proto.Unmarshal(mytest.ModelB, &model)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if model.Graph == nil {
+		t.Fatal("graph is nil")
+	}
+	if len(model.Graph.Input) != len(mytest.Input) {
+		t.Fatalf("invalid test: model has %v input, but test only provide %v", len(model.Graph.Input), len(mytest.Input))
+	}
+	if len(model.Graph.Output) != len(mytest.ExpectedOutput) {
+		t.Fatalf("invalid test: model has %v input, but test only provide %v", len(model.Graph.Output), len(mytest.ExpectedOutput))
+	}
+}
+`
 
 //Model: {{ template "modelCase" .ModelValue }},
 
@@ -251,15 +278,3 @@ type testCases struct {
 	Title       string
 	Constructor string
 }
-
-const testCasesTmpl = `
-package onnxtest
-
-import "github.com/owulveryck/onnx-go/backend/testbackend"
-
-func init() {
-// Register all the test cases
-{{ if . }} {{ range . }}
-{{ if .OpType }} testbackend.Register({{ .OpType }},"{{ .Title }}",New{{ .Title }}) {{end}} {{ end }} {{end}}
-}
-`

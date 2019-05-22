@@ -26,8 +26,8 @@ func NewTestBasicConvWithoutPadding() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Conv",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00011cb00)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*pb.AttributeProto)(0xc00011cc00)(name:"pads" type:INTS ints:0 ints:0 ints:0 ints:0 )
+		    (*pb.AttributeProto)(0xc000132d00)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*pb.AttributeProto)(0xc000132e00)(name:"pads" type:INTS ints:0 ints:0 ints:0 ints:0 )
 		   }
 		   ,
 		   },

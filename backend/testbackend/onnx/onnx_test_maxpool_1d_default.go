@@ -26,7 +26,7 @@ func NewTestMaxpool1dDefault() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011d700)(name:"kernel_shape" type:INTS ints:2 )
+		    (*pb.AttributeProto)(0xc000126000)(name:"kernel_shape" type:INTS ints:2 )
 		   }
 		   ,
 		   },

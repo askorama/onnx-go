@@ -26,8 +26,8 @@ func NewTestMaxpool2dSameLower() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00011cd00)(name:"auto_pad" type:STRING s:"SAME_LOWER" ),
-		    (*pb.AttributeProto)(0xc00011ce00)(name:"kernel_shape" type:INTS ints:2 ints:2 )
+		    (*pb.AttributeProto)(0xc000132b00)(name:"auto_pad" type:STRING s:"SAME_LOWER" ),
+		    (*pb.AttributeProto)(0xc000132c00)(name:"kernel_shape" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

@@ -26,8 +26,8 @@ func NewTestReduceProdDoNotKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceProd",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc0026dc600)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc0026dc700)(name:"keepdims" type:INT )
+		    (*pb.AttributeProto)(0xc000126300)(name:"axes" type:INTS ints:1 ),
+		    (*pb.AttributeProto)(0xc000126400)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

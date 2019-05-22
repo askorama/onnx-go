@@ -26,8 +26,8 @@ func NewTestReduceMeanDoNotKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMean",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc002766000)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc002766100)(name:"keepdims" type:INT )
+		    (*pb.AttributeProto)(0xc000254400)(name:"axes" type:INTS ints:1 ),
+		    (*pb.AttributeProto)(0xc000254500)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },
