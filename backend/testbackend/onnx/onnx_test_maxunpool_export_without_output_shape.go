@@ -26,8 +26,8 @@ func NewTestMaxunpoolExportWithoutOutputShape() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxUnpool",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00011d100)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
-		    (*pb.AttributeProto)(0xc00011d200)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*pb.AttributeProto)(0xc000126f00)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
+		    (*pb.AttributeProto)(0xc000127000)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

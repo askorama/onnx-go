@@ -8,83 +8,90 @@ import (
 )
 
 func broadcast(a, b *Node) (*gorgonia.Node, *gorgonia.Node, error) {
-	if sameDim(a.gorgoniaNode, b.gorgoniaNode) {
-		return a.gorgoniaNode, b.gorgoniaNode, nil
+	return ggnBroadcast(a.gorgoniaNode, b.gorgoniaNode)
+}
+
+func ggnBroadcast(a, b *gorgonia.Node) (*gorgonia.Node, *gorgonia.Node, error) {
+	if sameDim(a, b) {
+		return a, b, nil
 	}
 	// for NCHW tensors, the first dimension may be omited and must be broadcasted
 	// TODO find a smarter way to achieve this
 	switch {
-	case len(a.gorgoniaNode.Shape()) == 0:
-		bDim := b.gorgoniaNode.Shape()
+	case len(a.Shape()) == 0:
+		bDim := b.Shape()
 		aRDim := make([]int, len(bDim))
 		for i := 0; i < len(bDim); i++ {
 			aRDim[i] = 1
 		}
-		aR, err := gorgonia.Reshape(a.gorgoniaNode, aRDim)
+		aR, err := gorgonia.Reshape(a, aRDim)
 		if err != nil {
 			return nil, nil, err
 		}
-		return gorgonia.Broadcast(aR, a.gorgoniaNode, getBroadcastPattern(aR, b.gorgoniaNode))
-	case len(b.gorgoniaNode.Shape()) == 0:
-		aDim := a.gorgoniaNode.Shape()
+		return gorgonia.Broadcast(aR, a, getBroadcastPattern(aR, b))
+	case len(b.Shape()) == 0:
+		aDim := a.Shape()
 		bRDim := make([]int, len(aDim))
 		for i := 0; i < len(aDim); i++ {
 			bRDim[i] = 1
 		}
-		bR, err := gorgonia.Reshape(b.gorgoniaNode, bRDim)
+		bR, err := gorgonia.Reshape(b, bRDim)
 		if err != nil {
 			return nil, nil, err
 		}
-		return gorgonia.Broadcast(a.gorgoniaNode, bR, getBroadcastPattern(a.gorgoniaNode, bR))
-	case len(a.gorgoniaNode.Shape()) == 1 && len(b.gorgoniaNode.Shape()) != 1:
+		return gorgonia.Broadcast(a, bR, getBroadcastPattern(a, bR))
+	case len(a.Shape()) == 1 && len(b.Shape()) != 1:
 		// Make an educated guess: find the axis that has the same dimension
-		bShape := b.gorgoniaNode.Shape()
+		bShape := b.Shape()
 		dims := make([]int, len(bShape))
 		for i := 0; i < len(bShape); i++ {
 			dims[i] = 1
-			if bShape[i] == a.gorgoniaNode.Shape()[0] {
+			if bShape[i] == a.Shape()[0] {
 				dims[i] = bShape[i]
 			}
 		}
 		// Reshape node a
-		aR, err := gorgonia.Reshape(a.gorgoniaNode, dims)
+		aR, err := gorgonia.Reshape(a, dims)
 		if err != nil {
 			return nil, nil, err
 		}
-		return gorgonia.Broadcast(aR, b.gorgoniaNode, getBroadcastPattern(aR, b.gorgoniaNode))
-	case len(a.gorgoniaNode.Shape()) != 1 && len(b.gorgoniaNode.Shape()) == 1:
+		return gorgonia.Broadcast(aR, b, getBroadcastPattern(aR, b))
+	case len(a.Shape()) != 1 && len(b.Shape()) == 1:
 		// Make an educated guess: find the axis that has the same dimension
-		aShape := a.gorgoniaNode.Shape()
+		aShape := a.Shape()
 		dims := make([]int, len(aShape))
 		for i := 0; i < len(aShape); i++ {
 			dims[i] = 1
-			if aShape[i] == b.gorgoniaNode.Shape()[0] {
+			if aShape[i] == b.Shape()[0] {
 				dims[i] = aShape[i]
 			}
 		}
 		// Reshape node a
-		bR, err := gorgonia.Reshape(b.gorgoniaNode, dims)
+		bR, err := gorgonia.Reshape(b, dims)
 		if err != nil {
 			return nil, nil, err
 		}
-		return gorgonia.Broadcast(a.gorgoniaNode, bR, getBroadcastPattern(a.gorgoniaNode, bR))
-	case len(a.gorgoniaNode.Shape()) == 3 && len(b.gorgoniaNode.Shape()) == 4:
+		return gorgonia.Broadcast(a, bR, getBroadcastPattern(a, bR))
+	case len(a.Shape()) == 3 && len(b.Shape()) == 4:
 		// Reshape node a
-		aR, err := gorgonia.Reshape(a.gorgoniaNode, append([]int{1}, a.gorgoniaNode.Shape()...))
+		aR, err := gorgonia.Reshape(a, append([]int{1}, a.Shape()...))
 		if err != nil {
 			return nil, nil, err
 		}
-		return gorgonia.Broadcast(aR, b.gorgoniaNode, getBroadcastPattern(aR, b.gorgoniaNode))
-	case len(a.gorgoniaNode.Shape()) == 4 && len(b.gorgoniaNode.Shape()) == 3:
+		return gorgonia.Broadcast(aR, b, getBroadcastPattern(aR, b))
+	case len(a.Shape()) == 2 && len(b.Shape()) == 2:
 		// Reshape node a
-		bR, err := gorgonia.Reshape(b.gorgoniaNode, append([]int{1}, b.gorgoniaNode.Shape()...))
+		return gorgonia.Broadcast(a, b, getBroadcastPattern(a, b))
+	case len(a.Shape()) == 4 && len(b.Shape()) == 3:
+		// Reshape node a
+		bR, err := gorgonia.Reshape(b, append([]int{1}, b.Shape()...))
 		if err != nil {
 			return nil, nil, err
 		}
-		return gorgonia.Broadcast(a.gorgoniaNode, bR, getBroadcastPattern(a.gorgoniaNode, bR))
+		return gorgonia.Broadcast(a, bR, getBroadcastPattern(a, bR))
 	default:
-		return a.gorgoniaNode, b.gorgoniaNode, &onnx.ErrNotImplemented{
-			Message: fmt.Sprintf("broadcast not yet implemented for shape %v, %v", a.gorgoniaNode.Shape(), b.gorgoniaNode.Shape()),
+		return a, b, &onnx.ErrNotImplemented{
+			Message: fmt.Sprintf("broadcast not yet implemented for shape %v, %v", a.Shape(), b.Shape()),
 		}
 
 	}

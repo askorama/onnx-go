@@ -31,6 +31,9 @@ func (g *Graph) walk(node int64) error {
 	// for each node, if nil, and if hold an operation, add the graph
 	for i := len(nodes) - 1; i >= 0; i-- {
 		n := g.g.Node(nodes[i]).(*Node)
+		if n.t == nil && n.operation == nil {
+			return fmt.Errorf("node %v is not a tensor nor an operation", n)
+		}
 		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
 			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
 		}
@@ -53,12 +56,14 @@ func (g *Graph) applyOperation(n *Node) error {
 		return fmt.Errorf("unsupported case: node is already in the exprgraph")
 	}
 	var op operator
+	var opC func() operator
 	var ok bool
-	if op, ok = operators[n.operation.Name]; !ok {
+	if opC, ok = operators[n.operation.Name]; !ok {
 		return &onnx.ErrNotImplemented{
 			Operator: n.operation.Name,
 		}
 	}
+	op = opC()
 	err := op.init(*n.operation)
 	if err != nil {
 		return err

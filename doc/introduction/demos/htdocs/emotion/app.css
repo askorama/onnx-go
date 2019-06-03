@@ -1,0 +1,13 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #FEFEFE;
+    margin: 0;
+    text-align: center;
+}
+
+#canvas {
+    background-color: black;
+}

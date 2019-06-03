@@ -8,7 +8,11 @@ import (
 type matMul struct{}
 
 func init() {
-	register("MatMul", &matMul{})
+	register("MatMul", newMatMul)
+}
+
+func newMatMul() operator {
+	return &matMul{}
 }
 
 func (a *matMul) apply(g *Graph, n *Node) error {

@@ -26,8 +26,8 @@ func NewTestReduceLogSumExpDoNotKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceLogSumExp",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc0007ff800)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc0007ff900)(name:"keepdims" type:INT )
+		    (*pb.AttributeProto)(0xc000132f00)(name:"axes" type:INTS ints:1 ),
+		    (*pb.AttributeProto)(0xc000133000)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

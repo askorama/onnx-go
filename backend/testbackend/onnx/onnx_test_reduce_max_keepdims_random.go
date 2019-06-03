@@ -26,8 +26,8 @@ func NewTestReduceMaxKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMax",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc001eb1a00)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc001eb1b00)(name:"keepdims" type:INT i:1 )
+		    (*pb.AttributeProto)(0xc000254000)(name:"axes" type:INTS ints:1 ),
+		    (*pb.AttributeProto)(0xc000254100)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

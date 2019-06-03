@@ -1,0 +1,16 @@
+<input id="modelMnist" type="file"  accept=".onnx" onchange="uploadModelMnist(this)" >
+<br>
+<div class="container">
+  <div>
+    <canvas style="touch-action: none;" id="canvasMnist" width="280" height="280"></canvas>
+  </div>
+  <div style="background:transparent;font-size:90px;">
+    &nbsp; &nbsp; &nbsp; &nbsp;
+  </div>
+  <div style="background:transparent;font-size:90px;" id="infoMnist">
+  </div>
+</div>
+<br>
+<button id="gomnist" class="button is-large is-primary" onclick="postImage()" disabled>submit</button>
+<button onclick="reset()">Reset</button>
+

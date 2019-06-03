@@ -45,6 +45,9 @@ func (m *Model) GetNodeByName(name string) (graph.Node, bool) {
 }
 
 func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
+	if io == nil {
+		return nil, errors.New("cannot process nil value")
+	}
 	var opts []tensor.ConsOpt
 	dst := m.backend
 	n := dst.NewNode()
@@ -53,6 +56,9 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	}
 	dst.AddNode(n)
 	m.dbByName[io.Name] = n
+	if io.Type == nil {
+		return n, nil
+	}
 	if _, ok := n.(DataCarrier); !ok {
 		return n, nil
 	}
@@ -88,9 +94,23 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
 	}
 
+	if model == nil {
+		return errModelIsNil
+	}
+	if model.Graph == nil {
+		return errGraphIsNil
+	}
+	if len(model.Graph.Node) == 0 {
+		return errEmptyGraph
+	}
+	if len(model.Graph.Output) == 0 {
+		return errGraphNoIO
+	}
+	if len(model.Graph.Input)+len(model.Graph.Output) == 0 {
+		return errGraphNoIO
+	}
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
-	// OLWU
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
 	dst := m.backend
 	// Well...

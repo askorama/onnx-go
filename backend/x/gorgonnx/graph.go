@@ -1,6 +1,9 @@
 package gorgonnx
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
@@ -39,7 +42,14 @@ func (g *Graph) Run() error {
 	}
 	// Now sets the output tensor
 	root := g.Node(g.roots[0]).(*Node)
-	root.t = root.gorgoniaNode.Value().(tensor.Tensor)
+	var ok bool
+	if root.gorgoniaNode == nil {
+		return errors.New("root node is nil")
+	}
+	root.t, ok = root.gorgoniaNode.Value().(tensor.Tensor)
+	if !ok {
+		return errors.New("root node is not a tensor")
+	}
 	return nil
 }
 
@@ -57,7 +67,10 @@ func (g *Graph) PopulateExprgraph() error {
 		}
 	}
 	if len(g.roots) != 1 {
-		return &onnx.ErrNotImplemented{}
+		return &onnx.ErrNotImplemented{
+			Message: fmt.Sprintf("the model have %v roots (output), but only graphs with one output is supported by this backend",
+				len(g.roots)),
+		}
 	}
 	return g.walk(g.roots[0])
 }

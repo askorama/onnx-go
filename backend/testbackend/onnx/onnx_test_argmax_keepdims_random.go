@@ -26,8 +26,8 @@ func NewTestArgmaxKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00023f600)(name:"axis" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc00023f700)(name:"keepdims" type:INT i:1 )
+		    (*pb.AttributeProto)(0xc000126e00)(name:"axis" type:INT i:1 ),
+		    (*pb.AttributeProto)(0xc000126f00)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

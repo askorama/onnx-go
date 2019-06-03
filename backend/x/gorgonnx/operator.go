@@ -6,11 +6,13 @@ import (
 	"github.com/owulveryck/onnx-go"
 )
 
-func register(optype string, op operator) {
+func register(optype string, op func() operator) {
 	operators[optype] = op
 }
 
-var operators = map[string]operator{}
+var operators = map[string]func() operator{}
+
+//var operators = map[string]operator{}
 
 type operator interface {
 	// apply analyse the graph to find the children of the node

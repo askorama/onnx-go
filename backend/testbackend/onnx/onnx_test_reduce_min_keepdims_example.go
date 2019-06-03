@@ -26,8 +26,8 @@ func NewTestReduceMinKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMin",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc002767600)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc002767700)(name:"keepdims" type:INT i:1 )
+		    (*pb.AttributeProto)(0xc000133300)(name:"axes" type:INTS ints:1 ),
+		    (*pb.AttributeProto)(0xc000133400)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

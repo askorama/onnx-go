@@ -26,7 +26,7 @@ func NewTestResizeDownsampleLinear() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Resize",
 		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00011c100)(name:"mode" type:STRING s:"linear" )
+		    (*pb.AttributeProto)(0xc000119400)(name:"mode" type:STRING s:"linear" )
 		   }
 		   ,
 		   },

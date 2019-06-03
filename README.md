@@ -2,6 +2,8 @@
 
 [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
 [![Build Status](https://travis-ci.com/owulveryck/onnx-go.svg?branch=master)](https://travis-ci.com/owulveryck/onnx-go)
+[![CodeCov](https://codecov.io/gh/owulveryck/onnx-go/branch/master/graph/badge.svg)](https://codecov.io/gh/owulveryck/onnx-go)
+
 
 This is a Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/).
 

@@ -26,8 +26,8 @@ func NewTestClipExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Clip",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc0007dab00)(name:"max" type:FLOAT f:1 ),
-		    (*pb.AttributeProto)(0xc0007dac00)(name:"min" type:FLOAT f:-1 )
+		    (*pb.AttributeProto)(0xc000118600)(name:"max" type:FLOAT f:1 ),
+		    (*pb.AttributeProto)(0xc000118700)(name:"min" type:FLOAT f:-1 )
 		   }
 		   ,
 		   },

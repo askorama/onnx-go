@@ -26,8 +26,8 @@ func NewTestGemmNobroadcast() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gemm",
 		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00027aa00)(name:"alpha" type:FLOAT f:0.5 ),
-		    (*pb.AttributeProto)(0xc00027ab00)(name:"beta" type:FLOAT f:0.5 )
+		    (*pb.AttributeProto)(0xc000132a00)(name:"alpha" type:FLOAT f:0.5 ),
+		    (*pb.AttributeProto)(0xc000132b00)(name:"beta" type:FLOAT f:0.5 )
 		   }
 		   ,
 		   },
