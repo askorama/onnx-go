@@ -1,6 +1,8 @@
 package gorgonnx
 
 import (
+	"errors"
+
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 	"gorgonia.org/tensor"
@@ -41,11 +43,19 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 }
 
 func (c *maxpool) init(o onnx.Operation) error {
-	autoPad, ok := o.Attributes["auto_pad"]
-	if ok && autoPad.(string) != "NOTSET" {
+	var autoPad string
+	if autoPad, ok := o.Attributes["auto_pad"]; ok {
+		if autoPad, ok = autoPad.(string); !ok {
+			return errors.New("autopad is not a string")
+		}
+
+	}
+	switch autoPad {
+	case "NOTSET":
+	default:
 		return &onnx.ErrNotImplemented{
 			Operator: "maxpool",
-			Message:  "auto_pad " + autoPad.(string) + " not implemented",
+			Message:  "auto_pad " + autoPad + " not implemented",
 		}
 	}
 	kernelShape, ok := o.Attributes["kernel_shape"]
