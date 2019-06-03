@@ -3,7 +3,7 @@ package gorgonnx
 import (
 	"errors"
 
-	"github.com/davecgh/go-spew/spew"
+	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 )
@@ -29,18 +29,58 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	spew.Dump(children[1].t.Data())
-	n.gorgoniaNode, _, _, _, err = gorgonia.BatchNorm(children[0].gorgoniaNode,
+	x, scaleN, biasN, meanN, varN := children[0].gorgoniaNode,
 		children[1].gorgoniaNode,
 		children[2].gorgoniaNode,
-		b.momentum,
-		b.epsilon)
-	return err
-	/*
+		children[3].gorgoniaNode,
+		children[4].gorgoniaNode
+	if len(x.Shape()) != 4 {
 		return &onnx.ErrNotImplemented{
-			Operator: "BatchNormalization",
+			Operator: "Batchnormalization",
+			Message:  "Only CxBxHxW tensors are supported",
 		}
-	*/
+	}
+	// helper func
+	apply := func(f func(a, b *gorgonia.Node) (*gorgonia.Node, error), a, b *gorgonia.Node) (*gorgonia.Node, error) {
+		if len(b.Shape()) != 1 {
+			return nil, errors.New("Batchnorm: wrong shape")
+		}
+		ba, err := gorgonia.Reshape(b, []int{1, b.Shape()[0], 1, 1})
+		if err != nil {
+			return nil, err
+		}
+		aa, bb, err := gorgonia.Broadcast(a, ba, gorgonia.NewBroadcastPattern(nil, []byte{0, 2, 3}))
+		if err != nil {
+			return nil, err
+		}
+		return f(aa, bb)
+	}
+	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
+	// output = scaleN * xNorm + biasN
+	xNorm1, err := apply(gorgonia.Sub, x, meanN)
+	if err != nil {
+		return err
+	}
+	epsilon := gorgonia.NewConstant(float32(b.epsilon), gorgonia.WithName("epsilon"+uuid.New().String()))
+	xNorm21, err := gorgonia.Add(varN, epsilon)
+	if err != nil {
+		return err
+	}
+	xNorm2, err := gorgonia.Sqrt(xNorm21)
+	if err != nil {
+		return err
+	}
+	xNorm, err := apply(gorgonia.HadamardDiv, xNorm1, xNorm2)
+	if err != nil {
+		return err
+	}
+	output1, err := apply(gorgonia.HadamardProd, xNorm, scaleN)
+	if err != nil {
+		return err
+	}
+	n.gorgoniaNode, err = apply(gorgonia.Add, output1, biasN)
+
+	return err
 }
 
 func (b *batchnorm) init(o onnx.Operation) error {
