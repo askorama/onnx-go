@@ -67,6 +67,7 @@ func (c *maxpool) init(o onnx.Operation) error {
 	case "NOTSET":
 	case "SAME_UPPER":
 		c.padding = autoPad
+	case "":
 	default:
 		return &onnx.ErrNotImplemented{
 			Operator: "maxpool",
