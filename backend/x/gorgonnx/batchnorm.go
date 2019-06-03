@@ -17,7 +17,10 @@ type batchnorm struct {
 }
 
 func init() {
-	register("BatchNormalization", &batchnorm{})
+	register("BatchNormalization", newBatchNorm)
+}
+func newBatchNorm() operator {
+	return &batchnorm{}
 }
 
 func (b *batchnorm) apply(g *Graph, n *Node) error {
@@ -26,9 +29,6 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	return &onnx.ErrNotImplemented{
-		Operator: "BatchNormalization",
-	}
 	spew.Dump(children[1].t.Data())
 	n.gorgoniaNode, _, _, _, err = gorgonia.BatchNorm(children[0].gorgoniaNode,
 		children[1].gorgoniaNode,
@@ -36,6 +36,11 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 		b.momentum,
 		b.epsilon)
 	return err
+	/*
+		return &onnx.ErrNotImplemented{
+			Operator: "BatchNormalization",
+		}
+	*/
 }
 
 func (b *batchnorm) init(o onnx.Operation) error {
