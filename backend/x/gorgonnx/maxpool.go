@@ -2,6 +2,7 @@ package gorgonnx
 
 import (
 	"errors"
+	"math"
 
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
@@ -22,6 +23,7 @@ func newMaxpool() operator {
 //    https://godoc.org/gorgonia.org/gorgonia#MaxPool2D
 // test with go test -run=TestONNX/maxpool
 type maxpool struct {
+	padding     string
 	pad         []int
 	stride      []int
 	kernelShape tensor.Shape
@@ -32,6 +34,17 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
+	}
+	x := children[0].gorgoniaNode
+	switch c.padding {
+	case "SAME_UPPER":
+		outputSpatialShape := make([]int, len(x.Shape()))
+		for i, v := range x.Shape()[2:3] {
+			outputSpatialShape[i] = int(math.Ceil(float64(v) / float64(c.stride[i])))
+			// pad_shape[i] = (output_spatial_shape[i] - 1) * strides_spatial_shape[i] + kernel_spatial_shape[i] - input_spatial_shape[i]
+			c.pad[i] = (outputSpatialShape[i]-1)*c.stride[i] + c.kernelShape[i] - v
+		}
+	default:
 	}
 	n.gorgoniaNode, err = gorgonia.MaxPool2D(
 		children[0].gorgoniaNode,
@@ -52,6 +65,8 @@ func (c *maxpool) init(o onnx.Operation) error {
 	}
 	switch autoPad {
 	case "NOTSET":
+	case "SAME_UPPER":
+		c.padding = autoPad
 	default:
 		return &onnx.ErrNotImplemented{
 			Operator: "maxpool",
