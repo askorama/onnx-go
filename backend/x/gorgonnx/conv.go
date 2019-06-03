@@ -1,6 +1,7 @@
 package gorgonnx
 
 import (
+	"errors"
 	"math"
 
 	"github.com/owulveryck/onnx-go"
@@ -32,9 +33,9 @@ type conv struct {
 
 func (c *conv) apply(g *Graph, n *Node) error {
 	children := getOrderedChildren(g.g, n)
-	err := checkCondition(children, 2)
-	if err != nil {
-		return err
+	var err error
+	if len(children) < 2 || len(children) > 3 {
+		return errors.New("Conv: bad arity")
 	}
 	// autopadding needs to be applied now because it needs to be aware of the shape of the nodes
 	switch c.autopad {
@@ -70,13 +71,28 @@ func (c *conv) apply(g *Graph, n *Node) error {
 			Message:  "auto_pad " + c.autopad + " not implemented",
 		}
 	}
-	n.gorgoniaNode, err = gorgonia.Conv2d(
+	convN, err := gorgonia.Conv2d(
 		children[0].gorgoniaNode,
 		children[1].gorgoniaNode,
 		c.kernelShape,
 		c.pad,
 		c.stride,
 		c.dilation)
+	if err != nil {
+		return err
+	}
+	n.gorgoniaNode = convN
+	if len(children) == 3 {
+		b, err := gorgonia.Reshape(children[2].gorgoniaNode, []int{children[2].gorgoniaNode.Shape()[0], 1, 1, 1})
+		if err != nil {
+			return err
+		}
+		convA, ba, err := gorgonia.Broadcast(convN, b, gorgonia.NewBroadcastPattern(nil, []byte{1, 2, 3}))
+		if err != nil {
+			return err
+		}
+		n.gorgoniaNode, err = gorgonia.Add(convA, ba)
+	}
 	return err
 }
 
