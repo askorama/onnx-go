@@ -81,19 +81,23 @@ func (c *conv) apply(g *Graph, n *Node) error {
 	if err != nil {
 		return err
 	}
-	n.gorgoniaNode = convN
 	if len(children) == 3 {
-		b, err := gorgonia.Reshape(children[2].gorgoniaNode, []int{children[2].gorgoniaNode.Shape()[0], 1, 1, 1})
+		b, err := gorgonia.Reshape(children[2].gorgoniaNode, []int{1, children[2].gorgoniaNode.Shape()[0], 1, 1})
 		if err != nil {
 			return err
 		}
-		convA, ba, err := gorgonia.Broadcast(convN, b, gorgonia.NewBroadcastPattern(nil, []byte{1, 2, 3}))
+		convA, ba, err := gorgonia.Broadcast(convN, b, gorgonia.NewBroadcastPattern(nil, []byte{0, 2, 3}))
 		if err != nil {
 			return err
 		}
 		n.gorgoniaNode, err = gorgonia.Add(convA, ba)
+		if err != nil {
+			return err
+		}
+	} else {
+		n.gorgoniaNode = convN
 	}
-	return err
+	return nil
 }
 
 func (c *conv) init(o onnx.Operation) error {
