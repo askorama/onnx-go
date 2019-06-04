@@ -38,8 +38,8 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 	x := children[0].gorgoniaNode
 	switch c.padding {
 	case "SAME_UPPER":
-		outputSpatialShape := make([]int, len(x.Shape()))
-		for i, v := range x.Shape()[2:3] {
+		outputSpatialShape := make([]int, len(x.Shape()[2:]))
+		for i, v := range x.Shape()[2:] {
 			outputSpatialShape[i] = int(math.Ceil(float64(v) / float64(c.stride[i])))
 			// pad_shape[i] = (output_spatial_shape[i] - 1) * strides_spatial_shape[i] + kernel_spatial_shape[i] - input_spatial_shape[i]
 			c.pad[i] = (outputSpatialShape[i]-1)*c.stride[i] + c.kernelShape[i] - v
@@ -57,8 +57,8 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 
 func (c *maxpool) init(o onnx.Operation) error {
 	var autoPad string
-	if autoPad, ok := o.Attributes["auto_pad"]; ok {
-		if autoPad, ok = autoPad.(string); !ok {
+	if a, ok := o.Attributes["auto_pad"]; ok {
+		if autoPad, ok = a.(string); !ok {
 			return errors.New("autopad is not a string")
 		}
 
