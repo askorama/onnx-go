@@ -2,6 +2,7 @@ package gorgonnx
 
 import (
 	"errors"
+	"log"
 
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
@@ -89,6 +90,7 @@ func (c *conv) apply(g *Graph, n *Node) error {
 	} else {
 		n.gorgoniaNode = convN
 	}
+	log.Printf("Convolution\t\t%v\t\t%v\t\t%v", c.kernelShape, c.stride, n.gorgoniaNode.Shape())
 	return nil
 }
 

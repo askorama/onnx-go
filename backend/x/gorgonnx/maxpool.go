@@ -2,6 +2,7 @@ package gorgonnx
 
 import (
 	"errors"
+	"log"
 	"math"
 
 	"github.com/owulveryck/onnx-go"
@@ -51,6 +52,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 		c.kernelShape,
 		c.pad,
 		c.stride)
+	log.Printf("MaxPooling\t\t%v\t\t%v\t\t%v", c.kernelShape, c.stride, n.gorgoniaNode.Shape())
 
 	return err
 }

@@ -40,7 +40,7 @@ func (a *imageScaler) apply(g *Graph, n *Node) error {
 	if len(a.bias) != x.Shape()[1] {
 		return errors.New("bias should be the same size as the channel")
 	}
-	scaleN := gorgonia.NewConstant(float32(a.scale), gorgonia.WithName("scale"+uuid.New().String()))
+	scaleN := gorgonia.NewConstant(float32(a.scale), gorgonia.WithName("scale"+uuid.New().String()), gorgonia.In(g.exprgraph))
 	aa, err := gorgonia.HadamardProd(x, scaleN)
 	if err != nil {
 		return err
