@@ -130,6 +130,13 @@ func (c *maxpool) init(o onnx.Operation) error {
 			}
 		}
 	}
+	_, ok = o.Attributes["ceil_mode"]
+	if ok {
+		return &onnx.ErrNotImplemented{
+			Operator: "maxpool",
+			Message:  "ceil_mode not implemented",
+		}
+	}
 	_, ok = o.Attributes["dilations"]
 	if ok {
 		return &onnx.ErrNotImplemented{
