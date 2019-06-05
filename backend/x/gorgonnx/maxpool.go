@@ -2,8 +2,7 @@ package gorgonnx
 
 import (
 	"errors"
-	"log"
-	"math"
+	"fmt"
 
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
@@ -30,6 +29,10 @@ type maxpool struct {
 	kernelShape tensor.Shape
 }
 
+func ceilDivInt(a, b int) int {
+	return (a + b - 1) / b
+}
+
 func (c *maxpool) apply(g *Graph, n *Node) error {
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
@@ -41,7 +44,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 	case "SAME_UPPER":
 		outputSpatialShape := make([]int, len(x.Shape()[2:]))
 		for i, v := range x.Shape()[2:] {
-			outputSpatialShape[i] = int(math.Ceil(float64(v) / float64(c.stride[i])))
+			outputSpatialShape[i] = ceilDivInt(v, c.stride[i])
 			// pad_shape[i] = (output_spatial_shape[i] - 1) * strides_spatial_shape[i] + kernel_spatial_shape[i] - input_spatial_shape[i]
 			c.pad[i] = (outputSpatialShape[i]-1)*c.stride[i] + c.kernelShape[i] - v
 		}
@@ -52,7 +55,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 		c.kernelShape,
 		c.pad,
 		c.stride)
-	log.Printf("MaxPooling\t\t%v\t\t%v\t\t%v", c.kernelShape, c.stride, n.gorgoniaNode.Shape())
+	fmt.Printf("MaxPooling\t\t%v\t\t%v\t\t%v\n", c.kernelShape, c.stride, n.gorgoniaNode.Shape())
 
 	return err
 }
