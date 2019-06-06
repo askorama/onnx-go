@@ -132,6 +132,14 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 		}
 		tw := testWrapper{tc, t}
 		for i := range output {
+			if len(tc.ExpectedOutput[i].Shape()) != len(output[i].Shape()) {
+				t.Fatalf("the two tensors doesn't have the same dimension, expected %v, got %v", tc.ExpectedOutput[i].Shape(), output[i].Shape())
+			}
+			for j, v := range tc.ExpectedOutput[i].Shape() {
+				if v != output[i].Shape()[j] {
+					t.Fatalf("the two tensors doesn't have the same dimension, expected %v, got %v", tc.ExpectedOutput[i].Shape(), output[i].Shape())
+				}
+			}
 			assert.InDeltaSlice(tw, tc.ExpectedOutput[i].Data(), output[i].Data(), 1e-6, "the two tensors should be equal.")
 		}
 
