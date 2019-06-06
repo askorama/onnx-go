@@ -42,14 +42,22 @@ func (s *stableSoftmax) apply(g *Graph, n *Node) error {
 		}
 		if sum, err = gorgonia.Sum(exp, axis); err == nil {
 			if sum.IsScalar() {
-				n.gorgoniaNode, err = gorgonia.HadamardDiv(exp, sum)
+				tmp, err := gorgonia.HadamardDiv(exp, sum)
+				if err != nil {
+					return err
+				}
+				n.gorgoniaNode, err = gorgonia.Reshape(tmp, children[0].gorgoniaNode.Shape())
 				return err
 			}
 			a, b, err := gorgonia.Broadcast(exp, sum, gorgonia.NewBroadcastPattern(nil, []byte{1}))
 			if err != nil {
 				return err
 			}
-			n.gorgoniaNode, err = gorgonia.HadamardDiv(a, b)
+			tmp, err := gorgonia.HadamardDiv(a, b)
+			if err != nil {
+				return err
+			}
+			n.gorgoniaNode, err = gorgonia.Reshape(tmp, children[0].gorgoniaNode.Shape())
 			return err
 		}
 		return err
