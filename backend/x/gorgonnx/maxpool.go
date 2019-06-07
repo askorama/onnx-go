@@ -23,13 +23,12 @@ func newMaxpool() operator {
 // test with go test -run=TestONNX/maxpool
 type maxpool struct {
 	padding     string
+	dilation    []int
 	pad         []int
 	stride      []int
 	kernelShape tensor.Shape
-}
-
-func ceilDivInt(a, b int) int {
-	return (a + b - 1) / b
+	ceilMode    bool
+	divInt      func(a, b int) int
 }
 
 func (c *maxpool) apply(g *Graph, n *Node) error {
@@ -41,11 +40,21 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 	x := children[0].gorgoniaNode
 	switch c.padding {
 	case "SAME_UPPER":
-		outputSpatialShape := make([]int, len(x.Shape()[2:]))
 		for i, v := range x.Shape()[2:] {
-			outputSpatialShape[i] = ceilDivInt(v, c.stride[i])
-			// pad_shape[i] = (output_spatial_shape[i] - 1) * strides_spatial_shape[i] + kernel_spatial_shape[i] - input_spatial_shape[i]
-			c.pad[i] = (outputSpatialShape[i]-1)*c.stride[i] + c.kernelShape[i] - v
+			outputSpatialShape := ceilDivInt(v, c.stride[i])
+			c.pad[i] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
+			if c.pad[i] < 0 {
+				c.pad[i] = 0
+			}
+			if c.pad[i]%2 != 0 {
+				return &onnx.ErrNotImplemented{
+					Operator:       "maxpool",
+					AttributeName:  "pads",
+					AttributeValue: c.pad[i],
+					Message:        "Asymetric padding",
+				}
+			}
+			c.pad[i] /= 2
 		}
 	default:
 	}
@@ -54,6 +63,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 		c.kernelShape,
 		c.pad,
 		c.stride)
+	//c.ceilMode)
 
 	return err
 }
@@ -68,6 +78,8 @@ func (c *maxpool) init(o onnx.Operation) error {
 	}
 	switch autoPad {
 	case "NOTSET":
+	case "SAME_UPPER":
+		c.padding = autoPad
 	case "":
 	default:
 		return &onnx.ErrNotImplemented{
@@ -95,7 +107,6 @@ func (c *maxpool) init(o onnx.Operation) error {
 	pad, ok := o.Attributes["pads"]
 	if ok {
 		if pad, ok := pad.([]int64); ok {
-
 			if len(pad) == 4 && (pad[0] != pad[1] || pad[2] != pad[3]) {
 				return &onnx.ErrNotImplemented{
 					Operator:       "maxpool",
@@ -131,13 +142,22 @@ func (c *maxpool) init(o onnx.Operation) error {
 			}
 		}
 	}
-	_, ok = o.Attributes["ceil_mode"]
-	if ok {
-		return &onnx.ErrNotImplemented{
-			Operator: "maxpool",
-			Message:  "ceil_mode not implemented",
+	c.divInt = floorDivInt
+	if ceilMode, ok := o.Attributes["ceil_mode"]; ok {
+		if mode, ok := ceilMode.(int64); ok {
+			if mode == 1 {
+				c.ceilMode = true
+				c.divInt = ceilDivInt
+				return &onnx.ErrNotImplemented{
+					Operator:       "maxpool",
+					AttributeName:  "ceil_mode",
+					AttributeValue: ceilMode,
+					Message:        "ceil mode not implemented in Gorgonia (https://github.com/gorgonia/gorgonia/pull/294)",
+				}
+			}
 		}
 	}
+	c.dilation = []int{1, 1}
 	_, ok = o.Attributes["dilations"]
 	if ok {
 		return &onnx.ErrNotImplemented{

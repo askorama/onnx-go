@@ -40,18 +40,14 @@ func (a *imageScaler) apply(g *Graph, n *Node) error {
 	if len(a.bias) != x.Shape()[1] {
 		return errors.New("bias should be the same size as the channel")
 	}
-	scaleN := gorgonia.NewConstant(float32(a.scale), gorgonia.WithName("scale"+uuid.New().String()))
-	aa, err := gorgonia.Mul(x, scaleN)
+	scaleN := gorgonia.NewConstant(float32(a.scale), gorgonia.WithName("scale"+uuid.New().String()), gorgonia.In(g.exprgraph))
+	aa, err := gorgonia.HadamardProd(x, scaleN)
 	if err != nil {
 		return err
 	}
-	biasT := tensor.New(tensor.WithBacking(a.bias), tensor.Of(tensor.Float32))
+	biasT := tensor.New(tensor.WithBacking(a.bias), tensor.Of(tensor.Float32), tensor.WithShape(1, len(a.bias), 1, 1))
 	bias := gorgonia.NodeFromAny(g.exprgraph, biasT, gorgonia.WithName(uuid.New().String()))
-	biasN, err := gorgonia.Reshape(bias, []int{1, bias.Shape()[0], 1, 1})
-	if err != nil {
-		return err
-	}
-	ax, bx, err := gorgonia.Broadcast(aa, biasN, gorgonia.NewBroadcastPattern(nil, []byte{0, 2, 3}))
+	ax, bx, err := gorgonia.Broadcast(aa, bias, gorgonia.NewBroadcastPattern(nil, []byte{0, 2, 3}))
 	if err != nil {
 		return err
 	}
