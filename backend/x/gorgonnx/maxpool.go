@@ -41,7 +41,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 	switch c.padding {
 	case "SAME_UPPER":
 		for i, v := range x.Shape()[2:] {
-			outputSpatialShape := c.divInt(v, c.stride[i])
+			outputSpatialShape := ceilDivInt(v, c.stride[i])
 			c.pad[i] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
 			if c.pad[i] < 0 {
 				c.pad[i] = 0
@@ -54,6 +54,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 					Message:        "Asymetric padding",
 				}
 			}
+			c.pad[i] /= 2
 		}
 	default:
 	}
@@ -61,8 +62,8 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 		children[0].gorgoniaNode,
 		c.kernelShape,
 		c.pad,
-		c.stride,
-		c.ceilMode)
+		c.stride)
+	//c.ceilMode)
 
 	return err
 }
