@@ -29,7 +29,7 @@ type operator interface {
 //  * if at least one of the children's pointer fo gorgoniaNode is nil
 func checkCondition(children []*Node, arity int) error {
 	if len(children) != arity {
-		return fmt.Errorf("bad arity for add operation (have %v, want %v)", len(children), arity)
+		return fmt.Errorf("bad arity for operation (have %v, want %v)", len(children), arity)
 	}
 	// fail fast
 	for i := range children {
