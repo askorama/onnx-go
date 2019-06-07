@@ -1,8 +1,6 @@
 package gorgonnx
 
 import (
-	"math"
-
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 	"gorgonia.org/tensor"
@@ -41,29 +39,22 @@ func (c *conv) apply(g *Graph, n *Node) error {
 	case "NOTSET":
 	case "":
 	case "SAME_UPPER":
-		outputHeight := int(
-			math.Ceil(
-				float64(children[0].gorgoniaNode.Shape()[2]) /
-					float64(c.stride[0])))
-		outputWidth := int(
-			math.Ceil(
-				float64(children[0].gorgoniaNode.Shape()[3]) /
-					float64(c.stride[1])))
-		c.pad[0] = int(
-			math.Max(
-				float64((outputHeight-1)*c.stride[0]+
-					c.kernelShape[0]-
-					children[0].gorgoniaNode.Shape()[2]),
-				float64(0))) /
-			2
-		c.pad[1] = int(
-			math.Max(
-				float64((outputWidth-1)*c.stride[1]+
-					c.kernelShape[1]-
-					children[0].gorgoniaNode.Shape()[3]),
-				float64(0))) /
-			2
-
+		for i, v := range children[0].gorgoniaNode.Shape()[2:] {
+			outputD := ceilDivInt(v, c.stride[i])
+			c.pad[i] = (outputD-1)*c.stride[i] + (c.kernelShape[i]-1)*c.dilation[i] + 1 - v
+			if c.pad[i] < 0 {
+				c.pad[i] = 0
+			}
+			if c.pad[i]%2 != 0 {
+				return &onnx.ErrNotImplemented{
+					Operator:       "conv",
+					AttributeName:  "pads",
+					AttributeValue: c.pad[i],
+					Message:        "Asymetric padding",
+				}
+			}
+			c.pad[i] /= 2
+		}
 	default:
 		return &onnx.ErrNotImplemented{
 			Operator: "Conv",
