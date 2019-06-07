@@ -41,10 +41,22 @@ func (c *conv) apply(g *Graph, n *Node) error {
 	case "NOTSET":
 	case "":
 	case "SAME_UPPER":
-		inputHeight := children[0].gorgoniaNode.Shape()[2]
-		inputWidth := children[0].gorgoniaNode.Shape()[3]
-		c.pad[0] = ((inputHeight-1)*c.stride[0] + 1 + c.dilation[0]*(c.kernelShape[0]-1) - inputHeight) / 2
-		c.pad[1] = ((inputWidth-1)*c.stride[0] + 1 + c.dilation[0]*(c.kernelShape[0]-1) - inputWidth) / 2
+		for i, v := range children[0].gorgoniaNode.Shape()[2:] {
+			outputD := ceilDivInt(v, c.stride[i])
+			c.pad[i] = (outputD-1)*c.stride[i] + (c.kernelShape[i]-1)*c.dilation[i] + 1 - v
+			if c.pad[i] < 0 {
+				c.pad[i] = 0
+			}
+			if c.pad[i]%2 != 0 {
+				return &onnx.ErrNotImplemented{
+					Operator:       "conv",
+					AttributeName:  "pads",
+					AttributeValue: c.pad[i],
+					Message:        "Asymetric padding",
+				}
+			}
+			c.pad[i] /= 2
+		}
 	default:
 		return &onnx.ErrNotImplemented{
 			Operator: "Conv",
