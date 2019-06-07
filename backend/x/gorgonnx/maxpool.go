@@ -43,6 +43,9 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 		for i, v := range x.Shape()[2:] {
 			outputSpatialShape := c.divInt(v, c.stride[i])
 			c.pad[i] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
+			if c.pad[i] < 0 {
+				c.pad[i] = 0
+			}
 			if c.pad[i]%2 != 0 {
 				return &onnx.ErrNotImplemented{
 					Operator:       "maxpool",
@@ -58,8 +61,8 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 		children[0].gorgoniaNode,
 		c.kernelShape,
 		c.pad,
-		c.stride)
-	//c.ceilMode)
+		c.stride,
+		c.ceilMode)
 
 	return err
 }
