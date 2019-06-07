@@ -1,7 +1,7 @@
 package gorgonnx
 
 import (
-	"math"
+	"errors"
 
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
@@ -32,52 +32,64 @@ type conv struct {
 
 func (c *conv) apply(g *Graph, n *Node) error {
 	children := getOrderedChildren(g.g, n)
-	err := checkCondition(children, 2)
-	if err != nil {
-		return err
+	var err error
+	if len(children) < 2 || len(children) > 3 {
+		return errors.New("Conv: bad arity")
 	}
 	// autopadding needs to be applied now because it needs to be aware of the shape of the nodes
 	switch c.autopad {
 	case "NOTSET":
 	case "":
 	case "SAME_UPPER":
-		outputHeight := int(
-			math.Ceil(
-				float64(children[0].gorgoniaNode.Shape()[2]) /
-					float64(c.stride[0])))
-		outputWidth := int(
-			math.Ceil(
-				float64(children[0].gorgoniaNode.Shape()[3]) /
-					float64(c.stride[1])))
-		c.pad[0] = int(
-			math.Max(
-				float64((outputHeight-1)*c.stride[0]+
-					c.kernelShape[0]-
-					children[0].gorgoniaNode.Shape()[2]),
-				float64(0))) /
-			2
-		c.pad[1] = int(
-			math.Max(
-				float64((outputWidth-1)*c.stride[1]+
-					c.kernelShape[1]-
-					children[0].gorgoniaNode.Shape()[3]),
-				float64(0))) /
-			2
-
+		inputHeight := children[0].gorgoniaNode.Shape()[2]
+		inputWidth := children[0].gorgoniaNode.Shape()[3]
+		c.pad[0] = ((inputHeight-1)*c.stride[0] + 1 + c.dilation[0]*(c.kernelShape[0]-1) - inputHeight) / 2
+		c.pad[1] = ((inputWidth-1)*c.stride[0] + 1 + c.dilation[0]*(c.kernelShape[0]-1) - inputWidth) / 2
 	default:
 		return &onnx.ErrNotImplemented{
 			Operator: "Conv",
 			Message:  "auto_pad " + c.autopad + " not implemented",
 		}
 	}
-	n.gorgoniaNode, err = gorgonia.Conv2d(
+	convN, err := gorgonia.Conv2d(
 		children[0].gorgoniaNode,
 		children[1].gorgoniaNode,
 		c.kernelShape,
 		c.pad,
 		c.stride,
 		c.dilation)
-	return err
+	if err != nil {
+		return &errOp{
+			"conv",
+			err,
+		}
+	}
+	if len(children) == 3 {
+		b, err := gorgonia.Reshape(children[2].gorgoniaNode, []int{1, children[2].gorgoniaNode.Shape()[0], 1, 1})
+		if err != nil {
+			return &errOp{
+				"conv",
+				err,
+			}
+		}
+		convA, ba, err := gorgonia.Broadcast(convN, b, gorgonia.NewBroadcastPattern(nil, []byte{0, 2, 3}))
+		if err != nil {
+			return &errOp{
+				"conv",
+				err,
+			}
+		}
+		n.gorgoniaNode, err = gorgonia.Add(convA, ba)
+		if err != nil {
+			return &errOp{
+				"conv",
+				err,
+			}
+		}
+	} else {
+		n.gorgoniaNode = convN
+	}
+	return nil
 }
 
 func (c *conv) init(o onnx.Operation) error {
