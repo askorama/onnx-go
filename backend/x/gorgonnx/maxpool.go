@@ -41,20 +41,19 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 	switch c.padding {
 	case "SAME_UPPER":
 		for i, v := range x.Shape()[2:] {
+			j := 2 * i
 			outputSpatialShape := ceilDivInt(v, c.stride[i])
-			c.pad[i] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
-			if c.pad[i] < 0 {
-				c.pad[i] = 0
+			c.pad[j] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
+			if c.pad[j] < 0 {
+				c.pad[j] = 0
 			}
-			if c.pad[i]%2 != 0 {
-				return &onnx.ErrNotImplemented{
-					Operator:       "maxpool",
-					AttributeName:  "pads",
-					AttributeValue: c.pad[i],
-					Message:        "Asymetric padding",
-				}
+			if c.pad[j]%2 != 0 {
+				c.pad[j] = c.pad[j]/2 + 1
+				c.pad[j+1] = c.pad[j] - 1
+			} else {
+				c.pad[j] /= 2
+				c.pad[j+1] = c.pad[j]
 			}
-			c.pad[i] /= 2
 		}
 	default:
 	}
@@ -103,24 +102,14 @@ func (c *maxpool) init(o onnx.Operation) error {
 		}
 	}
 
-	c.pad = []int{0, 0}
+	c.pad = []int{0, 0, 0, 0}
 	pad, ok := o.Attributes["pads"]
 	if ok {
-		if pad, ok := pad.([]int64); ok {
-			if len(pad) == 4 && (pad[0] != pad[1] || pad[2] != pad[3]) {
-				return &onnx.ErrNotImplemented{
-					Operator:       "maxpool",
-					AttributeName:  "pads",
-					AttributeValue: pad,
-					Message:        "Asymetric padding",
-				}
+    if pad, ok := pad.([]int64); ok {
+			for i, v := range pad {
+				c.pad[i] = int(v)
 			}
-
-			if len(pad) == 4 {
-				for i := 0; i < 2; i++ {
-					c.pad[i] = int(pad[2*i])
-				}
-			} else if len(pad) == 2 {
+			if len(pad) == 2 {
 				for i := 0; i < 2; i++ {
 					c.pad[i] = int(pad[i])
 				}
