@@ -350,4 +350,3 @@ Covering 21.3% of the onnx integration tests
 |![#ffa500](https://placehold.it/15/FFA500/000000?text=+)|ReduceProd|TestReduceProdDoNotKeepdimsRandom|true|true|false|
 |![#ffa500](https://placehold.it/15/FFA500/000000?text=+)|Pow|TestPowBcastArray|true|true|false|
 |![#ffa500](https://placehold.it/15/FFA500/000000?text=+)|ThresholdedRelu|TestThresholdedrelu|true|true|false|
-
