@@ -106,20 +106,25 @@ func (c *maxpool) init(o onnx.Operation) error {
 	pad, ok := o.Attributes["pads"]
 	if ok {
 		if pad, ok := pad.([]int64); ok {
-			if len(pad) == 4 && (pad[0] != pad[1] || pad[2] != pad[3]) {
-				return &onnx.ErrNotImplemented{
-					Operator:       "maxpool",
-					AttributeName:  "pads",
-					AttributeValue: pad,
-					Message:        "Asymetric padding",
+			/*
+				if len(pad) == 4 && (pad[0] != pad[1] || pad[2] != pad[3]) {
+					return &onnx.ErrNotImplemented{
+						Operator:       "maxpool",
+						AttributeName:  "pads",
+						AttributeValue: pad,
+						Message:        "Asymetric padding",
+					}
 				}
-			}
 
-			if len(pad) == 4 {
-				for i := 0; i < 2; i++ {
-					c.pad[i] = int(pad[2*i])
-				}
-			} else if len(pad) == 2 {
+				if len(pad) == 4 {
+					for i := 0; i < 2; i++ {
+						c.pad[i] = int(pad[2*i])
+					}
+			*/
+			for i, v := range pad {
+				c.pad[i] = int(v)
+			}
+			if len(pad) == 2 {
 				for i := 0; i < 2; i++ {
 					c.pad[i] = int(pad[i])
 				}
