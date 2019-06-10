@@ -10,6 +10,7 @@ import (
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -83,6 +84,17 @@ func TestModel(t *testing.T) {
 	})
 	t.Run("Run", func(t *testing.T) {
 		testRun(t, engine)
+	})
+	t.Run("Validate output", func(t *testing.T) {
+		computedOutputT, err := m.GetOutputTensors()
+		if err != nil {
+			t.Fatal(err)
+		}
+		outputT, err := onnx.NewTensor(output)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.InDeltaSlice(t, outputT.Data(), computedOutputT[0].Data(), 5e-3, "the two tensors should be equal.")
 	})
 }
 
