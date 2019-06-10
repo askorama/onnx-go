@@ -35,6 +35,12 @@ func TestMain(m *testing.M) {
 		log.Println(err)
 		os.Exit(0)
 	}
+	outputFile := filepath.Join(dir, "test_data_set_0/output_0.pb")
+	output, err = ioutil.ReadFile(outputFile)
+	if err != nil {
+		log.Println(err)
+		os.Exit(0)
+	}
 	os.Exit(m.Run())
 }
 
@@ -81,5 +87,9 @@ func TestModel(t *testing.T) {
 }
 
 func BenchmarkRun(b *testing.B) {
-	//	engine, m := testUnmarshal(b)
+	engine, m := testUnmarshal(b)
+	testSetInput(b, m)
+	for n := 0; n < b.N; n++ {
+		testRun(b, engine)
+	}
 }
