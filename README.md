@@ -35,9 +35,23 @@ check the `examples` subdirectory.
 
 ## Install
 
+Install it via go get
 ```
 go get github.com/owulveryck/onnx-go
 ```
+Or add it in go.mod
+
+```
+module myproject.org/package
+
+go 1.12
+
+require (
+        github.com/google/flatbuffers v1.11.0 // indirect
+        github.com/owulveryck/onnx-go v0.0.0-20190605120756-5af9985
+)
+```
+
 
 ## Example
 
