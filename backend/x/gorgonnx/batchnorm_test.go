@@ -49,7 +49,7 @@ func TestBatchnorm(t *testing.T) {
 		bias:    biasN.Value(),
 		mean:    meanN.Value(),
 		varN:    varN.Value(),
-		epsilon: 0,
+		epsilon: 1e-5,
 	}
 
 	output, err := gorgonia.ApplyOp(batchNormOp, xN)
@@ -71,5 +71,5 @@ func TestBatchnorm(t *testing.T) {
 			t.Fatalf("wrong dimension, got %v, expect %v", output.Shape(), expectedT.Shape())
 		}
 	}
-	assert.InDelta(t, output.Value().Data(), expectedT.Data(), 1e-6)
+	assert.InDeltaSlice(t, output.Value().Data(), expectedT.Data(), 1e-6)
 }
