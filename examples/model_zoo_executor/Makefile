@@ -3,6 +3,6 @@
 all: $(wildcard models/*)
 
 models/%: .FORCE
-	MODELDIR=$@ go test
+	-MODELDIR=$@ go test
 
 .FORCE:
