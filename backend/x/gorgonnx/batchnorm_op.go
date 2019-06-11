@@ -68,21 +68,18 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 			panic(err)
 		}
 	}()
-	var out gorgonia.Value
-	out = tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(s[1:]...))
-	/*
-		if out, err = gorgonia.CloneValue(x); err != nil {
-			return nil, err
-		}
-	*/
 	vals, err := native.Tensor3F32(x)
 	if err != nil {
 		return nil, err
 	}
-	outT3, err := native.Tensor3F32(out.(*tensor.Dense))
-	if err != nil {
-		return nil, err
-	}
+	/*
+		var out gorgonia.Value
+		out = tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(s[1:]...))
+		outT3, err := native.Tensor3F32(out.(*tensor.Dense))
+		if err != nil {
+			return nil, err
+		}
+	*/
 	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
 	// output = scaleN * xNorm + biasN
 	for c := 0; c < len(vals); c++ {
@@ -93,15 +90,19 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 		for h := 0; h < len(vals[c]); h++ {
 			for w := 0; w < len(vals[c][h]); w++ {
 				x := vals[c][h][w]
-				outT3[c][h][w] = scale*((x-mean)/sqrtF32(varV+b.epsilon)) + bias
+				//outT3[c][h][w] = scale*((x-mean)/sqrtF32(varV+b.epsilon)) + bias
+				vals[c][h][w] = scale*((x-mean)/sqrtF32(varV+b.epsilon)) + bias
 			}
 		}
 	}
-	err = out.(*tensor.Dense).Reshape(s...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+	/*
+		err = out.(*tensor.Dense).Reshape(s...)
+		if err != nil {
+			return nil, err
+		}
+	*/
+	//return out, nil
+	return x, nil
 }
 
 func sqrtF32(v float32) float32 {
@@ -117,7 +118,8 @@ func (b *batchNorm) CallsExtern() bool {
 }
 
 func (b *batchNorm) OverwritesInput() int {
-	return -1
+	//return -1
+	return 0
 }
 
 func (b *batchNorm) WriteHash(h hash.Hash) {
