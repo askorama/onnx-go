@@ -69,9 +69,12 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 		}
 	}()
 	var out gorgonia.Value
-	if out, err = gorgonia.CloneValue(x); err != nil {
-		return nil, err
-	}
+	out = tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(s[1:]...))
+	/*
+		if out, err = gorgonia.CloneValue(x); err != nil {
+			return nil, err
+		}
+	*/
 	vals, err := native.Tensor3F32(x)
 	if err != nil {
 		return nil, err
