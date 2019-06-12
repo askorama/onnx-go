@@ -39,21 +39,30 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
 	// output = scaleN * xNorm + biasN
 	if len(values) != b.Arity() {
-		return nil, errors.New("wrong number of arguments for batchnorm")
+		return nil, errors.New("wrong number of arguments for batchnorm_op")
 	}
 	x, ok := values[0].(*tensor.Dense)
 	if !ok {
-		return nil, errors.New("batchNorm only works on dense tensors")
+		return nil, errors.New("batchNorm_op only works on dense tensors")
 	}
 
 	if len(x.Shape()) != 4 {
-		return nil, errors.New("batchNorm expects a BCHW tensor")
+		return nil, errors.New("batchNorm_op expects a BCHW tensor")
 	}
 	if x.Shape()[0] != 1 {
-		return nil, errors.New("batchNorm expects a BCHW tensor with B=1")
+		return nil, errors.New("batchNorm_op expects a BCHW tensor with B=1")
 	}
 	if x.Dtype() != tensor.Float32 {
-		panic("not implemented")
+		panic("batchnorm_op: dense not []float32 not implemented")
+	}
+	if len(b.scale.Shape()) != 1 || len(b.bias.Shape()) != 1 ||
+		len(b.mean.Shape()) != 1 || len(b.varN.Shape()) != 1 {
+		return nil, errors.New("batchnorp_op only support 1 dim scale,bias,mean and var")
+	}
+	ch := x.Shape()[1]
+	if b.scale.Shape()[0] != ch || b.bias.Shape()[0] != ch ||
+		b.mean.Shape()[0] != ch || b.varN.Shape()[0] != ch {
+		return nil, errors.New("batchnorp_op only support 1 dim scale,bias,mean and var")
 	}
 	// Reshape to CHW
 	s := make([]int, len(x.Shape()))
@@ -68,18 +77,12 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 			panic(err)
 		}
 	}()
+	// TODO: handle float64
+
 	vals, err := native.Tensor3F32(x)
 	if err != nil {
 		return nil, err
 	}
-	/*
-		var out gorgonia.Value
-		out = tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(s[1:]...))
-		outT3, err := native.Tensor3F32(out.(*tensor.Dense))
-		if err != nil {
-			return nil, err
-		}
-	*/
 	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
 	// output = scaleN * xNorm + biasN
 	for c := 0; c < len(vals); c++ {
@@ -95,13 +98,6 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 			}
 		}
 	}
-	/*
-		err = out.(*tensor.Dense).Reshape(s...)
-		if err != nil {
-			return nil, err
-		}
-	*/
-	//return out, nil
 	return x, nil
 }
 
