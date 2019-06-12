@@ -119,7 +119,7 @@ This picture represents the mechanism:
 ![Schema](vignettes/imgs/schema.png)
 
 onnx-go do not provide any executable backend, but for a reference, a simple backend that builds an information graph is provided as an example (see the `simple` subpackage).
-Gorgonia is the man target backend of ONNX-Go.
+Gorgonia is the main target backend of ONNX-Go.
 
 #### Backend implementation
 
