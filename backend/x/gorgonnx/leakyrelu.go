@@ -39,24 +39,34 @@ func (l *leakyRELU) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	}
 	t, ok := inputs[0].(*tensor.Dense)
 	if !ok {
-		return nil, errors.New("leakyrelu: only dense are supporter")
+		return nil, errors.New("leakyrelu: only dense are supported")
 
 	}
-	if vals, ok := t.Data().([]float64); ok {
-		for i := range vals {
-			if vals[i] >= 0 {
-				continue
+	switch t.Dtype() {
+	case tensor.Float64:
+		if vals, ok := t.Data().([]float64); ok {
+			for i := range vals {
+				if vals[i] >= 0 {
+					continue
+				}
+				vals[i] *= float64(l.alpha)
 			}
-			vals[i] *= float64(l.alpha)
+		} else {
+			return nil, errors.New("expeced a []float64, but cannot cast")
 		}
-	}
-	if vals, ok := t.Data().([]float32); ok {
-		for i := range vals {
-			if vals[i] >= 0 {
-				continue
+	case tensor.Float32:
+		if vals, ok := t.Data().([]float32); ok {
+			for i := range vals {
+				if vals[i] >= 0 {
+					continue
+				}
+				vals[i] *= l.alpha
 			}
-			vals[i] *= l.alpha
+		} else {
+			return nil, errors.New("expected a []float32, but cannot cast")
 		}
+	default:
+		return nil, errors.New("LeakyRelu Unsupported type")
 	}
 	return t, nil
 }
