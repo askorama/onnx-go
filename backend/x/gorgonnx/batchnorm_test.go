@@ -44,7 +44,7 @@ func TestBatchnorm_float32(t *testing.T) {
 	biasN := gorgonia.NodeFromAny(g, biasT, gorgonia.WithName("bias"))
 	meanN := gorgonia.NodeFromAny(g, meanT, gorgonia.WithName("mean"))
 	varN := gorgonia.NodeFromAny(g, varT, gorgonia.WithName("var"))
-	batchNormOp := &batchNorm{
+	batchNormOp := &fastBatchnorm{
 		scale:   scaleN.Value(),
 		bias:    biasN.Value(),
 		mean:    meanN.Value(),
@@ -109,7 +109,7 @@ func TestBatchnorm_float64(t *testing.T) {
 	biasN := gorgonia.NodeFromAny(g, biasT, gorgonia.WithName("bias"))
 	meanN := gorgonia.NodeFromAny(g, meanT, gorgonia.WithName("mean"))
 	varN := gorgonia.NodeFromAny(g, varT, gorgonia.WithName("var"))
-	batchNormOp := &batchNorm{
+	batchNormOp := &fastBatchnorm{
 		scale:   scaleN.Value(),
 		bias:    biasN.Value(),
 		mean:    meanN.Value(),

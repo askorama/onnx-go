@@ -13,21 +13,21 @@ import (
 	"gorgonia.org/tensor/native"
 )
 
-type batchNorm struct {
+type fastBatchnorm struct {
 	scale, bias, mean, varN gorgonia.Value
 	epsilon                 float32
 }
 
-func (b *batchNorm) Arity() int {
+func (b *fastBatchnorm) Arity() int {
 	return 1
 }
 
-func (b *batchNorm) Type() hm.Type {
+func (b *fastBatchnorm) Type() hm.Type {
 	t := gorgonia.TensorType{Dims: 4, Of: hm.TypeVariable('a')}
 	return hm.NewFnType(t, t)
 }
 
-func (b *batchNorm) InferShape(ns ...gorgonia.DimSizer) (tensor.Shape, error) {
+func (b *fastBatchnorm) InferShape(ns ...gorgonia.DimSizer) (tensor.Shape, error) {
 	if len(ns) != b.Arity() {
 		return nil, errors.New("wrong number of arguments for batchnorm")
 	}
@@ -35,36 +35,46 @@ func (b *batchNorm) InferShape(ns ...gorgonia.DimSizer) (tensor.Shape, error) {
 	return ns[0].(tensor.Shape).Clone(), nil
 }
 
-func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
-	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
-	// output = scaleN * xNorm + biasN
-	if len(values) != b.Arity() {
-		return nil, errors.New("wrong number of arguments for batchnorm_op")
-	}
-	x, ok := values[0].(*tensor.Dense)
+var errNotSupported = errors.New("not supported")
+
+func (b *fastBatchnorm) check(v gorgonia.Value) (*tensor.Dense, error) {
+	x, ok := v.(*tensor.Dense)
 	if !ok {
-		return nil, errors.New("batchNorm_op only works on dense tensors")
+		return nil, errNotSupported
 	}
 
 	if len(x.Shape()) != 4 {
-		return nil, errors.New("batchNorm_op expects a BCHW tensor")
+		return nil, errNotSupported
 	}
 	if x.Shape()[0] != 1 {
-		return nil, errors.New("batchNorm_op expects a BCHW tensor with B=1")
+		return nil, errNotSupported
 	}
 	if len(b.scale.Shape()) != 1 || len(b.bias.Shape()) != 1 ||
 		len(b.mean.Shape()) != 1 || len(b.varN.Shape()) != 1 {
-		return nil, errors.New("batchnorp_op only support 1 dim scale,bias,mean and var")
+		return nil, errNotSupported
 	}
 	ch := x.Shape()[1]
 	if b.scale.Shape()[0] != ch || b.bias.Shape()[0] != ch ||
 		b.mean.Shape()[0] != ch || b.varN.Shape()[0] != ch {
-		return nil, errors.New("batchnorp_op only support 1 dim scale,bias,mean and var")
+		return nil, errNotSupported
+	}
+	return x, nil
+}
+
+func (b *fastBatchnorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
+	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
+	// output = scaleN * xNorm + biasN
+	if len(values) != b.Arity() {
+		return nil, errors.New("bad arity for fastBatchnorm")
+	}
+	x, err := b.check(values[0])
+	if err != nil {
+		return nil, err
 	}
 	// Reshape to CHW
 	s := make([]int, len(x.Shape()))
 	copy(s, x.Shape())
-	err := x.Reshape(s[1:]...)
+	err = x.Reshape(s[1:]...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +84,6 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 			panic(err)
 		}
 	}()
-	// TODO: handle float64
 
 	switch {
 	case x.Dtype() == tensor.Float32:
@@ -125,29 +134,29 @@ func sqrtF32(v float32) float32 {
 	return float32(math.Sqrt(float64(v)))
 }
 
-func (b *batchNorm) ReturnsPtr() bool {
+func (b *fastBatchnorm) ReturnsPtr() bool {
 	return true
 }
 
-func (b *batchNorm) CallsExtern() bool {
+func (b *fastBatchnorm) CallsExtern() bool {
 	return false
 }
 
-func (b *batchNorm) OverwritesInput() int {
+func (b *fastBatchnorm) OverwritesInput() int {
 	//return -1
 	return 0
 }
 
-func (b *batchNorm) WriteHash(h hash.Hash) {
+func (b *fastBatchnorm) WriteHash(h hash.Hash) {
 	fmt.Fprintf(h, "batchnorm-%1.1f", b.epsilon)
 }
 
-func (b *batchNorm) Hashcode() uint32 {
+func (b *fastBatchnorm) Hashcode() uint32 {
 	h := fnv.New32a()
 	b.WriteHash(h)
 	return h.Sum32()
 }
 
-func (b *batchNorm) String() string {
+func (b *fastBatchnorm) String() string {
 	return fmt.Sprintf("batchnorm-%1.1f", b.epsilon)
 }
