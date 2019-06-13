@@ -101,11 +101,6 @@ func getInput() tensor.Tensor {
 		if err != nil {
 			log.Fatal(err)
 		}
-		inputT := tensor.New(tensor.WithShape(1, 3, h, w), tensor.Of(tensor.Float32))
-		err = images.ImageToBCHW(img, inputT)
-		if err != nil {
-			log.Fatal(err)
-		}
 		return inputT
 	}
 	log.Fatal("Please speficy an input")
