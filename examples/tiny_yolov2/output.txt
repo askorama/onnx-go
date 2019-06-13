@@ -1,0 +1,15 @@
+[?25l[J[J[J[?2004h[?25h[?1049h[?1h=[?2004h[1;46r[?12h[?12l[22;2t[22;1t[27m[29m[m[H[2J[?25l[46;1H"main.go" 158L, 3430C[1;1Hpackage main
+
+import ([4;9H"flag"[5;9H"fmt"[6;9H"image"[7;9H"image/draw"[8;9H"image/jpeg"[9;9H"image/png"[10;9H"io/ioutil"[11;9H"log"[12;9H"os"[13;9H"sort"[15;9H"github.com/owulveryck/onnx-go"[16;9H"github.com/owulveryck/onnx-go/backend/x/gorgonnx"[17;9H"github.com/owulveryck/onnx-go/internal/x/images"[18;9H"gorgonia.org/tensor"[19;9H"gorgonia.org/tensor/native"
+)
+
+const h, w = 416, 416
+
+var ([25;9Hmodel   = flag.String("model", "model.onnx", "path to the model file")[26;9HimgF    = flag.String("img", "", "path of an input tensor for testing")[27;9Himg     image.Image[28;9Hclasses = []string{"aeroplane", "bicycle", "bird", "boat", "bottle",[29;17H"bus", "car", "cat", "chair", "cow",[30;17H"diningtable", "dog", "horse", "motorbike", "person",[31;17H"pottedplant", "sheep", "sofa", "train", "tv/monitor"}
+)
+
+func main() {[35;9Hh := flag.Bool("h", false, "help")[36;9Hflag.Parse()[37;9Hif *h {[38;17Hflag.Usage()[39;17Hos.Exit(0)[40;9H}[41;9Hif _, err := os.Stat(*model); err != nil && os.IsNotExist(err) {[42;17Hlog.Fatalf("%v does not exist", *model)[43;9H}[44;9H// Create a backend receiver[45;9Hbackend := gorgonnx.NewGraph()[1;1H[?25h[?25l[46;1HType  :qa!  and press <Enter> to abandon all changes and exit Vim[1;1H[?25h[?25l[?25h
+
+[4;9H[5;9H[6;9H[7;9H[?25l[?25h[46;1H[?2004l[?1l>[?1049lVim: Caught deadly signal HUP
+Vim: Finished.
+[46;1H[23;2t[23;1t[22;2t[22;1t[23;2t[23;1t

@@ -17,7 +17,6 @@ import (
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
 	"github.com/owulveryck/onnx-go/internal/x/images"
 	"gorgonia.org/tensor"
-	"gorgonia.org/tensor/native"
 )
 
 // The 416x416 image is divided into a 13x13 grid. Each of these grid cells
@@ -116,25 +115,28 @@ func processOutput(t []tensor.Tensor, err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	dense := t[0].(*tensor.Dense)
-	s := make([]int, 3)
-	copy(s, dense.Shape()[1:])
-	// Ignore the first dimension
-	err = dense.Reshape(s...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	features, err := native.Tensor3F32(dense)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var classification = make([]box, 13*13*5)
+	features := t[0].Data().([]float32)
+	var classification = make([]box, gridHeight*gridWidth*boxesPerCell)
 	var counter int
-	for b := 0; b < len(features); b += 25 {
-		for cx := 0; cx < len(features[b]); cx++ {
-			for cy := 0; cy < len(features[b][cx]); cy++ {
-				bb := (b + 1) / 25
+	for cx := 0; cx < gridHeight; cx++ {
+		for cy := 0; cy < gridWidth; cy++ {
+			for b := 0; b < boxesPerCell; b++ {
+				channel := b * (numClasses + 5)
+
+				o := offset(cx, cy, channel)
+				tx := features[o]
+				ty := features[o+1]
+				tw := features[o+2]
+				th := features[o+3]
+				tc := features[o+4]
+				tclasses := features[o+5 : o+24]
+				/*
+				   let tx = features[offset(channel, cx, cy)]
+				   let ty = features[offset(channel + 1, cx, cy)]
+				   let tw = features[offset(channel + 2, cx, cy)]
+				   let th = features[offset(channel + 3, cx, cy)]
+				   let tc = features[offset(channel + 4, cx, cy)]
+				*/
 				classification[counter] = box{
 					gridcell:    []int{cx, cy},
 					boundindBox: b,
@@ -145,15 +147,15 @@ func processOutput(t []tensor.Tensor, err error) {
 					// Now x and y represent center of the bounding box in the original
 					// 416x416 image space.
 					// https://github.com/hollance/Forge/blob/04109c856237faec87deecb55126d4a20fa4f59b/Examples/YOLO/YOLO/YOLO.swift#L154
-					x: (float32(cx) + sigmoid(features[b][cx][cy])) * blockSize,
-					y: (float32(cy) + sigmoid(features[b+1][cx][cy])) * blockSize,
+					x: (float32(cx) + sigmoid(tx)) * blockSize,
+					y: (float32(cy) + sigmoid(ty)) * blockSize,
 					// The size of the bounding box, tw and th, is predicted relative to
 					// the size of an "anchor" box. Here we also transform the width and
 					// height into the original 416x416 image space.
-					w:          exp(features[b+2][cx][cy]) * anchors[2*bb] * blockSize,
-					h:          exp(features[b+3][cx][cy]) * anchors[2*bb+1] * blockSize,
-					confidence: sigmoid(features[b+4][cx][cy]),
-					classes:    softmax(features[b+5 : b+24][cx][cy]),
+					w:          exp(tw) * anchors[2*b] * blockSize,
+					h:          exp(th) * anchors[2*b+1] * blockSize,
+					confidence: sigmoid64(tc),
+					classes:    getOrderedElements(softmax(tclasses)),
 				}
 				counter++
 			}
@@ -161,8 +163,8 @@ func processOutput(t []tensor.Tensor, err error) {
 	}
 	sort.Sort(sort.Reverse(byConfidence(classification)))
 	//sort.Sort(sort.Reverse(byGridCell(classification)))
-	for _, e := range classification[:6] {
-		fmt.Println(e)
+	for _, e := range classification[:15] {
+		fmt.Printf("%v: %v\n", e.confidence, e.classes[:3])
 	}
 	f, err := os.Create("output.png")
 	if err != nil {
@@ -190,10 +192,11 @@ func must(err error) {
 }
 
 type box struct {
-	gridcell               []int
-	boundindBox            int
-	x, y, w, h, confidence float32
-	classes                []float32
+	gridcell    []int
+	boundindBox int
+	x, y, w, h  float32
+	confidence  float64
+	classes     []element
 }
 
 type byGridCell []box
@@ -212,6 +215,9 @@ func (a byConfidence) Less(i, j int) bool { return a[i].confidence < a[j].confid
 func sigmoid(sum float32) float32 {
 	return float32(1.0 / (1.0 + math.Exp(float64(-sum))))
 }
+func sigmoid64(sum float32) float64 {
+	return 1.0 / (1.0 + math.Exp(float64(-sum)))
+}
 func exp(val float32) float32 {
 	return float32(math.Exp(float64(val)))
 }
@@ -226,4 +232,35 @@ func softmax(a []float32) []float32 {
 		output[i] = float32(math.Exp(float64(a[i]))) / sum
 	}
 	return output
+}
+
+type element struct {
+	prob  float32
+	class string
+}
+
+func getOrderedElements(input []float32) []element {
+	elems := make([]element, len(input))
+	for i := 0; i < len(elems); i++ {
+		elems[i] = element{
+			prob:  input[i],
+			class: classes[i],
+		}
+	}
+	sort.Sort(sort.Reverse(elements(elems)))
+	return elems
+}
+
+type elements []element
+
+func (a elements) Len() int           { return len(a) }
+func (a elements) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a elements) Less(i, j int) bool { return a[i].prob < a[j].prob }
+
+func offset(x, y, channel int) int {
+	offset := (gridWidth*(boxesPerCell*(numClasses+5)))*y + (boxesPerCell*(numClasses+5))*x + channel
+	//slice := channel / 4
+	//indexInSlice := channel - slice*4
+	//offset := slice*gridHeight*gridWidth*4 + y*gridWidth*4 + x*4 + indexInSlice
+	return offset
 }

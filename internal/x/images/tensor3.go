@@ -139,7 +139,7 @@ func (t *tensor3) getColor(h, w int) (color.Color, error) {
 		if err != nil {
 			return nil, err
 		}
-		return color.RGBA{
+		return color.NRGBA{
 			R: r,
 			G: g,
 			B: b,

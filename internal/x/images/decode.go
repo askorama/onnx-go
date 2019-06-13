@@ -146,7 +146,7 @@ func TensorToImg(t tensor.Tensor) (image.Image, error) {
 	case 1:
 		output = image.NewGray(rect)
 	case 3:
-		output = image.NewRGBA(rect)
+		output = image.NewNRGBA(rect)
 	default:
 		return nil, errors.New("unhandled image encoding")
 	}
