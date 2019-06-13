@@ -153,7 +153,7 @@ func processOutput(t []tensor.Tensor, err error) {
 					w:          exp(features[b+2][cx][cy]) * anchors[2*bb] * blockSize,
 					h:          exp(features[b+3][cx][cy]) * anchors[2*bb+1] * blockSize,
 					confidence: sigmoid(features[b+4][cx][cy]),
-					classes:    features[b+5 : b+24][cx][cy],
+					classes:    softmax(features[b+5 : b+24][cx][cy]),
 				}
 				counter++
 			}
@@ -214,4 +214,16 @@ func sigmoid(sum float32) float32 {
 }
 func exp(val float32) float32 {
 	return float32(math.Exp(float64(val)))
+}
+
+func softmax(a []float32) []float32 {
+	output := make([]float32, len(a))
+	var sum float32
+	for i := 0; i < len(a); i++ {
+		sum += float32(math.Exp(float64(a[i])))
+	}
+	for i := 0; i < len(a); i++ {
+		output[i] = float32(math.Exp(float64(a[i]))) / sum
+	}
+	return output
 }
