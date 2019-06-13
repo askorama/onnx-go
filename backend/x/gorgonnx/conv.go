@@ -5,6 +5,7 @@ import (
 
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
+	nnops "gorgonia.org/gorgonia/ops/nn"
 	"gorgonia.org/tensor"
 )
 
@@ -63,7 +64,7 @@ func (c *conv) apply(g *Graph, n *Node) error {
 			Message:  "auto_pad " + c.autopad + " not implemented",
 		}
 	}
-	convN, err := gorgonia.Conv2d(
+	convN, err := nnops.Conv2d(
 		children[0].gorgoniaNode,
 		children[1].gorgoniaNode,
 		c.kernelShape,
@@ -164,6 +165,7 @@ func (c *conv) init(o onnx.Operation) error {
 			}
 		}
 	}
+	c.dilation = []int{1, 1}
 	dilation, ok := o.Attributes["dilations"]
 	if ok {
 		if dilation, ok := dilation.([]int64); ok {
