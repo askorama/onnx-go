@@ -52,9 +52,6 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 	if x.Shape()[0] != 1 {
 		return nil, errors.New("batchNorm_op expects a BCHW tensor with B=1")
 	}
-	if x.Dtype() != tensor.Float32 {
-		panic("batchnorm_op: dense not []float32 not implemented")
-	}
 	if len(b.scale.Shape()) != 1 || len(b.bias.Shape()) != 1 ||
 		len(b.mean.Shape()) != 1 || len(b.varN.Shape()) != 1 {
 		return nil, errors.New("batchnorp_op only support 1 dim scale,bias,mean and var")
@@ -79,24 +76,47 @@ func (b *batchNorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
 	}()
 	// TODO: handle float64
 
-	vals, err := native.Tensor3F32(x)
-	if err != nil {
-		return nil, err
-	}
-	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
-	// output = scaleN * xNorm + biasN
-	for c := 0; c < len(vals); c++ {
-		mean := b.mean.Data().([]float32)[c]
-		varV := b.varN.Data().([]float32)[c]
-		scale := b.scale.Data().([]float32)[c]
-		bias := b.bias.Data().([]float32)[c]
-		for h := 0; h < len(vals[c]); h++ {
-			for w := 0; w < len(vals[c][h]); w++ {
-				x := vals[c][h][w]
-				//outT3[c][h][w] = scale*((x-mean)/sqrtF32(varV+b.epsilon)) + bias
-				vals[c][h][w] = scale*((x-mean)/sqrtF32(varV+b.epsilon)) + bias
+	switch {
+	case x.Dtype() == tensor.Float32:
+		vals, err := native.Tensor3F32(x)
+		if err != nil {
+			return nil, err
+		}
+		// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
+		// output = scaleN * xNorm + biasN
+		for c := 0; c < len(vals); c++ {
+			mean := b.mean.Data().([]float32)[c]
+			varV := b.varN.Data().([]float32)[c]
+			scale := b.scale.Data().([]float32)[c]
+			bias := b.bias.Data().([]float32)[c]
+			for h := 0; h < len(vals[c]); h++ {
+				for w := 0; w < len(vals[c][h]); w++ {
+					x := vals[c][h][w]
+					vals[c][h][w] = scale*((x-mean)/sqrtF32(varV+b.epsilon)) + bias
+				}
 			}
 		}
+	case x.Dtype() == tensor.Float64:
+		vals, err := native.Tensor3F64(x)
+		if err != nil {
+			return nil, err
+		}
+		// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
+		// output = scaleN * xNorm + biasN
+		for c := 0; c < len(vals); c++ {
+			mean := b.mean.Data().([]float64)[c]
+			varV := b.varN.Data().([]float64)[c]
+			scale := b.scale.Data().([]float64)[c]
+			bias := b.bias.Data().([]float64)[c]
+			for h := 0; h < len(vals[c]); h++ {
+				for w := 0; w < len(vals[c][h]); w++ {
+					x := vals[c][h][w]
+					vals[c][h][w] = scale*((x-mean)/math.Sqrt(varV+float64(b.epsilon))) + bias
+				}
+			}
+		}
+	default:
+		return x, errors.New("type not handled")
 	}
 	return x, nil
 }
