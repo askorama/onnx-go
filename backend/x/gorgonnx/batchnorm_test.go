@@ -8,6 +8,65 @@ import (
 	"gorgonia.org/tensor"
 )
 
+func TestBatchnorm_check(t *testing.T) {
+	xT := tensor.New(
+		tensor.WithShape(2, 1, 3),
+		tensor.WithBacking([]float32{-1, 0, 1, 2, 3, 4}),
+	)
+	batchNormOp := &fastBatchnorm{
+		epsilon: 1e-5,
+	}
+	_, err := batchNormOp.check(xT)
+	if err == nil {
+		t.Fatal("should have triggered an error")
+	}
+
+	scaleT := tensor.New(
+		tensor.WithShape(2),
+		tensor.WithBacking([]float32{1, 1.5}),
+	)
+
+	biasT := tensor.New(
+		tensor.WithShape(2),
+		tensor.WithBacking([]float32{0, 1}),
+	)
+
+	meanT := tensor.New(
+		tensor.WithShape(2),
+		tensor.WithBacking([]float32{0, 3}),
+	)
+
+	varT := tensor.New(
+		tensor.WithShape(2),
+		tensor.WithBacking([]float32{1, 1.5}),
+	)
+	batchNormOp = &fastBatchnorm{
+		scale:   scaleT,
+		bias:    biasT,
+		mean:    meanT,
+		varN:    varT,
+		epsilon: 1e-5,
+	}
+	xT = tensor.New(
+		tensor.WithShape(2, 1, 3),
+		tensor.WithBacking([]float32{-1, 0, 1, 2, 3, 4}),
+	)
+
+	_, err = batchNormOp.check(xT)
+	if err == nil {
+		t.Fatal("should have triggered an error")
+	}
+	xT = tensor.New(
+		tensor.WithShape(1, 3, 1, 2),
+		tensor.WithBacking([]float32{-1, 0, 1, 2, 3, 4}),
+	)
+
+	_, err = batchNormOp.check(xT)
+	if err == nil {
+		t.Fatal("should have triggered an error")
+	}
+
+}
 func TestBatchnorm_float32(t *testing.T) {
 	xT := tensor.New(
 		tensor.WithShape(1, 2, 1, 3),

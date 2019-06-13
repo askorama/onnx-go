@@ -49,6 +49,10 @@ func (b *fastBatchnorm) check(v gorgonia.Value) (*tensor.Dense, error) {
 	if x.Shape()[0] != 1 {
 		return nil, errNotSupported
 	}
+	if b.scale == nil || b.bias == nil ||
+		b.mean == nil || b.varN == nil {
+		return nil, errNotSupported
+	}
 	if len(b.scale.Shape()) != 1 || len(b.bias.Shape()) != 1 ||
 		len(b.mean.Shape()) != 1 || len(b.varN.Shape()) != 1 {
 		return nil, errNotSupported
