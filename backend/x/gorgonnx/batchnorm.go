@@ -47,13 +47,7 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 		varN:    varN.Value(),
 		epsilon: float32(b.epsilon),
 	}
-	_, err = batchNormOp.check(x.Value())
-	switch err {
-	// Fallback with the default batchnorm
-	case nil:
-		n.gorgoniaNode, err = gorgonia.ApplyOp(batchNormOp, x)
-		return err
-	case errNotSupported:
+	if x.Shape()[0] != 1 {
 		// helper func
 		apply := func(f func(a, b *gorgonia.Node) (*gorgonia.Node, error), a, b *gorgonia.Node) (*gorgonia.Node, error) {
 			if len(b.Shape()) != 1 {
@@ -95,6 +89,7 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 		n.gorgoniaNode, err = apply(gorgonia.Add, output1, biasN)
 		return err
 	}
+	n.gorgoniaNode, err = gorgonia.ApplyOp(batchNormOp, x)
 	return err
 
 }
