@@ -17,6 +17,7 @@ import (
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
 	"github.com/owulveryck/onnx-go/internal/x/images"
 	"gorgonia.org/tensor"
+	"gorgonia.org/tensor/native"
 )
 
 // The 416x416 image is divided into a 13x13 grid. Each of these grid cells
@@ -115,28 +116,26 @@ func processOutput(t []tensor.Tensor, err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	features := t[0].Data().([]float32)
+	dense := t[0].(*tensor.Dense)
+	must(dense.Reshape(125, gridHeight, gridWidth))
+	data, err := native.Tensor3F32(dense)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var classification = make([]box, gridHeight*gridWidth*boxesPerCell)
 	var counter int
-	for cx := 0; cx < gridHeight; cx++ {
-		for cy := 0; cy < gridWidth; cy++ {
-			for b := 0; b < boxesPerCell; b++ {
-				channel := b * (numClasses + 5)
+	// https://github.com/pjreddie/darknet/blob/61c9d02ec461e30d55762ec7669d6a1d3c356fb2/src/yolo_layer.c#L159
+	for b := 0; b < len(data)-25; b += 25 {
+		for cx := 0; cx < gridHeight; cx++ {
+			for cy := 0; cy < gridWidth; cy++ {
+				tx := data[b][cx][cy]
+				ty := data[b+1][cx][cy]
+				tw := data[b+2][cx][cy]
+				th := data[b+3][cx][cy]
+				tc := data[b+4][cx][cy]
+				tclasses := data[b+5 : b+24][cx][cy]
 
-				o := offset(cx, cy, channel)
-				tx := features[o]
-				ty := features[o+1]
-				tw := features[o+2]
-				th := features[o+3]
-				tc := features[o+4]
-				tclasses := features[o+5 : o+24]
-				/*
-				   let tx = features[offset(channel, cx, cy)]
-				   let ty = features[offset(channel + 1, cx, cy)]
-				   let tw = features[offset(channel + 2, cx, cy)]
-				   let th = features[offset(channel + 3, cx, cy)]
-				   let tc = features[offset(channel + 4, cx, cy)]
-				*/
 				classification[counter] = box{
 					gridcell:    []int{cx, cy},
 					boundindBox: b,
@@ -152,8 +151,10 @@ func processOutput(t []tensor.Tensor, err error) {
 					// The size of the bounding box, tw and th, is predicted relative to
 					// the size of an "anchor" box. Here we also transform the width and
 					// height into the original 416x416 image space.
-					w:          exp(tw) * anchors[2*b] * blockSize,
-					h:          exp(th) * anchors[2*b+1] * blockSize,
+					//w:          exp(tw) * anchors[2*b] * blockSize,
+					//h:          exp(th) * anchors[2*b+1] * blockSize,
+					w:          tw, // TODO use the anchor
+					h:          th, // TODO use the anchor
 					confidence: sigmoid64(tc),
 					classes:    getOrderedElements(softmax(tclasses)),
 				}
@@ -223,13 +224,19 @@ func exp(val float32) float32 {
 }
 
 func softmax(a []float32) []float32 {
+	max := -float32(math.MaxFloat32)
+	for _, v := range a {
+		if v > max {
+			max = v
+		}
+	}
 	output := make([]float32, len(a))
 	var sum float32
 	for i := 0; i < len(a); i++ {
-		sum += float32(math.Exp(float64(a[i])))
+		sum += float32(math.Exp(float64(a[i] - max)))
 	}
 	for i := 0; i < len(a); i++ {
-		output[i] = float32(math.Exp(float64(a[i]))) / sum
+		output[i] = float32(math.Exp(float64(a[i]-max))) / sum
 	}
 	return output
 }
@@ -256,11 +263,3 @@ type elements []element
 func (a elements) Len() int           { return len(a) }
 func (a elements) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a elements) Less(i, j int) bool { return a[i].prob < a[j].prob }
-
-func offset(x, y, channel int) int {
-	offset := (gridWidth*(boxesPerCell*(numClasses+5)))*y + (boxesPerCell*(numClasses+5))*x + channel
-	//slice := channel / 4
-	//indexInSlice := channel - slice*4
-	//offset := slice*gridHeight*gridWidth*4 + y*gridWidth*4 + x*4 + indexInSlice
-	return offset
-}
