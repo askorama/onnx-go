@@ -1,29 +1,51 @@
 package images
 
 import (
-	"bytes"
-	"encoding/base64"
-	"image/png"
-	"io"
-	"os"
-	"strings"
+	"image"
+	"image/color"
+	"math"
 	"testing"
 
 	"gorgonia.org/tensor"
 )
 
-const gopher = `iVBORw0KGgoAAAANSUhEUgAAAEsAAAA8CAAAAAALAhhPAAAFfUlEQVRYw62XeWwUVRzHf2+OPbo9d7tsWyiyaZti6eWGAhISoIGKECEKCAiJJkYTiUgTMYSIosYYBBIUIxoSPIINEBDi2VhwkQrVsj1ESgu9doHWdrul7ba73WNm3vOPtsseM9MdwvvrzTs+8/t95ze/33sI5BqiabU6m9En8oNjduLnAEDLUsQXFF8tQ5oxK3vmnNmDSMtrncks9Hhtt/qeWZapHb1ha3UqYSWVl2ZmpWgaXMXGohQAvmeop3bjTRtv6SgaK/Pb9/bFzUrYslbFAmHPp+3WhAYdr+7GN/YnpN46Opv55VDsJkoEpMrY/vO2BIYQ6LLvm0ThY3MzDzzeSJeeWNyTkgnIE5ePKsvKlcg/0T9QMzXalwXMlj54z4c0rh/mzEfr+FgWEz2w6uk8dkzFAgcARAgNp1ZYef8bH2AgvuStbc2/i6CiWGj98y2tw2l4FAXKkQBIf+exyRnteY83LfEwDQAYCoK+P6bxkZm/0966LxcAAILHB56kgD95PPxltuYcMtFTWw/FKkY/6Opf3GGd9ZF+Qp6mzJxzuRSractOmJrH1u8XTvWFHINNkLQLMR+XHXvfPPHw967raE1xxwtA36IMRfkAAG29/7mLuQcb2WOnsJReZGfpiHsSBX81cvMKywYZHhX5hFPtOqPGWZCXnhWGAu6lX91ElKXSalcLXu3UaOXVay57ZSe5f6Gpx7J2MXAsi7EqSp09b/MirKSyJfnfEEgeDjl8FgDAfvewP03zZ+AJ0m9aFRM8eEHBDRKjfcreDXnZdQuAxXpT2NRJ7xl3UkLBhuVGU16gZiGOgZmrSbRdqkILuL/yYoSXHHkl9KXgqNu3PB8oRg0geC5vFmLjad6mUyTKLmF3OtraWDIfACyXqmephaDABawfpi6tqqBZytfQMqOz6S09iWXhktrRaB8Xz4Yi/8gyABDm5NVe6qq/3VzPrcjELWrebVuyY2T7ar4zQyybUCtsQ5Es1FGaZVrRVQwAgHGW2ZCRZshI5bGQi7HesyE972pOSeMM0dSktlzxRdrlqb3Osa6CCS8IJoQQQgBAbTAa5l5epO34rJszibJI8rxLfGzcp1dRosutGeb2VDNgqYrwTiPNsLxXiPi3dz7LiS1WBRBDBOnqEjyy3aQb+/bLiJzz9dIkscVBBLxMfSEac7kO4Fpkngi0ruNBeSOal+u8jgOuqPz12nryMLCniEjtOOOmpt+KEIqsEdocJjYXwrh9OZqWJQyPCTo67LNS/TdxLAv6R5ZNK9npEjbYdT33gRo4o5oTqR34R+OmaSzDBWsAIPhuRcgyoteNi9gF0KzNYWVItPf2TLoXEg+7isNC7uJkgo1iQWOfRSP9NR11RtbZZ3OMG/VhL6jvx+J1m87+RCfJChAtEBQkSBX2PnSiihc/Twh3j0h7qdYQAoRVsRGmq7HU2QRbaxVGa1D6nIOqaIWRjyRZpHMQKWKpZM5feA+lzC4ZFultV8S6T0mzQGhQohi5I8iw+CsqBSxhFMuwyLgSwbghGb0AiIKkSDmGZVmJSiKihsiyOAUs70UkywooYP0bii9GdH4sfr1UNysd3fUyLLMQN+rsmo3grHl9VNJHbbwxoa47Vw5gupIqrZcjPh9R4Nye3nRDk199V+aetmvVtDRE8/+cbgAAgMIWGb3UA0MGLE9SCbWX670TDy1y98c3D27eppUjsZ6fql3jcd5rUe7+ZIlLNQny3Rd+E5Tct3WVhTM5RBCEdiEK0b6B+/ca2gYU393nFj/n1AygRQxPIUA043M42u85+z2SnssKrPl8Mx76NL3E6eXc3be7OD+H4WHbJkKI8AU8irbITQjZ+0hQcPEgId/Fn/pl9crKH02+5o2b9T/eMx7pKoskYgAAAABJRU5ErkJggg==`
+type circle struct {
+	X, Y, R float64
+}
 
-// gopherPNG creates an io.Reader by decoding the base64 encoded image data string in the gopher constant.
-func gopherPNG() io.Reader { return base64.NewDecoder(base64.StdEncoding, strings.NewReader(gorgonia)) }
+func (c *circle) brightness(x, y float64) uint8 {
+	var dx, dy float64 = c.X - x, c.Y - y
+	d := math.Sqrt(dx*dx+dy*dy) / c.R
+	if d > 1 {
+		return 0
+	}
+	return 255
+}
 
 func TestEncodeDecode_RGBA(t *testing.T) {
-	img, err := png.Decode(gopherPNG())
-	if err != nil {
-		t.Fatal(err)
+	var w, h int = 280, 240
+	var hw, hh float64 = float64(w / 2), float64(h / 2)
+	r := 40.0
+	θ := 2 * math.Pi / 3
+	cr := &circle{hw - r*math.Sin(0), hh - r*math.Cos(0), 60}
+	cg := &circle{hw - r*math.Sin(θ), hh - r*math.Cos(θ), 60}
+	cb := &circle{hw - r*math.Sin(-θ), hh - r*math.Cos(-θ), 60}
+
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			c := color.RGBA{
+				cr.brightness(float64(x), float64(y)),
+				cg.brightness(float64(x), float64(y)),
+				cb.brightness(float64(x), float64(y)),
+				255,
+			}
+			img.Set(x, y, c)
+		}
 	}
+
 	dense := tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(1, 3, img.Bounds().Max.Y, img.Bounds().Max.X))
-	err = ImageToBCHW(img, dense)
+	err := ImageToBCHW(img, dense)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,16 +53,19 @@ func TestEncodeDecode_RGBA(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var buf bytes.Buffer
-	//err = png.Encode(&buf, output)
-	err = png.Encode(os.Stdout, output)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assertEqual(t, img, output)
 
-	str := base64.StdEncoding.EncodeToString(buf.Bytes())
-	if str != gopher {
-		t.Fatal("images differs")
-	}
+}
 
+func assertEqual(t *testing.T, src, dst image.Image) {
+	if src.Bounds() != dst.Bounds() {
+		t.Fatalf("image bounds not equal: %+v, %+v", src.Bounds(), dst.Bounds())
+	}
+	for i := src.Bounds().Min.X; i < src.Bounds().Max.X; i++ {
+		for j := src.Bounds().Min.Y; j < src.Bounds().Max.Y; j++ {
+			if src.At(i, j) != dst.At(i, j) {
+				t.Fatalf("image not equal: %+v, %+v", src.At(i, j), dst.At(i, j))
+			}
+		}
+	}
 }
