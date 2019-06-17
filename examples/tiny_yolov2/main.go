@@ -127,8 +127,8 @@ func processOutput(t []tensor.Tensor, err error) {
 	var counter int
 	// https://github.com/pjreddie/darknet/blob/61c9d02ec461e30d55762ec7669d6a1d3c356fb2/src/yolo_layer.c#L159
 	for b := 0; b < len(data)-25; b += 25 {
-		for cx := 0; cx < gridHeight; cx++ {
-			for cy := 0; cy < gridWidth; cy++ {
+		for cx := 0; cx < gridWidth; cx++ {
+			for cy := 0; cy < gridHeight; cy++ {
 				tx := data[b][cx][cy]
 				ty := data[b+1][cx][cy]
 				tw := data[b+2][cx][cy]
@@ -164,8 +164,10 @@ func processOutput(t []tensor.Tensor, err error) {
 	}
 	sort.Sort(sort.Reverse(byConfidence(classification)))
 	//sort.Sort(sort.Reverse(byGridCell(classification)))
-	for _, e := range classification[:15] {
-		fmt.Printf("%v: %v\n", e.confidence, e.classes[:3])
+	for _, e := range classification {
+		if e.confidence > 0.30 {
+			fmt.Printf("at %vx%v with confidence %2.2f%%: %v\n", e.x, e.y, e.confidence, e.classes[:3])
+		}
 	}
 	f, err := os.Create("output.png")
 	if err != nil {
