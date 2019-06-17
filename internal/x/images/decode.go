@@ -42,16 +42,19 @@ func ImageToBCHW(img image.Image, dst tensor.Tensor) error {
 	case tensor.Float32:
 		for x := 0; x < w; x++ {
 			for y := 0; y < h; y++ {
-				r, g, b, _ := img.At(x, y).RGBA()
-				err := dst.SetAt(float32(r), 0, 0, y, x)
+				r, g, b, a := img.At(x, y).RGBA()
+				if a != 65535 {
+					return errors.New("transparency not handled")
+				}
+				err := dst.SetAt(float32(uint8(r/0x101)), 0, 0, y, x)
 				if err != nil {
 					return err
 				}
-				err = dst.SetAt(float32(g), 0, 1, y, x)
+				err = dst.SetAt(float32(uint8(g/0x101)), 0, 1, y, x)
 				if err != nil {
 					return err
 				}
-				err = dst.SetAt(float32(b), 0, 2, y, x)
+				err = dst.SetAt(float32(uint8(b/0x101)), 0, 2, y, x)
 				if err != nil {
 					return err
 				}

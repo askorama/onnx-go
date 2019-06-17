@@ -63,7 +63,10 @@ func assertEqual(t *testing.T, src, dst image.Image) {
 	}
 	for i := src.Bounds().Min.X; i < src.Bounds().Max.X; i++ {
 		for j := src.Bounds().Min.Y; j < src.Bounds().Max.Y; j++ {
-			if src.At(i, j) != dst.At(i, j) {
+			a, b, c, d := src.At(i, j).RGBA()
+			e, f, g, h := dst.At(i, j).RGBA()
+
+			if a != e || b != f || c != g || d != h {
 				t.Fatalf("image not equal: %+v, %+v", src.At(i, j), dst.At(i, j))
 			}
 		}
