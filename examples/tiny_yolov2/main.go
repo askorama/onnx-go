@@ -44,7 +44,7 @@ var (
 		"bus", "car", "cat", "chair", "cow",
 		"diningtable", "dog", "horse", "motorbike", "person",
 		"pottedplant", "sheep", "sofa", "train", "tv/monitor"}
-	anchors = []float32{1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52}
+	anchors = []float64{1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52}
 )
 
 func main() {
@@ -102,7 +102,7 @@ func getInput() tensor.Tensor {
 		if err != nil {
 			log.Fatal(err)
 		}
-		inputT := tensor.New(tensor.WithShape(1, 3, 416, 416), tensor.Of(tensor.Float32))
+		inputT := tensor.New(tensor.WithShape(1, 3, h, w), tensor.Of(tensor.Float32))
 		err = images.ImageToBCHW(img, inputT)
 		if err != nil {
 			log.Fatal(err)
@@ -124,19 +124,22 @@ func processOutput(t []tensor.Tensor, err error) {
 		log.Fatal(err)
 	}
 
-	var classification = make([]box, gridHeight*gridWidth*boxesPerCell)
+	var boxes = make([]box, gridHeight*gridWidth*boxesPerCell)
 	var counter int
 	// https://github.com/pjreddie/darknet/blob/61c9d02ec461e30d55762ec7669d6a1d3c356fb2/src/yolo_layer.c#L159
-	for b := 0; b < len(data)-25; b += 25 {
-		for cx := 0; cx < gridWidth; cx++ {
-			for cy := 0; cy < gridHeight; cy++ {
-				element := (b + 1) / 25
-				tx := data[b][cy][cx]
-				ty := data[b+1][cy][cx]
-				tw := data[b+2][cy][cx]
-				th := data[b+3][cy][cx]
-				tc := data[b+4][cy][cx]
-				tclasses := data[b+5 : b+24][cy][cx]
+	for cx := 0; cx < gridWidth; cx++ {
+		for cy := 0; cy < gridHeight; cy++ {
+			for b := 0; b < boxesPerCell; b++ {
+				channel := b * (numClasses + 5)
+				tx := data[channel][cx][cy]
+				ty := data[channel+1][cx][cy]
+				tw := data[channel+2][cx][cy]
+				th := data[channel+3][cx][cy]
+				tc := data[channel+4][cx][cy]
+				tclasses := make([]float32, 20)
+				for i := 0; i < 20; i++ {
+					tclasses[i] = data[channel+5+i][cx][cy]
+				}
 				// The predicted tx and ty coordinates are relative to the location
 				// of the grid cell; we use the logistic sigmoid to constrain these
 				// coordinates to the range 0 - 1. Then we add the cell coordinates
@@ -149,23 +152,22 @@ func processOutput(t []tensor.Tensor, err error) {
 				// The size of the bounding box, tw and th, is predicted relative to
 				// the size of an "anchor" box. Here we also transform the width and
 				// height into the original 416x416 image space.
-				w := int(exp(tw) * anchors[2*element] * blockSize)
-				h := int(exp(th) * anchors[2*element+1] * blockSize)
+				w := int(exp(tw) * anchors[2*b] * blockSize)
+				h := int(exp(th) * anchors[2*b+1] * blockSize)
 
-				classification[counter] = box{
-					gridcell:    []int{cx, cy},
-					r:           image.Rect(max(0, x-w/2), max(0, y-h/2), min(416-1, x+w/2), min(416, y+h/2)),
-					boundindBox: b,
-					confidence:  sigmoid64(tc),
-					classes:     getOrderedElements(softmax(tclasses)),
+				boxes[counter] = box{
+					gridcell:   []int{cx, cy},
+					r:          image.Rect(max(0, x-w/2), max(0, y-h/2), min(w-1, x+w/2), min(h, y+h/2)),
+					confidence: sigmoid64(tc),
+					classes:    getOrderedElements(softmax(tclasses)),
 				}
 				counter++
 			}
 		}
 	}
-	sort.Sort(sort.Reverse(byConfidence(classification)))
+	sort.Sort(sort.Reverse(byConfidence(boxes)))
 	//sort.Sort(sort.Reverse(byGridCell(classification)))
-	printClassification(classification)
+	printClassification(boxes)
 	f, err := os.Create("output.png")
 	if err != nil {
 		log.Fatal(err)
@@ -173,9 +175,9 @@ func processOutput(t []tensor.Tensor, err error) {
 	m := image.NewNRGBA(img.Bounds())
 
 	draw.Draw(m, m.Bounds(), img, image.ZP, draw.Src)
-	for _, c := range classification {
-		if c.confidence > 0.30 {
-			drawRectangle(m, c.r)
+	for _, b := range boxes {
+		if b.confidence > 0.3 {
+			drawRectangle(m, b.r)
 		}
 	}
 
@@ -216,11 +218,10 @@ func must(err error) {
 }
 
 type box struct {
-	gridcell    []int
-	boundindBox int
-	r           image.Rectangle
-	confidence  float64
-	classes     []element
+	r          image.Rectangle
+	gridcell   []int
+	confidence float64
+	classes    []element
 }
 
 type byProba []element
@@ -248,8 +249,8 @@ func sigmoid(sum float32) float32 {
 func sigmoid64(sum float32) float64 {
 	return 1.0 / (1.0 + math.Exp(float64(-sum)))
 }
-func exp(val float32) float32 {
-	return float32(math.Exp(float64(val)))
+func exp(val float32) float64 {
+	return math.Exp(float64(val))
 }
 
 func softmax(a []float32) []float64 {
