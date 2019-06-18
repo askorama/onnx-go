@@ -27,12 +27,14 @@ import (
 // cell also predicts which class each bounding box belongs to.
 //
 const (
-	h, w         = 416, 416
-	blockSize    = 32
-	gridHeight   = 13
-	gridWidth    = 13
-	boxesPerCell = 5
-	numClasses   = 20
+	hSize, wSize     = 416, 416
+	blockSize        = 32
+	gridHeight       = 13
+	gridWidth        = 13
+	boxesPerCell     = 5
+	numClasses       = 20
+	threshold        = 0.30
+	drawingThreshold = 0.8
 )
 
 var (
@@ -102,7 +104,7 @@ func getInput() tensor.Tensor {
 		if err != nil {
 			log.Fatal(err)
 		}
-		inputT := tensor.New(tensor.WithShape(1, 3, h, w), tensor.Of(tensor.Float32))
+		inputT := tensor.New(tensor.WithShape(1, 3, hSize, wSize), tensor.Of(tensor.Float32))
 		err = images.ImageToBCHW(img, inputT)
 		if err != nil {
 			log.Fatal(err)
@@ -157,7 +159,7 @@ func processOutput(t []tensor.Tensor, err error) {
 
 				boxes[counter] = box{
 					gridcell:   []int{cx, cy},
-					r:          image.Rect(max(0, x-w/2), max(0, y-h/2), min(w-1, x+w/2), min(h, y+h/2)),
+					r:          image.Rect(max(y-w/2, 0), max(x-h/2, 0), min(y+w/2, wSize), min(x+h/2, hSize)),
 					confidence: sigmoid64(tc),
 					classes:    getOrderedElements(softmax(tclasses)),
 				}
@@ -166,7 +168,6 @@ func processOutput(t []tensor.Tensor, err error) {
 		}
 	}
 	sort.Sort(sort.Reverse(byConfidence(boxes)))
-	//sort.Sort(sort.Reverse(byGridCell(classification)))
 	printClassification(boxes)
 	f, err := os.Create("output.png")
 	if err != nil {
@@ -176,7 +177,7 @@ func processOutput(t []tensor.Tensor, err error) {
 
 	draw.Draw(m, m.Bounds(), img, image.ZP, draw.Src)
 	for _, b := range boxes {
-		if b.confidence > 0.3 {
+		if b.confidence > drawingThreshold {
 			drawRectangle(m, b.r)
 		}
 	}
@@ -195,10 +196,10 @@ func processOutput(t []tensor.Tensor, err error) {
 func printClassification(classification []box) {
 	var classes []element
 	for _, e := range classification {
-		if e.confidence > 0.30 {
-			if e.classes[0].prob > 0.30 {
+		if e.confidence > threshold {
+			if e.classes[0].prob > threshold {
 				classes = append(classes, e.classes...)
-				fmt.Printf("at %v with confidence %2.2f%%: %v\n", e.r, e.confidence, e.classes[:3])
+				fmt.Printf("at (%v) with confidence %2.2f%%: %v\n", e.r, e.confidence, e.classes[:3])
 			}
 		}
 	}
@@ -302,13 +303,9 @@ func min(a, b int) int {
 	return b
 }
 
-//func drawRectangle(img image.Image, r image.Rectangle) *image.NRGBA {
 func drawRectangle(img *image.NRGBA, r image.Rectangle) {
 	col := color.RGBA{255, 0, 0, 255} // Red
 
-	//dst := image.NewNRGBA(img.Bounds())
-	//draw.Draw(dst, dst.Bounds(), img, image.ZP, draw.Src)
-	//draw.Draw(dst, img.Bounds(), img, image.ZP, draw.Over)
 	// HLine draws a horizontal line
 	hLine := func(x1, y, x2 int) {
 		for ; x1 <= x2; x1++ {
@@ -331,5 +328,4 @@ func drawRectangle(img *image.NRGBA, r image.Rectangle) {
 		vLine(r.Min.X, r.Min.Y, r.Max.Y)
 	}
 	rect(r)
-	//return dst
 }
