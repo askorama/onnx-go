@@ -17,6 +17,9 @@ import (
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
 	"github.com/owulveryck/onnx-go/internal/x/images"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/math/fixed"
 	"gorgonia.org/tensor"
 	"gorgonia.org/tensor/native"
 )
@@ -178,7 +181,7 @@ func processOutput(t []tensor.Tensor, err error) {
 	draw.Draw(m, m.Bounds(), img, image.ZP, draw.Src)
 	for _, b := range boxes {
 		if b.confidence > drawingThreshold {
-			drawRectangle(m, b.r)
+			drawRectangle(m, b.r, fmt.Sprintf("%v %2.2f%%", b.classes[0].class, b.classes[0].prob*100))
 		}
 	}
 
@@ -303,7 +306,7 @@ func min(a, b int) int {
 	return b
 }
 
-func drawRectangle(img *image.NRGBA, r image.Rectangle) {
+func drawRectangle(img *image.NRGBA, r image.Rectangle, label string) {
 	col := color.RGBA{255, 0, 0, 255} // Red
 
 	// HLine draws a horizontal line
@@ -327,5 +330,22 @@ func drawRectangle(img *image.NRGBA, r image.Rectangle) {
 		vLine(r.Max.X, r.Min.Y, r.Max.Y)
 		vLine(r.Min.X, r.Min.Y, r.Max.Y)
 	}
+	addLabel(img, r.Bounds().Min.X+5, r.Bounds().Min.Y+15, label)
 	rect(r)
+}
+
+func addLabel(img *image.NRGBA, x, y int, label string) {
+	col := color.NRGBA{0, 255, 0, 255}
+	point := fixed.Point26_6{
+		X: fixed.Int26_6(x * 64),
+		Y: fixed.Int26_6(y * 64),
+	}
+
+	d := &font.Drawer{
+		Dst:  img,
+		Src:  image.NewUniform(col),
+		Face: basicfont.Face7x13,
+		Dot:  point,
+	}
+	d.DrawString(label)
 }
