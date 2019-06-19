@@ -8,6 +8,7 @@ import (
 	"image/draw"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"log"
 	"math"
@@ -42,8 +43,8 @@ const (
 )
 
 type configuration struct {
-	ConfidenceThreshold float64 `envconfig:"confidence_threshold" default:"0.30" required="true"`
-	ClassProbaThreshold float64 `envconfig:"proba_threshold" default:"0.85" required="true"`
+	ConfidenceThreshold float64 `envconfig:"confidence_threshold" default:"0.30" required:"true"`
+	ClassProbaThreshold float64 `envconfig:"proba_threshold" default:"0.90" required:"true"`
 }
 
 func init() {
@@ -55,7 +56,9 @@ func init() {
 
 var (
 	model   = flag.String("model", "model.onnx", "path to the model file")
-	imgF    = flag.String("img", "", "path of an input tensor for testing")
+	imgF    = flag.String("img", "", "path of an input jpeg image (use - for stdin)")
+	outputF = flag.String("output", "output.png", "path of an output png file (use - for stdout)")
+	silent  = flag.Bool("s", false, "silent mode (useful if output is -)")
 	img     image.Image
 	classes = []string{"aeroplane", "bicycle", "bird", "boat", "bottle",
 		"bus", "car", "cat", "chair", "cow",
@@ -101,11 +104,17 @@ func getInput() tensor.Tensor {
 		flag.Usage()
 		os.Exit(1)
 	}
-	f, err := os.Open(*imgF)
-	if err != nil {
-		log.Fatal(err)
+	var f io.Reader
+	var err error
+	if *imgF == "-" {
+		f = os.Stdin
+	} else {
+		f, err = os.Open(*imgF)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.(*os.File).Close()
 	}
-	defer f.Close()
 	img, err = jpeg.Decode(f)
 	if err != nil {
 		log.Fatal(err)
@@ -194,8 +203,12 @@ func processOutput(t []tensor.Tensor, err error) {
 		}
 	}
 	boxes = sanitize(boxes)
-	printClassification(boxes)
-	drawClassification(boxes)
+	if !*silent {
+		printClassification(boxes)
+	}
+	if *outputF != "" {
+		drawClassification(boxes)
+	}
 }
 
 func printClassification(boxes []box) {
@@ -215,10 +228,19 @@ func printClassification(boxes []box) {
 
 }
 func drawClassification(boxes []box) {
-
-	f, err := os.Create("output.png")
-	if err != nil {
-		log.Fatal(err)
+	if *outputF == "" {
+		return
+	}
+	var f io.Writer
+	var err error
+	if *outputF == "-" {
+		f = os.Stdout
+	} else {
+		f, err = os.Create(*outputF)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.(*os.File).Close()
 	}
 	m := image.NewNRGBA(img.Bounds())
 
@@ -228,13 +250,9 @@ func drawClassification(boxes []box) {
 	}
 
 	if err := png.Encode(f, m); err != nil {
-		f.Close()
 		log.Fatal(err)
 	}
 
-	if err := f.Close(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func must(err error) {
