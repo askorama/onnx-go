@@ -14,6 +14,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/nfnt/resize"
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
@@ -31,19 +32,30 @@ import (
 // cell also predicts which class each bounding box belongs to.
 //
 const (
-	hSize, wSize = 416, 416
-	blockSize    = 32
-	gridHeight   = 13
-	gridWidth    = 13
-	boxesPerCell = 5
-	numClasses   = 20
-	threshold    = 0.30
+	hSize, wSize  = 416, 416
+	blockSize     = 32
+	gridHeight    = 13
+	gridWidth     = 13
+	boxesPerCell  = 5
+	numClasses    = 20
+	envConfPrefix = "yolo"
 )
+
+type configuration struct {
+	ConfidenceThreshold float64 `envconfig:"confidence_threshold" default:"0.30" required="true"`
+	ClassProbaThreshold float64 `envconfig:"proba_threshold" default:"0.98" required="true"`
+}
+
+func init() {
+	err := envconfig.Process(envConfPrefix, &config)
+	if err != nil {
+		panic(err)
+	}
+}
 
 var (
 	model   = flag.String("model", "model.onnx", "path to the model file")
 	imgF    = flag.String("img", "", "path of an input tensor for testing")
-	inputT  = flag.String("input", "", "tensor")
 	img     image.Image
 	classes = []string{"aeroplane", "bicycle", "bird", "boat", "bottle",
 		"bus", "car", "cat", "chair", "cow",
@@ -51,6 +63,7 @@ var (
 		"pottedplant", "sheep", "sofa", "train", "tv/monitor"}
 	anchors     = []float64{1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52}
 	scaleFactor = float32(1) // The scale factor to resize the image to hSize*wSize
+	config      configuration
 )
 
 func main() {
@@ -58,6 +71,7 @@ func main() {
 	flag.Parse()
 	if *h {
 		flag.Usage()
+		envconfig.Usage(envConfPrefix, &config)
 		os.Exit(0)
 	}
 	if _, err := os.Stat(*model); err != nil && os.IsNotExist(err) {
@@ -83,63 +97,48 @@ func main() {
 }
 
 func getInput() tensor.Tensor {
-	if *inputT != "" {
-		b, err := ioutil.ReadFile(*inputT)
-		if err != nil {
-			log.Fatal(err)
-		}
-		t, err := onnx.NewTensor(b)
-		if err != nil {
-			log.Fatal(err)
-		}
-		img, err = images.TensorToImg(t)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return t
+	if *imgF == "" {
+		flag.Usage()
+		os.Exit(1)
 	}
-	if *imgF != "" {
-		f, err := os.Open(*imgF)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		img, err = jpeg.Decode(f)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// find the resize scale
-		imgRescaled := image.NewNRGBA(image.Rect(0, 0, wSize, hSize))
-		color := color.RGBA{0, 0, 0, 255}
-
-		draw.Draw(imgRescaled, imgRescaled.Bounds(), &image.Uniform{color}, image.ZP, draw.Src)
-		var m image.Image
-		if (img.Bounds().Max.X - img.Bounds().Min.X) > (img.Bounds().Max.Y - img.Bounds().Min.Y) {
-			scaleFactor = float32(img.Bounds().Max.Y-img.Bounds().Min.Y) / float32(hSize)
-			m = resize.Resize(0, hSize, img, resize.Lanczos3)
-		} else {
-			scaleFactor = float32(img.Bounds().Max.X-img.Bounds().Min.X) / float32(wSize)
-			m = resize.Resize(wSize, 0, img, resize.Lanczos3)
-		}
-		switch m.(type) {
-		case *image.NRGBA:
-			draw.Draw(imgRescaled, imgRescaled.Bounds(), m.(*image.NRGBA), image.ZP, draw.Src)
-		case *image.YCbCr:
-			draw.Draw(imgRescaled, imgRescaled.Bounds(), m.(*image.YCbCr), image.ZP, draw.Src)
-		default:
-			log.Fatal("unhandled type")
-		}
-
-		inputT := tensor.New(tensor.WithShape(1, 3, hSize, wSize), tensor.Of(tensor.Float32))
-		//err = images.ImageToBCHW(img, inputT)
-		err = images.ImageToBCHW(imgRescaled, inputT)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return inputT
+	f, err := os.Open(*imgF)
+	if err != nil {
+		log.Fatal(err)
 	}
-	log.Fatal("Please speficy an input")
-	return nil
+	defer f.Close()
+	img, err = jpeg.Decode(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// find the resize scale
+	imgRescaled := image.NewNRGBA(image.Rect(0, 0, wSize, hSize))
+	color := color.RGBA{0, 0, 0, 255}
+
+	draw.Draw(imgRescaled, imgRescaled.Bounds(), &image.Uniform{color}, image.ZP, draw.Src)
+	var m image.Image
+	if (img.Bounds().Max.X - img.Bounds().Min.X) > (img.Bounds().Max.Y - img.Bounds().Min.Y) {
+		scaleFactor = float32(img.Bounds().Max.Y-img.Bounds().Min.Y) / float32(hSize)
+		m = resize.Resize(0, hSize, img, resize.Lanczos3)
+	} else {
+		scaleFactor = float32(img.Bounds().Max.X-img.Bounds().Min.X) / float32(wSize)
+		m = resize.Resize(wSize, 0, img, resize.Lanczos3)
+	}
+	switch m.(type) {
+	case *image.NRGBA:
+		draw.Draw(imgRescaled, imgRescaled.Bounds(), m.(*image.NRGBA), image.ZP, draw.Src)
+	case *image.YCbCr:
+		draw.Draw(imgRescaled, imgRescaled.Bounds(), m.(*image.YCbCr), image.ZP, draw.Src)
+	default:
+		log.Fatal("unhandled type")
+	}
+
+	inputT := tensor.New(tensor.WithShape(1, 3, hSize, wSize), tensor.Of(tensor.Float32))
+	//err = images.ImageToBCHW(img, inputT)
+	err = images.ImageToBCHW(imgRescaled, inputT)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return inputT
 }
 
 func processOutput(t []tensor.Tensor, err error) {
@@ -202,7 +201,7 @@ func processOutput(t []tensor.Tensor, err error) {
 func printClassification(boxes []box) {
 	var elements []element
 	for _, box := range boxes {
-		if box.classes[0].prob > threshold {
+		if box.classes[0].prob > config.ConfidenceThreshold {
 			elements = append(elements, box.classes...)
 			fmt.Printf("at (%v) with confidence %2.2f%%: %v\n", box.r, box.confidence, box.classes[:3])
 		}
@@ -373,7 +372,11 @@ func sanitize(boxes []box) []box {
 	sort.Sort(sort.Reverse(byConfidence(boxes)))
 
 	for i := 1; i < len(boxes); i++ {
-		if boxes[i].confidence < threshold {
+		if boxes[i].confidence < config.ConfidenceThreshold {
+			boxes = boxes[:i]
+			break
+		}
+		if boxes[i].classes[0].prob < config.ClassProbaThreshold {
 			boxes = boxes[:i]
 			break
 		}
@@ -386,15 +389,6 @@ func sanitize(boxes []box) []box {
 			j++
 		}
 	}
-	/*
-		k := 0
-		for k = 0; k < len(boxes); k++ {
-			if boxes[k].confidence < threshold {
-				break
-			}
-		}
-		return boxes[:k]
-	*/
 	return boxes
 }
 
