@@ -52,7 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(inputT.Shape())
+	fmt.Println(inputT.Data())
 	m.SetInput(0, inputT)
 	err = backend.Run()
 	if err != nil {
@@ -70,10 +70,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(computedOutputT[0].Shape())
-	fmt.Println(outputT.Shape())
+	fmt.Println("output shape: ", computedOutputT[0].Shape())
 	assert.InDeltaSlice(&testingT{}, outputT.Data(), computedOutputT[0].Data(), 5e-3, "the two tensors should be equal.")
-	//fmt.Println(computedOutputT[0].Data())
+	fmt.Println("output data: ", computedOutputT[0].Data())
 }
 
 type testingT struct{}
