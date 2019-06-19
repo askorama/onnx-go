@@ -43,7 +43,7 @@ const (
 
 type configuration struct {
 	ConfidenceThreshold float64 `envconfig:"confidence_threshold" default:"0.30" required="true"`
-	ClassProbaThreshold float64 `envconfig:"proba_threshold" default:"0.98" required="true"`
+	ClassProbaThreshold float64 `envconfig:"proba_threshold" default:"0.85" required="true"`
 }
 
 func init() {
