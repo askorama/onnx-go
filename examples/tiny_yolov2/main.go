@@ -37,7 +37,7 @@ const (
 	boxesPerCell     = 5
 	numClasses       = 20
 	threshold        = 0.30
-	drawingThreshold = 0.8
+	drawingThreshold = 0.3
 )
 
 var (
