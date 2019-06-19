@@ -57,7 +57,7 @@ func init() {
 var (
 	model   = flag.String("model", "model.onnx", "path to the model file")
 	imgF    = flag.String("img", "", "path of an input jpeg image (use - for stdin)")
-	outputF = flag.String("output", "output.png", "path of an output png file (use - for stdout)")
+	outputF = flag.String("output", "", "path of an output png file (use - for stdout)")
 	silent  = flag.Bool("s", false, "silent mode (useful if output is -)")
 	img     image.Image
 	classes = []string{"aeroplane", "bicycle", "bird", "boat", "bottle",

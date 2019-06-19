@@ -15,7 +15,7 @@ $ go run main.go -h
   -model string
         path to the model file (default "model.onnx")
   -output string
-        path of an output png file (use - for stdout) (default "output.png")
+        path of an output png file (use - for stdout)
   -s    silent mode (useful if output is -)
 This application is configured via the environment. The following environment
 variables can be used:
