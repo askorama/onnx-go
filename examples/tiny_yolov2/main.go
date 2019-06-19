@@ -8,12 +8,15 @@ import (
 	"image/draw"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"log"
 	"math"
 	"os"
 	"sort"
 
+	"github.com/kelseyhightower/envconfig"
+	"github.com/nfnt/resize"
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
 	"github.com/owulveryck/onnx-go/internal/x/images"
@@ -30,26 +33,40 @@ import (
 // cell also predicts which class each bounding box belongs to.
 //
 const (
-	hSize, wSize     = 416, 416
-	blockSize        = 32
-	gridHeight       = 13
-	gridWidth        = 13
-	boxesPerCell     = 5
-	numClasses       = 20
-	threshold        = 0.30
-	drawingThreshold = 0.3
+	hSize, wSize  = 416, 416
+	blockSize     = 32
+	gridHeight    = 13
+	gridWidth     = 13
+	boxesPerCell  = 5
+	numClasses    = 20
+	envConfPrefix = "yolo"
 )
+
+type configuration struct {
+	ConfidenceThreshold float64 `envconfig:"confidence_threshold" default:"0.30" required:"true"`
+	ClassProbaThreshold float64 `envconfig:"proba_threshold" default:"0.90" required:"true"`
+}
+
+func init() {
+	err := envconfig.Process(envConfPrefix, &config)
+	if err != nil {
+		panic(err)
+	}
+}
 
 var (
 	model   = flag.String("model", "model.onnx", "path to the model file")
-	imgF    = flag.String("img", "", "path of an input tensor for testing")
-	inputT  = flag.String("input", "", "tensor")
+	imgF    = flag.String("img", "", "path of an input jpeg image (use - for stdin)")
+	outputF = flag.String("output", "", "path of an output png file (use - for stdout)")
+	silent  = flag.Bool("s", false, "silent mode (useful if output is -)")
 	img     image.Image
 	classes = []string{"aeroplane", "bicycle", "bird", "boat", "bottle",
 		"bus", "car", "cat", "chair", "cow",
 		"diningtable", "dog", "horse", "motorbike", "person",
 		"pottedplant", "sheep", "sofa", "train", "tv/monitor"}
-	anchors = []float64{1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52}
+	anchors     = []float64{1.08, 1.19, 3.42, 4.41, 6.63, 11.38, 9.42, 5.11, 16.62, 10.52}
+	scaleFactor = float32(1) // The scale factor to resize the image to hSize*wSize
+	config      configuration
 )
 
 func main() {
@@ -57,6 +74,7 @@ func main() {
 	flag.Parse()
 	if *h {
 		flag.Usage()
+		envconfig.Usage(envConfPrefix, &config)
 		os.Exit(0)
 	}
 	if _, err := os.Stat(*model); err != nil && os.IsNotExist(err) {
@@ -82,40 +100,54 @@ func main() {
 }
 
 func getInput() tensor.Tensor {
-	if *inputT != "" {
-		b, err := ioutil.ReadFile(*inputT)
-		if err != nil {
-			log.Fatal(err)
-		}
-		t, err := onnx.NewTensor(b)
-		if err != nil {
-			log.Fatal(err)
-		}
-		img, err = images.TensorToImg(t)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return t
+	if *imgF == "" {
+		flag.Usage()
+		os.Exit(1)
 	}
-	if *imgF != "" {
-		f, err := os.Open(*imgF)
+	var f io.Reader
+	var err error
+	if *imgF == "-" {
+		f = os.Stdin
+	} else {
+		f, err = os.Open(*imgF)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer f.Close()
-		img, err = jpeg.Decode(f)
-		if err != nil {
-			log.Fatal(err)
-		}
-		inputT := tensor.New(tensor.WithShape(1, 3, hSize, wSize), tensor.Of(tensor.Float32))
-		err = images.ImageToBCHW(img, inputT)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return inputT
+		defer f.(*os.File).Close()
 	}
-	log.Fatal("Please speficy an input")
-	return nil
+	img, err = jpeg.Decode(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// find the resize scale
+	imgRescaled := image.NewNRGBA(image.Rect(0, 0, wSize, hSize))
+	color := color.RGBA{0, 0, 0, 255}
+
+	draw.Draw(imgRescaled, imgRescaled.Bounds(), &image.Uniform{color}, image.ZP, draw.Src)
+	var m image.Image
+	if (img.Bounds().Max.X - img.Bounds().Min.X) > (img.Bounds().Max.Y - img.Bounds().Min.Y) {
+		scaleFactor = float32(img.Bounds().Max.Y-img.Bounds().Min.Y) / float32(hSize)
+		m = resize.Resize(0, hSize, img, resize.Lanczos3)
+	} else {
+		scaleFactor = float32(img.Bounds().Max.X-img.Bounds().Min.X) / float32(wSize)
+		m = resize.Resize(wSize, 0, img, resize.Lanczos3)
+	}
+	switch m.(type) {
+	case *image.NRGBA:
+		draw.Draw(imgRescaled, imgRescaled.Bounds(), m.(*image.NRGBA), image.ZP, draw.Src)
+	case *image.YCbCr:
+		draw.Draw(imgRescaled, imgRescaled.Bounds(), m.(*image.YCbCr), image.ZP, draw.Src)
+	default:
+		log.Fatal("unhandled type")
+	}
+
+	inputT := tensor.New(tensor.WithShape(1, 3, hSize, wSize), tensor.Of(tensor.Float32))
+	//err = images.ImageToBCHW(img, inputT)
+	err = images.ImageToBCHW(imgRescaled, inputT)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return inputT
 }
 
 func processOutput(t []tensor.Tensor, err error) {
@@ -170,47 +202,55 @@ func processOutput(t []tensor.Tensor, err error) {
 			}
 		}
 	}
-	sort.Sort(sort.Reverse(byConfidence(boxes)))
-	printClassification(boxes)
-	f, err := os.Create("output.png")
-	if err != nil {
-		log.Fatal(err)
+	boxes = sanitize(boxes)
+	if !*silent {
+		printClassification(boxes)
+	}
+	if *outputF != "" {
+		drawClassification(boxes)
+	}
+}
+
+func printClassification(boxes []box) {
+	var elements []element
+	for _, box := range boxes {
+		if box.classes[0].prob > config.ConfidenceThreshold {
+			elements = append(elements, box.classes...)
+			fmt.Printf("at (%v) with confidence %2.2f%%: %v\n", box.r, box.confidence, box.classes[:3])
+		}
+	}
+	sort.Sort(sort.Reverse(byProba(elements)))
+	for _, c := range elements {
+		if c.prob > 0.4 {
+			fmt.Println(c)
+		}
+	}
+
+}
+func drawClassification(boxes []box) {
+	if *outputF == "" {
+		return
+	}
+	var f io.Writer
+	var err error
+	if *outputF == "-" {
+		f = os.Stdout
+	} else {
+		f, err = os.Create(*outputF)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.(*os.File).Close()
 	}
 	m := image.NewNRGBA(img.Bounds())
 
 	draw.Draw(m, m.Bounds(), img, image.ZP, draw.Src)
 	for _, b := range boxes {
-		if b.confidence > drawingThreshold {
-			drawRectangle(m, b.r, fmt.Sprintf("%v %2.2f%%", b.classes[0].class, b.classes[0].prob*100))
-		}
+		drawRectangle(m, b.r, fmt.Sprintf("%v %2.2f%%", b.classes[0].class, b.classes[0].prob*100))
 	}
 
 	if err := png.Encode(f, m); err != nil {
-		f.Close()
 		log.Fatal(err)
-	}
-
-	if err := f.Close(); err != nil {
-		log.Fatal(err)
-	}
-
-}
-
-func printClassification(classification []box) {
-	var classes []element
-	for _, e := range classification {
-		if e.confidence > threshold {
-			if e.classes[0].prob > threshold {
-				classes = append(classes, e.classes...)
-				fmt.Printf("at (%v) with confidence %2.2f%%: %v\n", e.r, e.confidence, e.classes[:3])
-			}
-		}
-	}
-	sort.Sort(sort.Reverse(byProba(classes)))
-	for _, e := range classes {
-		if e.prob > 0.4 {
-			fmt.Println(e)
-		}
 	}
 
 }
@@ -221,6 +261,17 @@ func must(err error) {
 	}
 }
 
+type element struct {
+	prob  float64
+	class string
+}
+
+type byProba []element
+
+func (b byProba) Len() int           { return len(b) }
+func (b byProba) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b byProba) Less(i, j int) bool { return b[i].prob < b[j].prob }
+
 type box struct {
 	r          image.Rectangle
 	gridcell   []int
@@ -228,24 +279,11 @@ type box struct {
 	classes    []element
 }
 
-type byProba []element
-
-func (a byProba) Len() int           { return len(a) }
-func (a byProba) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byProba) Less(i, j int) bool { return a[i].prob < a[j].prob }
-
-type byGridCell []box
 type byConfidence []box
 
-func (a byGridCell) Len() int      { return len(a) }
-func (a byGridCell) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a byGridCell) Less(i, j int) bool {
-	return a[i].gridcell[0] < a[j].gridcell[0] || a[i].gridcell[1] < a[j].gridcell[1]
-}
-
-func (a byConfidence) Len() int           { return len(a) }
-func (a byConfidence) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byConfidence) Less(i, j int) bool { return a[i].confidence < a[j].confidence }
+func (b byConfidence) Len() int           { return len(b) }
+func (b byConfidence) Swap(i, j int)      { b[i], b[j] = b[j], b[i] }
+func (b byConfidence) Less(i, j int) bool { return b[i].confidence < b[j].confidence }
 
 func sigmoid(sum float32) float32 {
 	return float32(1.0 / (1.0 + math.Exp(float64(-sum))))
@@ -270,11 +308,6 @@ func softmax(a []float32) []float64 {
 	return output
 }
 
-type element struct {
-	prob  float64
-	class string
-}
-
 func getOrderedElements(input []float64) []element {
 	elems := make([]element, len(input))
 	for i := 0; i < len(elems); i++ {
@@ -283,15 +316,9 @@ func getOrderedElements(input []float64) []element {
 			class: classes[i],
 		}
 	}
-	sort.Sort(sort.Reverse(elements(elems)))
+	sort.Sort(sort.Reverse(byProba(elems)))
 	return elems
 }
-
-type elements []element
-
-func (a elements) Len() int           { return len(a) }
-func (a elements) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a elements) Less(i, j int) bool { return a[i].prob < a[j].prob }
 
 func max(a, b int) int {
 	if a > b {
@@ -323,14 +350,19 @@ func drawRectangle(img *image.NRGBA, r image.Rectangle, label string) {
 		}
 	}
 
+	minX := int(float32(r.Min.X) * scaleFactor)
+	maxX := int(float32(r.Max.X) * scaleFactor)
+	minY := int(float32(r.Min.Y) * scaleFactor)
+	maxY := int(float32(r.Max.Y) * scaleFactor)
 	// Rect draws a rectangle utilizing HLine() and VLine()
 	rect := func(r image.Rectangle) {
-		hLine(r.Min.X, r.Max.Y, r.Max.X)
-		hLine(r.Min.X, r.Min.Y, r.Max.X)
-		vLine(r.Max.X, r.Min.Y, r.Max.Y)
-		vLine(r.Min.X, r.Min.Y, r.Max.Y)
+		hLine(minX, maxY, maxX)
+		hLine(minX, maxY, maxX)
+		hLine(minX, minY, maxX)
+		vLine(maxX, minY, maxY)
+		vLine(minX, minY, maxY)
 	}
-	addLabel(img, r.Bounds().Min.X+5, r.Bounds().Min.Y+15, label)
+	addLabel(img, minX+5, minY+15, label)
 	rect(r)
 }
 
@@ -348,4 +380,55 @@ func addLabel(img *image.NRGBA, x, y int, label string) {
 		Dot:  point,
 	}
 	d.DrawString(label)
+}
+
+// from https://medium.com/@jonathan_hui/real-time-object-detection-with-yolo-yolov2-28b1b93e2088
+// 1- Sort the predictions by the confidence scores.
+// 2- Start from the top scores, ignore any current prediction if we find any previous predictions that have the same class and IoU > 0.5 with the current prediction.
+// 3- Repeat step 2 until all predictions are checked.
+func sanitize(boxes []box) []box {
+	sort.Sort(sort.Reverse(byConfidence(boxes)))
+
+	for i := 1; i < len(boxes); i++ {
+		if boxes[i].confidence < config.ConfidenceThreshold {
+			boxes = boxes[:i]
+			break
+		}
+		if boxes[i].classes[0].prob < config.ClassProbaThreshold {
+			boxes = boxes[:i]
+			break
+		}
+		for j := i + 1; j < len(boxes); {
+			iou := iou(boxes[i].r, boxes[j].r)
+			if iou > 0.5 && boxes[i].classes[0].class == boxes[j].classes[0].class {
+				boxes = append(boxes[:j], boxes[j+1:]...)
+				continue
+			}
+			j++
+		}
+	}
+	return boxes
+}
+
+// evaluate the intersection over union of two rectangles
+func iou(r1, r2 image.Rectangle) float64 {
+	// get the intesection rectangle
+	intersection := image.Rect(
+		max(r1.Min.X, r2.Min.X),
+		max(r1.Min.Y, r2.Min.Y),
+		min(r1.Max.X, r2.Max.X),
+		min(r1.Max.Y, r2.Max.Y),
+	)
+	// compute the area of intersection rectangle
+	interArea := area(intersection)
+	r1Area := area(r1)
+	r2Area := area(r2)
+	// compute the intersection over union by taking the intersection
+	// area and dividing it by the sum of prediction + ground-truth
+	// areas - the interesection area
+	return float64(interArea) / float64(r1Area+r2Area-interArea)
+}
+
+func area(r image.Rectangle) int {
+	return max(0, r.Max.X-r.Min.X-1) * max(0, r.Max.Y-r.Min.Y-1)
 }
