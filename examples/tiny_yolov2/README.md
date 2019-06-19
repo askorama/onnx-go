@@ -3,43 +3,35 @@
 to run this utility you need:
 
 - the onnx definition of tiny yolo v2 from the [model zoo](https://github.com/onnx/models/tree/master/tiny_yolov2).
-- a 416x416 jpeg picture
+- a jpeg picture
 
-then 
-
-`go run main.go -model /path/to/tiny_yolov2/model.onnx -img /path/to/picture_416x416.jpg`
-
-
-ex:
+## Usage
 
 ```
-✗  go run main.go -model $MODELDIR/tiny_yolov2/model.onnx -img data/dog_416.jpg
-at (162,0)-(189,206) with confidence 0.95%: [{0.9998071754247418 dog} {0.00018703953064835692 cat} {2.115350363488541e-06 person}]
-at (0,3)-(438,346) with confidence 0.85%: [{0.9999962088094221 bicycle} {2.4332601660991103e-06 chair} {4.6456437678137356e-07 person}]
-at (0,73)-(126,295) with confidence 0.83%: [{0.9999995178370005 car} {3.5306012468841564e-07 bus} {1.0748795966861477e-07 person}]
-at (0,43)-(430,320) with confidence 0.73%: [{0.9999789093484178 bicycle} {2.013909263985852e-05 chair} {6.396542550263407e-07 boat}]
-at (152,0)-(226,187) with confidence 0.66%: [{0.9982670709247383 dog} {0.0016460507909590047 cat} {5.957194709763225e-05 person}]
-at (0,83)-(103,325) with confidence 0.66%: [{0.9999934470064776 car} {4.297399737329603e-06 person} {2.082974674910856e-06 bus}]
-at (157,0)-(186,200) with confidence 0.64%: [{0.999784279956219 dog} {0.00019693142718305628 cat} {8.454914041169167e-06 bird}]
-at (0,0)-(413,362) with confidence 0.62%: [{0.9986541066305761 bicycle} {0.0008222933798651681 chair} {0.00032344712097440875 motorbike}]
-at (0,0)-(400,363) with confidence 0.55%: [{0.9999220651658735 bicycle} {5.773722286386036e-05 chair} {6.478719961409336e-06 person}]
-at (0,0)-(448,338) with confidence 0.51%: [{0.9995790811257635 bicycle} {0.0002938493348981077 chair} {5.05680835872687e-05 dog}]
-at (143,0)-(223,186) with confidence 0.45%: [{0.9857089464884052 dog} {0.01341958871066549 cat} {0.0007088810484281701 person}]
-at (0,71)-(112,263) with confidence 0.34%: [{0.9999317843569847 car} {4.842326315789941e-05 person} {1.0402486318194522e-05 bus}]
-at (146,0)-(184,241) with confidence 0.33%: [{0.9999781504060399 dog} {6.9390734196093085e-06 cat} {5.307627835320137e-06 chair}]
-at (15,36)-(446,327) with confidence 0.31%: [{0.9999871477975073 bicycle} {7.80820896521431e-06 boat} {3.1919688616376533e-06 chair}]
-{0.9999995178370005 car}
-{0.9999962088094221 bicycle}
-{0.9999934470064776 car}
-{0.9999871477975073 bicycle}
-{0.9999789093484178 bicycle}
-{0.9999781504060399 dog}
-{0.9999317843569847 car}
-{0.9999220651658735 bicycle}
-{0.9998071754247418 dog}
-{0.999784279956219 dog}
-{0.9995790811257635 bicycle}
-{0.9986541066305761 bicycle}
-{0.9982670709247383 dog}
-{0.9857089464884052 dog}
+$ go run main.go -h
+  -h    help
+  -img string
+        path of an input jpeg image (use - for stdin)
+  -model string
+        path to the model file (default "model.onnx")
+  -output string
+        path of an output png file (use - for stdout)
+  -s    silent mode (useful if output is -)
+This application is configured via the environment. The following environment
+variables can be used:
+
+KEY                          TYPE     DEFAULT    REQUIRED    DESCRIPTION
+YOLO_CONFIDENCE_THRESHOLD    Float    0.30       true
+YOLO_PROBA_THRESHOLD         Float    0.90       true
 ```
+
+to run it, simply do a 
+`go run main.go -model /path/to/tiny_yolov2/model.onnx -img /path/to/picture.jpg`
+
+if you want to generate an anotated output picture in png, use the `-output` parameter
+
+
+You can alter the output by playing with the environment variables
+
+- `YOLO_CONFIDENCE_THRESHOLD`: bypass the boxes with a confidence lower than this value
+- `YOLO_PROBA_THRESHOLD`: bypass the boxes with a class detection lower than this value
