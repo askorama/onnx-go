@@ -35,9 +35,13 @@ check the `examples` subdirectory.
 
 ## Install
 
+Install it via go get
 ```
 go get github.com/owulveryck/onnx-go
 ```
+
+onnx-go is compatible with [go modules](https://github.com/golang/go/wiki/Modules).
+
 
 ## Example
 
