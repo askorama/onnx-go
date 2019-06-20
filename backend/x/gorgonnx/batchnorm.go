@@ -40,6 +40,13 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 			Message:  "Only CxBxHxW tensors are supported",
 		}
 	}
+	batchNormOp := &fastBatchnorm{
+		scale:   scaleN.Value(),
+		bias:    biasN.Value(),
+		mean:    meanN.Value(),
+		varN:    varN.Value(),
+		epsilon: float32(b.epsilon),
+	}
 	if x.Shape()[0] != 1 {
 		// helper func
 		apply := func(f func(a, b *gorgonia.Node) (*gorgonia.Node, error), a, b *gorgonia.Node) (*gorgonia.Node, error) {
@@ -80,18 +87,11 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 			return err
 		}
 		n.gorgoniaNode, err = apply(gorgonia.Add, output1, biasN)
-
 		return err
-	}
-	batchNormOp := &batchNorm{
-		scale:   scaleN.Value(),
-		bias:    biasN.Value(),
-		mean:    meanN.Value(),
-		varN:    varN.Value(),
-		epsilon: float32(b.epsilon),
 	}
 	n.gorgoniaNode, err = gorgonia.ApplyOp(batchNormOp, x)
 	return err
+
 }
 
 func (b *batchnorm) init(o onnx.Operation) error {

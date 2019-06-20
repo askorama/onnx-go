@@ -104,7 +104,9 @@ func Example_gorgonia() {
 }
 ```
 
-A basic implementation can be found in the `examples` subdirectory.
+### Model zoo
+
+In the `examples` subdirectory, you will find a utility to run a model from the zoo, as well as a sample utility to analyze a picture with [Tiny YOLO v2](https://pjreddie.com/darknet/yolov2/)
 
 ## Internal
 

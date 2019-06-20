@@ -2,8 +2,6 @@ package images
 
 import (
 	"image"
-	"image/png"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,21 +30,4 @@ func TestEncodeDecode(t *testing.T) {
 	}
 	assert.Equal(t, sampleT.Shape(), generatedT.Shape())
 	assert.Equal(t, sampleT.Data(), generatedT.Data())
-}
-
-func savePic(img image.Image) error {
-	f, err := os.Create("image.png")
-	if err != nil {
-		return err
-	}
-
-	if err := png.Encode(f, img); err != nil {
-		f.Close()
-		return err
-	}
-
-	if err := f.Close(); err != nil {
-		return err
-	}
-	return nil
 }
