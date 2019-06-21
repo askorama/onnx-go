@@ -151,29 +151,52 @@ And depending on the phase (testing or training), it is evaluated in a way or th
 
 Neural networks are *Graphs* and *values*. The values are multidimentional arrays called _tensors_.
 
+* How do you "code" neural networks?
+
+To use a neural network, you need to encode the graph into a language...
+
+- Caffe
+- Pytorch
+- Keras
+- ...
+
+and to use a backend to compute it.
+
+- Tensorflow
+- Theano
+- CNTK
+- ...
+
+* But, do you really want to waste your time in the installation of...
+ 
+.background assets/squelette.png
+
+
+.image assets/TensorFlowLogo.svg
+
+* anything and in Go?
+
+* 
+
+.background assets/Gorgonia_Final.png
+
 * Part III - WHAT 
 
 .background assets/loupe.png
 
-* How do you "code" neural networks?
-
-To use a neural network, you need to encode the graph into a language and to compute it.
-Several libraries exists to do this:
-
-- Tensorflow
-- Caffe
-- Pytorch
-- Gorgonia!
-
-Those libraries allow to compute the graph, in both directions; so you can use them
-to evaluate a "trained" neural network, as well as to train a neural network
-
 * Interoperability
 
-Eventually it's a graph and some float values...
+What I want to do is:
 
-- Can I use my favorite tool to train it and you use your favorite tool to run it?
-- People did a good job in training, can I re-use their work in my code?
+- facilitate the export of a pre-trained model to run it at scale
+- give the (Go) developer the opportunity to use a neural network easily
+- create some POC without wasting my time with configuration...
+
+The product team is composed of:
+
+- functional experts 
+- data experts to analyse and extract data to a valuable model 
+- Dev & Ops to build and run the software
 
 * About ONNX
 
