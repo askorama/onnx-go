@@ -153,6 +153,8 @@ Neural networks are *Graphs* and *values*. The values are multidimentional array
 
 * Part III - WHAT 
 
+.background assets/loupe.png
+
 * How do you "code" neural networks?
 
 To use a neural network, you need to encode the graph into a language and to compute it.
@@ -170,7 +172,8 @@ to evaluate a "trained" neural network, as well as to train a neural network
 
 Eventually it's a graph and some float values...
 
-can you train the model for me so I can use it?
+- Can I use my favorite tool to train it and you use your favorite tool to run it?
+- People did a good job in training, can I re-use their work in my code?
 
 * About ONNX
 
