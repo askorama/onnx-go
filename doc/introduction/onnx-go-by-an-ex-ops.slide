@@ -85,7 +85,7 @@ _Caution_ personal opinion here!
 
 - static binaries make deployement easier;
 - stronly typed language and the compiler are your friends; 
-- A little copying is better than a bid dependency
+- A little copying is better than a big dependency
 - the language is highly opinionated in a way that allows developers to stay focus instead of constantly refactoring.
 - a Go program do not increase the toil when running at scale. Its self-contained static binary is one of the most DevOps friendly principles so far.
 
@@ -93,7 +93,7 @@ _Caution_ personal opinion here!
 
 .background assets/egg.png
 
-Let's apply those lessons to machine learning based softares to run it in production, at scale...
+Let's apply those lessons to machine learning based softwares to run it in production, at scale...
 
 : Appying those lessons to machine learning and run it at scale (well in production is a first step)
 
