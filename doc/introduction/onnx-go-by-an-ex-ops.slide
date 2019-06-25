@@ -308,7 +308,7 @@ onnx-go provides those convenient methods to do that:
  onnx-go handles the problem in a modular way, 
  and several different backend engines can be plugged seamlessly into onnx-go.
 
-.link https://keras.io/backend/ This is a copy/paste of the Kears documentation with a s/keras/onnx-go/.
+.link https://keras.io/backend/ This is a copy/paste of the Keras documentation with a s/keras/onnx-go/.
 
 * The backend is simply an interface
 

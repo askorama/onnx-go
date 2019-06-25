@@ -20,8 +20,8 @@ var (
 func main() {
 	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(img8))
 	im, _, _ = image.Decode(reader)
-	outputConsole()
-	// outputValues()
+	//outputConsole()
+	outputValues()
 }
 
 func outputConsole() {
