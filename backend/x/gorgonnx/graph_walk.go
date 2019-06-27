@@ -14,7 +14,7 @@ import (
 // walk the graph from node "node"
 func (g *Graph) walk(node int64) error {
 	// n contains an ordered list of the nodes of the graph
-	nodes := make([]int64, 0)
+	nodes := make([]int64, 0, g.Nodes().Len())
 	// Walk the graph
 	bf := traverse.BreadthFirst{
 		Visit: func(v graph.Node) {
