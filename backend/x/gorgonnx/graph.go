@@ -72,5 +72,5 @@ func (g *Graph) PopulateExprgraph() error {
 				len(g.roots)),
 		}
 	}
-	return g.walk(g.roots[0])
+	return g.populateExprgraph()
 }
