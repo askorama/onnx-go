@@ -2,6 +2,7 @@ package gorgonnx
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
@@ -63,6 +64,12 @@ func (g *Graph) PopulateExprgraph() error {
 		n := it.Node()
 		if g.g.To(n.ID()).Len() == 0 {
 			g.roots = append(g.roots, n.ID())
+		}
+	}
+	if len(g.roots) != 1 {
+		return &onnx.ErrNotImplemented{
+			Message: fmt.Sprintf("the model have %v roots (output), but only graphs with one output is supported by this backend",
+				len(g.roots)),
 		}
 	}
 	return g.populateExprgraph()

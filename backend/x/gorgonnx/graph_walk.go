@@ -1,68 +1,56 @@
 package gorgonnx
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
-	"gonum.org/v1/gonum/graph"
-	"gonum.org/v1/gonum/graph/simple"
-	"gonum.org/v1/gonum/graph/traverse"
 	"gorgonia.org/gorgonia"
 )
 
 // populateExprgraph by walking through the graph
 func (g *Graph) populateExprgraph() error {
-	reverseGraph := simple.NewDirectedGraph()
 	// Walk the graph
 	itN := g.Nodes()
+	nodes := make([]*Node, 0, itN.Len())
 	for itN.Next() {
-		reverseGraph.AddNode(itN.Node())
-	}
-	itE := g.g.Edges()
-	for itE.Next() {
-		reverseGraph.SetEdge(itE.Edge().ReversedEdge())
-	}
-	roots := make([]int64, 0)
-	it := reverseGraph.Nodes()
-	for it.Next() {
-		n := it.Node()
-		if reverseGraph.To(n.ID()).Len() == 0 {
-			roots = append(roots, n.ID())
+		// if the node is a "tensor", set it!
+		n := itN.Node().(*Node)
+		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
+			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
+		} else {
+			nodes = append(nodes, n)
 		}
 	}
-	var errorApply error
-	bf := traverse.BreadthFirst{
-		Visit: func(nde graph.Node) {
-			n := nde.(*Node)
-			if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
-				n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
-			}
+	for len(nodes) > 0 {
+		initialLen := len(nodes)
+		for i := 0; i < len(nodes); i++ {
+			n := nodes[i]
 			if n.operation != nil {
 				children := getOrderedChildren(g.g, n)
-				for i := 0; i < len(children); i++ {
-					if children[i].gorgoniaNode == nil {
-						errorApply = fmt.Errorf("will not apply operation on %v because its %vth child is nil (%v)", n, i, children[i])
-						return
+				nilChild := false
+				for j := 0; j < len(children); j++ {
+					if children[j].gorgoniaNode == nil {
+						nilChild = true
+						break
 					}
 				}
-				var err error
-				err = g.applyOperation(n)
-				if err != nil {
-					errorApply = err
-					//log.Printf("ERROR: Cannot apply operation on node %v (%v)", n, err)
-					return
+				if nilChild {
+					continue
 				}
+				err := g.applyOperation(n)
+				if err != nil {
+					return err
+				}
+				nodes = append(nodes[:i], nodes[i+1:]...)
 			}
-
-		},
+		}
+		if len(nodes) == initialLen {
+			return errors.New("infinite loop")
+		}
 	}
-	for i := 0; i < len(roots); i++ {
-		bf.Reset()
-		errorApply = nil
-		bf.Walk(reverseGraph, reverseGraph.Node(roots[i]), nil)
-	}
-	return errorApply
+	return nil
 }
 
 // applyOperation creates a new node on the exprgraph
