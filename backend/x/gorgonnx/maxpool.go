@@ -2,6 +2,7 @@ package gorgonnx
 
 import (
 	"errors"
+	"log"
 
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
@@ -68,6 +69,7 @@ func (c *maxpool) apply(g *Graph, n *Node) error {
 }
 
 func (c *maxpool) init(o onnx.Operation) error {
+	log.Println(o)
 	var autoPad string
 	if a, ok := o.Attributes["auto_pad"]; ok {
 		if autoPad, ok = a.(string); !ok {
@@ -105,7 +107,7 @@ func (c *maxpool) init(o onnx.Operation) error {
 	c.pad = []int{0, 0, 0, 0}
 	pad, ok := o.Attributes["pads"]
 	if ok {
-    if pad, ok := pad.([]int64); ok {
+		if pad, ok := pad.([]int64); ok {
 			for i, v := range pad {
 				c.pad[i] = int(v)
 			}
