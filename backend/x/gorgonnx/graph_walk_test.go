@@ -26,7 +26,7 @@ type errNilGorgoniaNode struct {
 }
 
 func (n *errNilGorgoniaNode) Error() string {
-	return fmt.Sprintf("%v", n.node)
+	return fmt.Sprintf("child %v is nil", n.node)
 }
 
 func (d *dummyOp) apply(g *Graph, n *Node) error {
@@ -98,7 +98,8 @@ func TestPopulateExprgraph_simple(t *testing.T) {
 	// output -> dummyOp1
 	// output -> dummyOp2
 	// dummmuOp1 -> dummyOp2
-	// dummyOp2 -> input
+	// dummyOp2 -> input1
+	// dummyOp2 -> input2
 	// output and input are tensors
 	outputN := g.NewNode()
 	g.AddNode(outputN)
@@ -106,15 +107,22 @@ func TestPopulateExprgraph_simple(t *testing.T) {
 	g.AddNode(dummyOp1N)
 	dummyOp2N := g.NewNode()
 	g.AddNode(dummyOp2N)
-	inputN := g.NewNode()
-	g.AddNode(inputN)
+	input1N := g.NewNode()
+	g.AddNode(input1N)
+	input2N := g.NewNode()
+	g.AddNode(input2N)
 	g.SetWeightedEdge(g.NewWeightedEdge(outputN, dummyOp1N, 0))
 	g.SetWeightedEdge(g.NewWeightedEdge(dummyOp1N, dummyOp2N, 0))
-	//g.SetWeightedEdge(g.NewWeightedEdge(outputN, dummyOp2N, 1))
-	g.SetWeightedEdge(g.NewWeightedEdge(dummyOp2N, inputN, 0))
+	g.SetWeightedEdge(g.NewWeightedEdge(dummyOp2N, input1N, 0))
+	g.SetWeightedEdge(g.NewWeightedEdge(dummyOp2N, input2N, 0))
 
 	// Now set the tensors...
-	err := inputN.(*Node).SetTensor(tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(1)))
+	err := input1N.(*Node).SetTensor(tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(1)))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = input2N.(*Node).SetTensor(tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(1)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -133,8 +141,8 @@ func TestPopulateExprgraph_simple(t *testing.T) {
 	err = g.ApplyOperation(onnx.Operation{
 		Name: "dummy",
 		Attributes: map[string]interface{}{
-			"arity": int(1),
-			"type":  hm.NewFnType(tensorType, tensorType),
+			"arity": int(2),
+			"type":  hm.NewFnType(tensorType, tensorType, tensorType),
 		},
 	}, dummyOp2N)
 
@@ -159,21 +167,21 @@ func TestPopulateExprgraph_simple(t *testing.T) {
 	root := g.exprgraph.Roots()[0]
 	it := g.exprgraph.From(root.ID())
 	if it.Len() != 1 {
-		t.Fatal("bad length 1")
+		t.Fatalf("level1: bad number of children, expecte %v, got %v ", 1, it.Len())
 	}
 	// dummyOp1
 	it.Next()
 	n := it.Node()
 	it = g.exprgraph.From(n.ID())
 	if it.Len() != 1 {
-		t.Fatal("bad length 2")
+		t.Fatalf("level2: bad number of children, expecte %v, got %v ", 1, it.Len())
 	}
 	// dummyOp2
 	it.Next()
 	n = it.Node()
 	it = g.exprgraph.From(n.ID())
-	if it.Len() != 1 {
-		t.Fatal("bad length 3")
+	if it.Len() != 2 {
+		t.Fatalf("level3: bad number of children, expecte %v, got %v ", 2, it.Len())
 	}
 
 }
@@ -249,21 +257,21 @@ func TestPopulateExprgraph_complex(t *testing.T) {
 	root := g.exprgraph.Roots()[0]
 	it := g.exprgraph.From(root.ID())
 	if it.Len() != 2 {
-		t.Fatal("bad length 1")
+		t.Fatalf("level1: bad number of children, expecte %v, got %v ", 2, it.Len())
 	}
 	// dummyOp1
 	it.Next()
 	n := it.Node()
 	it = g.exprgraph.From(n.ID())
 	if it.Len() != 1 {
-		t.Fatal("bad length 2")
+		t.Fatalf("level2: bad number of children, expecte %v, got %v ", 1, it.Len())
 	}
 	// dummyOp2
 	it.Next()
 	n = it.Node()
 	it = g.exprgraph.From(n.ID())
 	if it.Len() != 1 {
-		t.Fatal("bad length 3")
+		t.Fatalf("level3: bad number of children, expecte %v, got %v ", 1, it.Len())
 	}
 
 }

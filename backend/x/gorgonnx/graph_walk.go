@@ -2,7 +2,6 @@ package gorgonnx
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
@@ -32,6 +31,7 @@ func (g *Graph) populateExprgraph() error {
 			roots = append(roots, n.ID())
 		}
 	}
+	var errorApply error
 	bf := traverse.BreadthFirst{
 		Visit: func(nde graph.Node) {
 			n := nde.(*Node)
@@ -39,10 +39,18 @@ func (g *Graph) populateExprgraph() error {
 				n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
 			}
 			if n.operation != nil {
+				children := getOrderedChildren(g.g, n)
+				for i := 0; i < len(children); i++ {
+					if children[i].gorgoniaNode == nil {
+						errorApply = fmt.Errorf("will not apply operation on %v because its %vth child is nil (%v)", n, i, children[i])
+						return
+					}
+				}
 				var err error
 				err = g.applyOperation(n)
 				if err != nil {
-					log.Println("ERROR", err)
+					errorApply = err
+					//log.Printf("ERROR: Cannot apply operation on node %v (%v)", n, err)
 					return
 				}
 			}
@@ -50,9 +58,11 @@ func (g *Graph) populateExprgraph() error {
 		},
 	}
 	for i := 0; i < len(roots); i++ {
+		bf.Reset()
+		errorApply = nil
 		bf.Walk(reverseGraph, reverseGraph.Node(roots[i]), nil)
 	}
-	return nil
+	return errorApply
 }
 
 // applyOperation creates a new node on the exprgraph
