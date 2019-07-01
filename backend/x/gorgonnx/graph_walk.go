@@ -6,46 +6,50 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
-	"gonum.org/v1/gonum/graph"
-	"gonum.org/v1/gonum/graph/traverse"
 	"gorgonia.org/gorgonia"
 )
 
-// walk the graph from node "node"
-func (g *Graph) walk(node int64) error {
-	// n contains an ordered list of the nodes of the graph
-	nodes := make([]int64, 0)
+// populateExprgraph by walking through the graph
+func (g *Graph) populateExprgraph() error {
 	// Walk the graph
-	bf := traverse.BreadthFirst{
-		Visit: func(v graph.Node) {
-			if len(nodes) == 0 || nodes[len(nodes)-1] != v.ID() {
-				nodes = append(nodes, v.ID())
-			}
-		},
-	}
-
-	bf.Walk(g, g.Node(node), nil)
-	if len(nodes) == 0 {
-		return errors.New("unable to compute node, empty path")
-	}
-	// for each node, if nil, and if hold an operation, add the graph
-	for i := len(nodes) - 1; i >= 0; i-- {
-		n := g.g.Node(nodes[i]).(*Node)
-		if n.t == nil && n.operation == nil {
-			return fmt.Errorf("node %v is not a tensor nor an operation", n)
-		}
+	itN := g.Nodes()
+	nodes := make([]*Node, 0, itN.Len())
+	for itN.Next() {
+		// if the node is a "tensor", set it!
+		n := itN.Node().(*Node)
 		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
 			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
-		}
-		if n.operation != nil {
-			var err error
-			err = g.applyOperation(n)
-			if err != nil {
-				return err
-			}
+		} else {
+			nodes = append(nodes, n)
 		}
 	}
-
+	for len(nodes) > 0 {
+		initialLen := len(nodes)
+		for i := 0; i < len(nodes); i++ {
+			n := nodes[i]
+			if n.operation != nil {
+				children := getOrderedChildren(g.g, n)
+				nilChild := false
+				for j := 0; j < len(children); j++ {
+					if children[j].gorgoniaNode == nil {
+						nilChild = true
+						break
+					}
+				}
+				if nilChild {
+					continue
+				}
+				err := g.applyOperation(n)
+				if err != nil {
+					return err
+				}
+				nodes = append(nodes[:i], nodes[i+1:]...)
+			}
+		}
+		if len(nodes) == initialLen {
+			return errors.New("infinite loop")
+		}
+	}
 	return nil
 }
 
