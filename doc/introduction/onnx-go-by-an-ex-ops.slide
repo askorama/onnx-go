@@ -173,6 +173,7 @@ and to use a backend to compute it.
  
 .background assets/squelette.png
 
+TensorFlow 
 
 .image assets/TensorFlowLogo.svg
 
