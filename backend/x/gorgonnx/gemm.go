@@ -60,7 +60,7 @@ func (o *gemm) InferShape(inputs ...gorgonia.DimSizer) (tensor.Shape, error) {
 	if err != nil {
 		return nil, err
 	}
-	if o.transA {
+	if o.transB {
 		n, err = inputs[1].DimSize(0)
 		if err != nil {
 			return nil, err
@@ -114,12 +114,12 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 			for i := 0; i < len(backend); i++ {
 				backend[i] = c.Data().([]float32)[0]
 			}
-		case m:
-			for i := 0; i < n; i++ {
-				copy(backend[i:i+m], c.Data().([]float32))
+		case n:
+			for i := 0; i < m; i++ {
+				copy(backend[i:i+n], c.Data().([]float32))
 			}
 		default:
-			return nil, errors.New("Gemm: unhandled shape for C broadcast not fully suported")
+			return nil, fmt.Errorf("gemm: C has %v elements, but %vx%v are expected", c.DataSize(), m, n)
 		}
 		c = tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend))
 	}
@@ -184,12 +184,12 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 			for i := 0; i < len(backend); i++ {
 				backend[i] = c.Data().([]float64)[0]
 			}
-		case m:
-			for i := 0; i < n; i++ {
-				copy(backend[i:i+m], c.Data().([]float64))
+		case n:
+			for i := 0; i < m; i++ {
+				copy(backend[i:i+n], c.Data().([]float64))
 			}
 		default:
-			return nil, errors.New("Gemm: unhandled shape for C broadcast not fully suported")
+			return nil, fmt.Errorf("gemm: C has %v elements, but %vx%v are expected", c.DataSize(), m, n)
 		}
 		c = tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend))
 	}
