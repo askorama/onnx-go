@@ -10,6 +10,7 @@ import (
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/blas"
 	"gonum.org/v1/gonum/blas/blas32"
+	"gonum.org/v1/gonum/blas/blas64"
 	"gorgonia.org/gorgonia"
 	"gorgonia.org/tensor"
 )
@@ -69,6 +70,22 @@ func (o *gemm) InferShape(inputs ...gorgonia.DimSizer) (tensor.Shape, error) {
 }
 
 func (o *gemm) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
+	var a tensor.Tensor
+	var ok bool
+	if a, ok = inputs[0].(tensor.Tensor); !ok {
+		return nil, errors.New("gemm: not a tensor")
+	}
+	switch a.Dtype() {
+	case gorgonia.Float32:
+		return o.do32(inputs...)
+	case gorgonia.Float64:
+		return o.do64(inputs...)
+	default:
+		return nil, errors.New("gemm: type not handled")
+	}
+}
+
+func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	var a, b, c tensor.Tensor
 	var ok bool
 	if a, ok = inputs[0].(tensor.Tensor); !ok {
@@ -89,6 +106,10 @@ func (o *gemm) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	if c.DataSize() != m*n {
 		backend := make([]float32, m*n)
 		switch c.DataSize() {
+		case 0:
+			for i := 0; i < len(backend); i++ {
+				backend[i] = c.Data().(float32)
+			}
 		case 1:
 			for i := 0; i < len(backend); i++ {
 				backend[i] = c.Data().([]float32)[0]
@@ -98,7 +119,7 @@ func (o *gemm) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 				copy(backend[i:i+m], c.Data().([]float32))
 			}
 		default:
-			return nil, errors.New("Gemm: unhandled shape for C")
+			return nil, errors.New("Gemm: unhandled shape for C broadcast not fully suported")
 		}
 		c = tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend))
 	}
@@ -133,7 +154,76 @@ func (o *gemm) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 		})
 
 	return c, nil
+}
+func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
+	var a, b, c tensor.Tensor
+	var ok bool
+	if a, ok = inputs[0].(tensor.Tensor); !ok {
+		return nil, errors.New("gemm: not a tensor")
+	}
+	if b, ok = inputs[1].(tensor.Tensor); !ok {
+		return nil, errors.New("gemm: not a tensor")
+	}
+	if c, ok = inputs[2].(tensor.Tensor); !ok {
+		return nil, errors.New("gemm: not a tensor")
+	}
+	s, err := o.InferShape(a.Shape(), b.Shape(), c.Shape())
+	if err != nil {
+		return nil, err
+	}
+	m := s[0]
+	n := s[1]
+	if c.DataSize() != m*n {
+		backend := make([]float64, m*n)
+		switch c.DataSize() {
+		case 0:
+			for i := 0; i < len(backend); i++ {
+				backend[i] = c.Data().(float64)
+			}
+		case 1:
+			for i := 0; i < len(backend); i++ {
+				backend[i] = c.Data().([]float64)[0]
+			}
+		case m:
+			for i := 0; i < n; i++ {
+				copy(backend[i:i+m], c.Data().([]float64))
+			}
+		default:
+			return nil, errors.New("Gemm: unhandled shape for C broadcast not fully suported")
+		}
+		c = tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend))
+	}
+	transA := blas.NoTrans
+	transB := blas.NoTrans
+	if o.transA {
+		transA = blas.Trans
+	}
+	if o.transB {
+		transB = blas.Trans
+	}
+	// do we need to broadcast?
+	blas64.Gemm(transA, transB, float64(o.alpha),
+		blas64.General{
+			Rows:   a.Shape()[0],
+			Cols:   a.Shape()[1],
+			Stride: a.Strides()[0],
+			Data:   a.Data().([]float64),
+		},
+		blas64.General{
+			Rows:   b.Shape()[0],
+			Cols:   b.Shape()[1],
+			Stride: b.Strides()[0],
+			Data:   b.Data().([]float64),
+		},
+		float64(o.beta),
+		blas64.General{
+			Rows:   c.Shape()[0],
+			Cols:   c.Shape()[1],
+			Stride: c.Strides()[0],
+			Data:   c.Data().([]float64),
+		})
 
+	return c, nil
 }
 
 func (*gemm) ReturnsPtr() bool {
