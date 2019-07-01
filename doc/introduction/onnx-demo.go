@@ -58,7 +58,7 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 func modelPostHandler(w http.ResponseWriter, r *http.Request) {
 	// reset the backend and the model
 	// START_MODEL OMIT
-	var b []byte
+	var b []byte // will hold the content of the `model.onnx file
 	var err error
 	// Create a backend receiver
 	backend = gorgonnx.NewGraph()
