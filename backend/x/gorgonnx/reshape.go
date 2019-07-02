@@ -30,6 +30,10 @@ func (a *reshape) apply(g *Graph, n *Node) error {
 		childShape := make([]int, len(to))
 		copy(childShape, children[0].gorgoniaNode.Shape())
 		toShape = make([]int, len(to))
+		dimSize := 1
+		for i := 0; i < len(childShape); i++ {
+			dimSize *= childShape[i]
+		}
 		for i := 0; i < len(to); i++ {
 			toShape[i] = int(to[i])
 		}
@@ -37,14 +41,14 @@ func (a *reshape) apply(g *Graph, n *Node) error {
 			if toShape[i] == 0 {
 				toShape[i] = childShape[i]
 			}
+		}
+		actualSize := 1
+		for i := 0; i < len(toShape); i++ {
+			actualSize *= toShape[i]
+		}
+		for i := 0; i < len(toShape); i++ {
 			if toShape[i] == -1 {
-				sum := 1
-				for j := 0; j < len(childShape); j++ {
-					if j >= len(toShape) || toShape[j] == -1 {
-						sum *= childShape[j]
-					}
-				}
-				toShape[i] = sum
+				toShape[i] = dimSize / actualSize
 			}
 		}
 	} else {
