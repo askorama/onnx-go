@@ -60,7 +60,7 @@ func (o *gemm) InferShape(inputs ...gorgonia.DimSizer) (tensor.Shape, error) {
 	if err != nil {
 		return nil, err
 	}
-	if o.transA {
+	if o.transB {
 		n, err = inputs[1].DimSize(0)
 		if err != nil {
 			return nil, err
@@ -103,8 +103,9 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	}
 	m := s[0]
 	n := s[1]
+	backend := c.Data().([]float32)
 	if c.DataSize() != m*n {
-		backend := make([]float32, m*n)
+		backend = make([]float32, m*n)
 		switch c.DataSize() {
 		case 0:
 			for i := 0; i < len(backend); i++ {
@@ -114,14 +115,13 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 			for i := 0; i < len(backend); i++ {
 				backend[i] = c.Data().([]float32)[0]
 			}
-		case m:
-			for i := 0; i < n; i++ {
-				copy(backend[i:i+m], c.Data().([]float32))
+		case n:
+			for i := 0; i < m; i++ {
+				copy(backend[i*n:(i+1)*n], c.Data().([]float32))
 			}
 		default:
 			return nil, errors.New("Gemm: unhandled shape for C broadcast not fully suported")
 		}
-		c = tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend))
 	}
 	transA := blas.NoTrans
 	transB := blas.NoTrans
@@ -131,7 +131,6 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	if o.transB {
 		transB = blas.Trans
 	}
-	// do we need to broadcast?
 	blas32.Gemm(transA, transB, o.alpha,
 		blas32.General{
 			Rows:   a.Shape()[0],
@@ -147,13 +146,12 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 		},
 		o.beta,
 		blas32.General{
-			Rows:   c.Shape()[0],
-			Cols:   c.Shape()[1],
-			Stride: c.Strides()[0],
-			Data:   c.Data().([]float32),
+			Rows:   m,
+			Cols:   n,
+			Stride: n,
+			Data:   backend,
 		})
-
-	return c, nil
+	return tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend)), nil
 }
 func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	var a, b, c tensor.Tensor
@@ -173,8 +171,9 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	}
 	m := s[0]
 	n := s[1]
+	backend := c.Data().([]float32)
 	if c.DataSize() != m*n {
-		backend := make([]float64, m*n)
+		backend = make([]float64, m*n)
 		switch c.DataSize() {
 		case 0:
 			for i := 0; i < len(backend); i++ {
@@ -184,9 +183,9 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 			for i := 0; i < len(backend); i++ {
 				backend[i] = c.Data().([]float64)[0]
 			}
-		case m:
-			for i := 0; i < n; i++ {
-				copy(backend[i:i+m], c.Data().([]float64))
+		case n:
+			for i := 0; i < m; i++ {
+				copy(backend[i*n:(i+1)*n], c.Data().([]float64))
 			}
 		default:
 			return nil, errors.New("Gemm: unhandled shape for C broadcast not fully suported")
@@ -217,13 +216,13 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 		},
 		float64(o.beta),
 		blas64.General{
-			Rows:   c.Shape()[0],
-			Cols:   c.Shape()[1],
-			Stride: c.Strides()[0],
-			Data:   c.Data().([]float64),
+			Rows:   m,
+			Cols:   n,
+			Stride: n,
+			Data:   backend,
 		})
 
-	return c, nil
+	return tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend)), nil
 }
 
 func (*gemm) ReturnsPtr() bool {
