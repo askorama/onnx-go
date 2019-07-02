@@ -103,8 +103,8 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	}
 	m := s[0]
 	n := s[1]
-	backend := c.Data().([]float32)
-	if c.DataSize() != m*n {
+	backend, ok := c.Data().([]float32)
+	if c.DataSize() != m*n || !ok {
 		backend = make([]float32, m*n)
 		switch c.DataSize() {
 		case 0:
@@ -171,8 +171,8 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	}
 	m := s[0]
 	n := s[1]
-	backend := c.Data().([]float32)
-	if c.DataSize() != m*n {
+	backend, ok := c.Data().([]float64)
+	if c.DataSize() != m*n || !ok {
 		backend = make([]float64, m*n)
 		switch c.DataSize() {
 		case 0:
