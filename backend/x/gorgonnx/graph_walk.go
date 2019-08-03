@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 )
@@ -18,7 +17,7 @@ func (g *Graph) populateExprgraph() error {
 		// if the node is a "tensor", set it!
 		n := itN.Node().(*Node)
 		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
-			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(uuid.New().String()))
+			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(getUniqNodeName("node")))
 		} else {
 			nodes = append(nodes, n)
 		}
