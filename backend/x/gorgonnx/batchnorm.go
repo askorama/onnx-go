@@ -3,7 +3,6 @@ package gorgonnx
 import (
 	"errors"
 
-	"github.com/google/uuid"
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 )
@@ -69,7 +68,7 @@ func (b *batchnorm) apply(g *Graph, n *Node) error {
 		if err != nil {
 			return err
 		}
-		epsilon := gorgonia.NewConstant(float32(b.epsilon), gorgonia.WithName("epsilon"+uuid.New().String()))
+		epsilon := gorgonia.NewConstant(float32(b.epsilon), gorgonia.WithName(getUniqNodeName("epsilon")))
 		xNorm21, err := gorgonia.Add(varN, epsilon)
 		if err != nil {
 			return err
