@@ -91,7 +91,9 @@ var tests = []testGraph{
 				},
 				Initializer: []*pb.TensorProto{
 					&pb.TensorProto{
-						Name: "B",
+						Name:      "B",
+						DataType:  pb.TensorProto_DataType_value["FLOAT"],
+						FloatData: []float32{0},
 					},
 				},
 			},
@@ -103,8 +105,9 @@ var tests = []testGraph{
 					name: "A",
 				},
 				to: &nodeTest{
-					id:   1,
-					name: "B",
+					id:    1,
+					name:  "B",
+					value: tensor.New(tensor.Of(tensor.Float32), tensor.WithBacking([]float32{0})),
 				},
 				weight: 0,
 			},
