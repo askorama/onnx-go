@@ -1,7 +1,7 @@
 ![ONNX Logo](vignettes/imgs/ONNX_logo_main.png) ![Go Logo](vignettes/imgs/Go-Logo_Blue.png)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fowulveryck%2Fonnx-go.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fowulveryck%2Fonnx-go?ref=badge_shield)
 
-[![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#machine-learning) [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
 [![Build Status](https://travis-ci.com/owulveryck/onnx-go.svg?branch=master)](https://travis-ci.com/owulveryck/onnx-go)
 [![CodeCov](https://codecov.io/gh/owulveryck/onnx-go/branch/master/graph/badge.svg)](https://codecov.io/gh/owulveryck/onnx-go)
 
