@@ -27,9 +27,29 @@ func (a *reshape) apply(g *Graph, n *Node) error {
 
 	var toShape tensor.Shape
 	if to, ok := children[1].gorgoniaNode.Value().Data().([]int64); ok {
+		childShape := make([]int, len(to))
+		copy(childShape, children[0].gorgoniaNode.Shape())
 		toShape = make([]int, len(to))
+		dimSize := 1
+		for i := 0; i < len(childShape); i++ {
+			dimSize *= childShape[i]
+		}
 		for i := 0; i < len(to); i++ {
 			toShape[i] = int(to[i])
+		}
+		for i := 0; i < len(toShape); i++ {
+			if toShape[i] == 0 {
+				toShape[i] = childShape[i]
+			}
+		}
+		actualSize := 1
+		for i := 0; i < len(toShape); i++ {
+			actualSize *= toShape[i]
+		}
+		for i := 0; i < len(toShape); i++ {
+			if toShape[i] == -1 {
+				toShape[i] = dimSize / actualSize
+			}
 		}
 	} else {
 		return fmt.Errorf("Cannot reshape, bad output shape %#v", children[1].gorgoniaNode.Value().Data())
