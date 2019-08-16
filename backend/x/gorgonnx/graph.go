@@ -21,6 +21,15 @@ type Graph struct {
 	roots     []int64
 }
 
+// GetExprGraph returns the gorgonia graph; if the graph is nil, it populates the graph before returing it
+func (g *Graph) GetExprGraph() (*gorgonia.ExprGraph, error) {
+	var err error
+	if g.exprgraph == nil {
+		err = g.PopulateExprgraph()
+	}
+	return g.exprgraph, err
+}
+
 // ApplyOperation to fulfill the onnx.Backend interface
 func (g *Graph) ApplyOperation(o onnx.Operation, n graph.Node) error {
 	n.(*Node).operation = &o
