@@ -37,6 +37,27 @@ func (tx *TensorProto) Tensor() (tensor.Tensor, error) {
 				}
 			}
 			opts = append(opts, tensor.WithBacking(backing))
+		case tx.RawData != nil:
+			buf := bytes.NewReader(tx.RawData)
+			element := make([]byte, 8)
+			var err error
+			var backing []bool
+			for {
+				var n int
+				n, err = buf.Read(element)
+				if err != nil || n != 8 {
+					break
+				}
+				if element[7] == 1 {
+					backing = append(backing, true)
+				} else {
+					backing = append(backing, false)
+				}
+			}
+			if err != io.EOF {
+				return nil, errors.Wrapf(err, "%v", ErrCorruptedData)
+			}
+			opts = append(opts, tensor.WithBacking(backing))
 		default:
 			return nil, errors.New("No data found")
 		}

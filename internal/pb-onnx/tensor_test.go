@@ -128,4 +128,21 @@ func TestNewTensor_bool(t *testing.T) {
 			t.Fail()
 		}
 	}
+	var rawData []byte
+	for _, v := range boolData {
+		b := make([]byte, 8)
+		b[7] = byte(v)
+		rawData = append(rawData, b...)
+	}
+	txBool.Int32Data = nil
+	txBool.RawData = rawData
+	tg, err = txBool.Tensor()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, v := range tg.Data().([]bool) {
+		if v && boolData[i] == 0 {
+			t.Fail()
+		}
+	}
 }
