@@ -33,7 +33,12 @@ func toOperationAttributes(attrs []*pb.AttributeProto) (map[string]interface{}, 
 		case pb.AttributeProto_INTS:
 			output[attr.Name] = attr.GetInts()
 		case pb.AttributeProto_STRINGS:
-			output[attr.Name] = attr.GetFloats()
+			s := attr.GetStrings()
+			strings := make([]string, len(s))
+			for i := 0; i < len(s); i++ {
+				strings[i] = string(s[i])
+			}
+			output[attr.Name] = strings
 		case pb.AttributeProto_TENSORS:
 			return nil, &ErrNotImplemented{
 				AttributeName:  attr.Name,
