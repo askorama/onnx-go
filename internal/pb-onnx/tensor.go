@@ -27,6 +27,20 @@ func (tx *TensorProto) Tensor() (tensor.Tensor, error) {
 	}
 	opts := []tensor.ConsOpt{tensor.WithShape(size...), tensor.Of(dt)}
 	switch dt {
+	case tensor.Bool:
+		switch {
+		case tx.Int32Data != nil:
+			backing := make([]bool, len(tx.Int32Data))
+			for i := 0; i < len(tx.Int32Data); i++ {
+				if tx.Int32Data[i] == 1 {
+					backing[i] = true
+				}
+			}
+			opts = append(opts, tensor.WithBacking(backing))
+		default:
+			return nil, errors.New("No data found")
+		}
+
 	case tensor.Float32:
 		switch {
 		case tx.RawData != nil:
