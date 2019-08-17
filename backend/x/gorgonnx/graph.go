@@ -18,6 +18,7 @@ import (
 type Graph struct {
 	g         *simple.WeightedDirectedGraph
 	exprgraph *gorgonia.ExprGraph
+	m         gorgonia.VM
 	roots     []int64
 }
 
@@ -44,8 +45,13 @@ func (g *Graph) Run() error {
 			return err
 		}
 	}
-	t := gorgonia.NewTapeMachine(g.exprgraph)
-	err := t.RunAll()
+	if g.m == nil {
+		g.m = gorgonia.NewTapeMachine(g.exprgraph)
+	} else {
+		g.m.Reset()
+	}
+
+	err := g.m.RunAll()
 	if err != nil {
 		return err
 	}
