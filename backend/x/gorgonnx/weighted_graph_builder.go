@@ -10,7 +10,8 @@ import (
 // NewGraph ...
 func NewGraph() *Graph {
 	return &Graph{
-		g: simple.NewWeightedDirectedGraph(math.MaxFloat64, -1),
+		g:      simple.NewWeightedDirectedGraph(math.MaxFloat64, -1),
+		groups: make([][]*Node, 0),
 	}
 }
 
