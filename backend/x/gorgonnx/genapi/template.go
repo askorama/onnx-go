@@ -24,8 +24,11 @@ func new{{ .GorgonnxOp }}() operator {
 	return &{{ .GorgonnxOp }}{}
 }
 
-func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *{{ .GorgonnxOp }}) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, {{ .Arity }})
 	if err != nil {
 		return err
@@ -39,9 +42,9 @@ func (a *{{ .GorgonnxOp }}) apply(g *Graph, n *Node) error {
 		}
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(x,y)
+	n[0].gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(x,y)
 	{{ else }}
-	n.gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(
+	n[0].gorgoniaNode, err = gorgonia.{{ .GorgoniaOp }}(
 		{{- range $val := Iterate .Arity }}
 		children[{{ $val }}].gorgoniaNode, 
 		{{- end }}
@@ -88,6 +91,7 @@ import (
 const opHeader = `package gorgonnx
 
 import (
+	"errors"
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 )`

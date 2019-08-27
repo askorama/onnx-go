@@ -19,7 +19,8 @@ func newConcat() operator {
 	return &concat{}
 }
 
-func (a *concat) apply(g *Graph, n *Node) error {
+func (a *concat) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	var nodes = make([]*gorgonia.Node, len(children))
 	for i := 0; i < len(children); i++ {

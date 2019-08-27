@@ -1,6 +1,7 @@
 package gorgonnx
 
 import (
+	"errors"
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 )
@@ -15,8 +16,11 @@ func newhadamardProd() operator {
 	return &hadamardProd{}
 }
 
-func (a *hadamardProd) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *hadamardProd) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 2)
 	if err != nil {
 		return err
@@ -30,7 +34,7 @@ func (a *hadamardProd) apply(g *Graph, n *Node) error {
 		}
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.HadamardProd(x, y)
+	n[0].gorgoniaNode, err = gorgonia.HadamardProd(x, y)
 
 	return err
 }
@@ -50,8 +54,11 @@ func newhadamardDiv() operator {
 	return &hadamardDiv{}
 }
 
-func (a *hadamardDiv) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *hadamardDiv) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 2)
 	if err != nil {
 		return err
@@ -65,7 +72,7 @@ func (a *hadamardDiv) apply(g *Graph, n *Node) error {
 		}
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.HadamardDiv(x, y)
+	n[0].gorgoniaNode, err = gorgonia.HadamardDiv(x, y)
 
 	return err
 }
@@ -85,8 +92,11 @@ func newsub() operator {
 	return &sub{}
 }
 
-func (a *sub) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *sub) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 2)
 	if err != nil {
 		return err
@@ -100,7 +110,7 @@ func (a *sub) apply(g *Graph, n *Node) error {
 		}
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.Sub(x, y)
+	n[0].gorgoniaNode, err = gorgonia.Sub(x, y)
 
 	return err
 }
@@ -120,8 +130,11 @@ func newadd() operator {
 	return &add{}
 }
 
-func (a *add) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *add) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 2)
 	if err != nil {
 		return err
@@ -135,7 +148,7 @@ func (a *add) apply(g *Graph, n *Node) error {
 		}
 		return err
 	}
-	n.gorgoniaNode, err = gorgonia.Add(x, y)
+	n[0].gorgoniaNode, err = gorgonia.Add(x, y)
 
 	return err
 }
@@ -155,14 +168,17 @@ func newabs() operator {
 	return &abs{}
 }
 
-func (a *abs) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *abs) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Abs(
+	n[0].gorgoniaNode, err = gorgonia.Abs(
 		children[0].gorgoniaNode,
 	)
 
@@ -184,14 +200,17 @@ func newsign() operator {
 	return &sign{}
 }
 
-func (a *sign) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *sign) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Sign(
+	n[0].gorgoniaNode, err = gorgonia.Sign(
 		children[0].gorgoniaNode,
 	)
 
@@ -213,14 +232,17 @@ func newceil() operator {
 	return &ceil{}
 }
 
-func (a *ceil) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *ceil) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Ceil(
+	n[0].gorgoniaNode, err = gorgonia.Ceil(
 		children[0].gorgoniaNode,
 	)
 
@@ -242,14 +264,17 @@ func newfloor() operator {
 	return &floor{}
 }
 
-func (a *floor) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *floor) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Floor(
+	n[0].gorgoniaNode, err = gorgonia.Floor(
 		children[0].gorgoniaNode,
 	)
 
@@ -271,14 +296,17 @@ func newsin() operator {
 	return &sin{}
 }
 
-func (a *sin) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *sin) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Sin(
+	n[0].gorgoniaNode, err = gorgonia.Sin(
 		children[0].gorgoniaNode,
 	)
 
@@ -300,14 +328,17 @@ func newcos() operator {
 	return &cos{}
 }
 
-func (a *cos) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *cos) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Cos(
+	n[0].gorgoniaNode, err = gorgonia.Cos(
 		children[0].gorgoniaNode,
 	)
 
@@ -329,14 +360,17 @@ func newexp() operator {
 	return &exp{}
 }
 
-func (a *exp) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *exp) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Exp(
+	n[0].gorgoniaNode, err = gorgonia.Exp(
 		children[0].gorgoniaNode,
 	)
 
@@ -358,14 +392,17 @@ func newlogarithm() operator {
 	return &logarithm{}
 }
 
-func (a *logarithm) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *logarithm) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Log(
+	n[0].gorgoniaNode, err = gorgonia.Log(
 		children[0].gorgoniaNode,
 	)
 
@@ -387,14 +424,17 @@ func newlog2() operator {
 	return &log2{}
 }
 
-func (a *log2) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *log2) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Log2(
+	n[0].gorgoniaNode, err = gorgonia.Log2(
 		children[0].gorgoniaNode,
 	)
 
@@ -416,14 +456,17 @@ func newrelu() operator {
 	return &relu{}
 }
 
-func (a *relu) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *relu) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Rectify(
+	n[0].gorgoniaNode, err = gorgonia.Rectify(
 		children[0].gorgoniaNode,
 	)
 
@@ -445,14 +488,17 @@ func newneg() operator {
 	return &neg{}
 }
 
-func (a *neg) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *neg) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Neg(
+	n[0].gorgoniaNode, err = gorgonia.Neg(
 		children[0].gorgoniaNode,
 	)
 
@@ -474,14 +520,17 @@ func newsquare() operator {
 	return &square{}
 }
 
-func (a *square) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *square) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Square(
+	n[0].gorgoniaNode, err = gorgonia.Square(
 		children[0].gorgoniaNode,
 	)
 
@@ -503,14 +552,17 @@ func newsqrt() operator {
 	return &sqrt{}
 }
 
-func (a *sqrt) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *sqrt) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Sqrt(
+	n[0].gorgoniaNode, err = gorgonia.Sqrt(
 		children[0].gorgoniaNode,
 	)
 
@@ -532,14 +584,17 @@ func newinverse() operator {
 	return &inverse{}
 }
 
-func (a *inverse) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *inverse) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Inverse(
+	n[0].gorgoniaNode, err = gorgonia.Inverse(
 		children[0].gorgoniaNode,
 	)
 
@@ -561,14 +616,17 @@ func newcube() operator {
 	return &cube{}
 }
 
-func (a *cube) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *cube) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Cube(
+	n[0].gorgoniaNode, err = gorgonia.Cube(
 		children[0].gorgoniaNode,
 	)
 
@@ -590,14 +648,17 @@ func newtanh() operator {
 	return &tanh{}
 }
 
-func (a *tanh) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *tanh) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Tanh(
+	n[0].gorgoniaNode, err = gorgonia.Tanh(
 		children[0].gorgoniaNode,
 	)
 
@@ -619,14 +680,17 @@ func newsigmoid() operator {
 	return &sigmoid{}
 }
 
-func (a *sigmoid) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *sigmoid) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Sigmoid(
+	n[0].gorgoniaNode, err = gorgonia.Sigmoid(
 		children[0].gorgoniaNode,
 	)
 
@@ -648,14 +712,17 @@ func newlog1p() operator {
 	return &log1p{}
 }
 
-func (a *log1p) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *log1p) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Log1p(
+	n[0].gorgoniaNode, err = gorgonia.Log1p(
 		children[0].gorgoniaNode,
 	)
 
@@ -677,14 +744,17 @@ func newexpm1() operator {
 	return &expm1{}
 }
 
-func (a *expm1) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *expm1) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Expm1(
+	n[0].gorgoniaNode, err = gorgonia.Expm1(
 		children[0].gorgoniaNode,
 	)
 
@@ -706,14 +776,17 @@ func newsoftplus() operator {
 	return &softplus{}
 }
 
-func (a *softplus) apply(g *Graph, n *Node) error {
-	children := getOrderedChildren(g.g, n)
+func (a *softplus) apply(g *Graph, n ...*Node) error {
+	if len(n) != 1 {
+		return errors.New("wrong number of input nodes")
+	}
+	children := getOrderedChildren(g.g, n[0])
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
 	}
 
-	n.gorgoniaNode, err = gorgonia.Softplus(
+	n[0].gorgoniaNode, err = gorgonia.Softplus(
 		children[0].gorgoniaNode,
 	)
 

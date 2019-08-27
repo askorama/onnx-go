@@ -29,7 +29,8 @@ func (n *errNilGorgoniaNode) Error() string {
 	return fmt.Sprintf("child %v is nil", n.node)
 }
 
-func (d *dummyOp) apply(g *Graph, n *Node) error {
+func (d *dummyOp) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	var err error
 	children := getOrderedChildren(g.g, n)
 	gorgoniaChildren := make([]*gorgonia.Node, len(children))

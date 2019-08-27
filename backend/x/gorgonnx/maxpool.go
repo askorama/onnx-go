@@ -31,7 +31,14 @@ type maxpool struct {
 	divInt      func(a, b int) int
 }
 
-func (c *maxpool) apply(g *Graph, n *Node) error {
+func (c *maxpool) apply(g *Graph, ns ...*Node) error {
+	if len(ns) > 1 {
+		return &onnx.ErrNotImplemented{
+			Operator: "maxpool",
+			Message:  "second output not yet supported",
+		}
+	}
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {
@@ -105,7 +112,7 @@ func (c *maxpool) init(o onnx.Operation) error {
 	c.pad = []int{0, 0, 0, 0}
 	pad, ok := o.Attributes["pads"]
 	if ok {
-    if pad, ok := pad.([]int64); ok {
+		if pad, ok := pad.([]int64); ok {
 			for i, v := range pad {
 				c.pad[i] = int(v)
 			}

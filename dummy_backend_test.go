@@ -142,7 +142,7 @@ func (g *testBackend) To(id int64) graph.Nodes {
 	return g.g.To(id)
 }
 
-func (g *testBackend) ApplyOperation(o Operation, n graph.Node) error {
+func (g *testBackend) ApplyOperation(_ Operation, _ ...graph.Node) error {
 	return nil
 }
 

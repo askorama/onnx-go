@@ -12,7 +12,8 @@ func newIdentity() operator {
 	return &identity{}
 }
 
-func (a *identity) apply(g *Graph, n *Node) error {
+func (a *identity) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {

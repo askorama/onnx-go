@@ -169,7 +169,8 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		}
 	}
 	for _, node := range model.Graph.Node {
-		for _, output := range node.Output {
+		outputNodes := make([]graph.Node, len(node.Output))
+		for i, output := range node.Output {
 			var ok bool
 			var no graph.Node
 			if no, ok = m.dbByName[output]; !ok {
@@ -195,18 +196,20 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 				e := dst.NewWeightedEdge(no, ni, float64(i))
 				dst.SetWeightedEdge(e)
 			}
-			// The graph can apply operations
-			attrs, err := toOperationAttributes(node.GetAttribute())
-			if err != nil {
-				return err
-			}
-			err = dst.ApplyOperation(Operation{
-				node.OpType,
-				attrs,
-			}, no)
-			if err != nil {
-				return err
-			}
+			outputNodes[i] = no
+		}
+
+		// The graph can apply operations
+		attrs, err := toOperationAttributes(node.GetAttribute())
+		if err != nil {
+			return err
+		}
+		err = dst.ApplyOperation(Operation{
+			node.OpType,
+			attrs,
+		}, outputNodes...)
+		if err != nil {
+			return err
 		}
 	}
 	return nil

@@ -110,7 +110,8 @@ func newImageScaler() operator {
 	return &imageScaler{}
 }
 
-func (i *imageScaler) apply(g *Graph, n *Node) error {
+func (i *imageScaler) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	if len(children) != 1 {
 		return errors.New("ImageScaler: bad number of children")
