@@ -32,6 +32,12 @@ type maxpool struct {
 }
 
 func (c *maxpool) apply(g *Graph, ns ...*Node) error {
+	if len(ns) > 1 {
+		return &onnx.ErrNotImplemented{
+			Operator: "maxpool",
+			Message:  "second output not yet supported",
+		}
+	}
 	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
