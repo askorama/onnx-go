@@ -17,7 +17,17 @@ import (
 type Graph struct {
 	g         *simple.WeightedDirectedGraph
 	exprgraph *gorgonia.ExprGraph
+	m         gorgonia.VM
 	roots     []int64
+}
+
+// GetExprGraph returns the gorgonia graph; if the graph is nil, it populates the graph before returing it
+func (g *Graph) GetExprGraph() (*gorgonia.ExprGraph, error) {
+	var err error
+	if g.exprgraph == nil {
+		err = g.PopulateExprgraph()
+	}
+	return g.exprgraph, err
 }
 
 // ApplyOperation to fulfill the onnx.Backend interface
@@ -34,8 +44,13 @@ func (g *Graph) Run() error {
 			return err
 		}
 	}
-	t := gorgonia.NewTapeMachine(g.exprgraph)
-	err := t.RunAll()
+	if g.m == nil {
+		g.m = gorgonia.NewTapeMachine(g.exprgraph)
+	} else {
+		g.m.Reset()
+	}
+
+	err := g.m.RunAll()
 	if err != nil {
 		return err
 	}
