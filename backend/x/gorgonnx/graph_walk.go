@@ -11,7 +11,7 @@ import (
 // populateExprgraph by walking through the graph
 func (g *Graph) populateExprgraph() error {
 	if len(g.groups) == 0 {
-		return errors.New("cannot populate the graphi because ApplyOperation have not been called")
+		return errors.New("cannot populate the graph because ApplyOperation have not been called")
 	}
 
 	// Walk the graph
