@@ -167,6 +167,6 @@ func (g *Graph) To(id int64) graph.Nodes {
 	return g.g.To(id)
 }
 
-func (g *Graph) ApplyOperation(o onnx.Operation, n graph.Node) error {
+func (g *Graph) ApplyOperation(_ onnx.Operation, _ ...graph.Node) error {
 	return nil
 }
