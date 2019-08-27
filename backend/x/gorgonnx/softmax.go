@@ -19,7 +19,8 @@ func newStableSoftmax() operator {
 	return &stableSoftmax{}
 }
 
-func (s *stableSoftmax) apply(g *Graph, n *Node) error {
+func (s *stableSoftmax) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {

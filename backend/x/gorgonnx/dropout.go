@@ -16,7 +16,8 @@ func newDropout() operator {
 	return &dropout{}
 }
 
-func (a *dropout) apply(g *Graph, n *Node) error {
+func (a *dropout) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {

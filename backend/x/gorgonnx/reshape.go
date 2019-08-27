@@ -18,7 +18,8 @@ func newReshape() operator {
 	return &reshape{}
 }
 
-func (a *reshape) apply(g *Graph, n *Node) error {
+func (a *reshape) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 2)
 	if err != nil {

@@ -31,7 +31,8 @@ type maxpool struct {
 	divInt      func(a, b int) int
 }
 
-func (c *maxpool) apply(g *Graph, n *Node) error {
+func (c *maxpool) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 1)
 	if err != nil {
