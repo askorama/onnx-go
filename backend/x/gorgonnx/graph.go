@@ -31,8 +31,10 @@ func (g *Graph) GetExprGraph() (*gorgonia.ExprGraph, error) {
 }
 
 // ApplyOperation to fulfill the onnx.Backend interface
-func (g *Graph) ApplyOperation(o onnx.Operation, n graph.Node) error {
-	n.(*Node).operation = &o
+func (g *Graph) ApplyOperation(o onnx.Operation, n ...graph.Node) error {
+	for _, n := range n {
+		n.(*Node).operation = &o
+	}
 	return nil
 }
 
