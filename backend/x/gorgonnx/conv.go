@@ -31,7 +31,8 @@ type conv struct {
 	kernelShape tensor.Shape
 }
 
-func (c *conv) apply(g *Graph, n *Node) error {
+func (c *conv) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	var err error
 	if len(children) < 2 || len(children) > 3 {

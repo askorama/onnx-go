@@ -22,7 +22,8 @@ func newGAP() operator {
 
 type gap struct{}
 
-func (g *gap) apply(gg *Graph, n *Node) error {
+func (g *gap) apply(gg *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(gg.g, n)
 	var err error
 	if len(children) != 1 {

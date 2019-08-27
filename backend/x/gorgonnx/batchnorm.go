@@ -22,7 +22,8 @@ func newBatchNorm() operator {
 	return &batchnorm{}
 }
 
-func (b *batchnorm) apply(g *Graph, n *Node) error {
+func (b *batchnorm) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 5)
 	if err != nil {
