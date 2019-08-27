@@ -107,7 +107,8 @@ func newLeakyRELU() operator {
 	return &leakyRELU{}
 }
 
-func (l *leakyRELU) apply(g *Graph, n *Node) error {
+func (l *leakyRELU) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	var nodes = make([]*gorgonia.Node, len(children))
 	for i := 0; i < len(children); i++ {

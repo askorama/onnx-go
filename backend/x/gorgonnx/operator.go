@@ -18,7 +18,7 @@ type operator interface {
 	// apply analyse the graph to find the children of the node
 	// then extract its gorgonia.Node references
 	// and assign the result of the operation to the node n
-	apply(g *Graph, n *Node) error
+	apply(*Graph, ...*Node) error
 	// init the operator with name and attributes as carried by the onnx.Operator
 	init(o onnx.Operation) error
 }

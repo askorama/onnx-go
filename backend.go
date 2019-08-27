@@ -20,5 +20,8 @@ type Operation struct {
 // because the operation needs the topology of the graph
 // to check the arity of the node for example
 type OperationCarrier interface {
-	ApplyOperation(Operation, graph.Node) error
+	// ApplyOperation on the graph nodes
+	// graph.Node is an array because it allows to handle multiple output
+	// for example a split operation returns n nodes...
+	ApplyOperation(Operation, ...graph.Node) error
 }

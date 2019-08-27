@@ -26,7 +26,8 @@ type transpose struct {
 	perm []int64
 }
 
-func (t *transpose) apply(g *Graph, n *Node) error {
+func (t *transpose) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	var err error
 	if len(children) != 1 {

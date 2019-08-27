@@ -53,11 +53,22 @@ func TestGetExprGraph(t *testing.T) {
 	input.(*Node).SetTensor(inputT)
 	input2.(*Node).SetTensor(inputT2)
 	var err error
+	_, err = g.GetExprGraph()
+	if err == nil {
+		t.Fail()
+	}
+
+	g.exprgraph = nil
+	g.ApplyOperation(onnx.Operation{
+		Name: "Add",
+	}, output.(*Node))
 	expg, err := g.GetExprGraph()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if len(expg.AllNodes()) != 3 {
-		t.Fail()
+		t.Log(expg)
+		t.Fatalf("graph has %v node (expected %v)", len(expg.AllNodes()), 3)
 	}
 }

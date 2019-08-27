@@ -142,7 +142,10 @@ type Backend interface {
 [embedmd]:# (backend.go /type OperationCarrier/ /}/)
 ```go
 type OperationCarrier interface {
-	ApplyOperation(Operation, graph.Node) error
+	// ApplyOperation on the graph nodes
+	// graph.Node is an array because it allows to handle multiple output
+	// for example a split operation returns n nodes...
+	ApplyOperation(Operation, ...graph.Node) error
 }
 ```
 

@@ -262,7 +262,8 @@ func (o *gemm) String() string {
 // (tensor C should be unidirectional broadcastable to tensor A * B);
 //
 // https://github.com/onnx/onnx/blob/master/docs/Operators.md#Gemm
-func (o *gemm) apply(g *Graph, n *Node) error {
+func (o *gemm) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	err := checkCondition(children, 3)
 	if err != nil {

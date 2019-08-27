@@ -19,7 +19,8 @@ type flatten struct {
 	axis int64
 }
 
-func (f *flatten) apply(g *Graph, n *Node) error {
+func (f *flatten) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
 	children := getOrderedChildren(g.g, n)
 	var err error
 	if len(children) != 1 {
