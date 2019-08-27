@@ -71,6 +71,50 @@ var tests = []testGraph{
 		err:      errGraphNoIO,
 	},
 	testGraph{
+		name: "initializer with no input",
+		// A is the Output
+		// B is the Input
+		// A -> B
+		onnxModelProto: &pb.ModelProto{
+			Graph: &pb.GraphProto{
+				Node: []*pb.NodeProto{
+					&pb.NodeProto{
+						Name:   "output",
+						Input:  []string{"B"},
+						Output: []string{"A"},
+					},
+				},
+				Output: []*pb.ValueInfoProto{
+					&pb.ValueInfoProto{
+						Name: "A",
+					},
+				},
+				Initializer: []*pb.TensorProto{
+					&pb.TensorProto{
+						Name:      "B",
+						DataType:  pb.TensorProto_DataType_value["FLOAT"],
+						FloatData: []float32{0},
+					},
+				},
+			},
+		},
+		expected: newExpectedGraph([]edge{
+			edge{
+				from: &nodeTest{
+					id:   0,
+					name: "A",
+				},
+				to: &nodeTest{
+					id:    1,
+					name:  "B",
+					value: tensor.New(tensor.Of(tensor.Float32), tensor.WithBacking([]float32{0})),
+				},
+				weight: 0,
+			},
+		}),
+		err: nil,
+	},
+	testGraph{
 		name: "simple graph",
 		// A is the Output
 		// B is the Input
@@ -122,8 +166,8 @@ func TestDecodeProto_badBackend(t *testing.T) {
 }
 
 func TestDecodeProto(t *testing.T) {
-	m := NewModel(newTestBackend())
 	for _, test := range tests {
+		m := NewModel(newTestBackend())
 		test := test // capture range variable
 		t.Run(test.name, func(t *testing.T) {
 			//t.Parallel()

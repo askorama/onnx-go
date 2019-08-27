@@ -42,8 +42,8 @@ func (g *Graph) populateExprgraph() error {
 				if err != nil {
 					return err
 				}
-				nodes = append(nodes[:i], nodes[i+1:]...)
 			}
+			nodes = append(nodes[:i], nodes[i+1:]...)
 		}
 		if len(nodes) == initialLen {
 			return errors.New("infinite loop")

@@ -141,7 +141,13 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		}
 		n, ok := m.dbByName[name]
 		if !ok {
-			return errors.New("invalid model: initializer has not been defined in input, output or value")
+			dst := m.backend
+			n = dst.NewNode()
+			if _, ok := n.(Namer); ok {
+				n.(Namer).SetName(name)
+			}
+			dst.AddNode(n)
+			m.dbByName[name] = n
 		}
 		// Remove it from the input
 		// find the ID
