@@ -5,8 +5,7 @@ import (
 	"gorgonia.org/gorgonia"
 )
 
-// SPEC: https://github.com/onnx/onnx/blob/master/docs/Operators.md#BatchNormalization
-// Gorgonia implem: https://godoc.org/gorgonia.org/gorgonia#BatchNorm
+// SPEC: https://github.com/onnx/onnx/blob/master/docs/Operators.md#Unsqueeze
 
 type unsqueeze struct {
 	Axes []int64
@@ -52,5 +51,6 @@ func (a *unsqueeze) apply(g *Graph, ns ...*Node) error {
 }
 
 func (a *unsqueeze) init(o onnx.Operation) error {
+	a.Axes = o.Attributes["Axes"].([]int64)
 	return nil
 }
