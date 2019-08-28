@@ -51,6 +51,6 @@ func (a *unsqueeze) apply(g *Graph, ns ...*Node) error {
 }
 
 func (a *unsqueeze) init(o onnx.Operation) error {
-	a.Axes = o.Attributes["Axes"].([]int64)
+	a.Axes, _ = o.Attributes["Axes"].([]int64)
 	return nil
 }
