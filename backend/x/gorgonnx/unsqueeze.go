@@ -1,6 +1,8 @@
 package gorgonnx
 
 import (
+	"errors"
+
 	"github.com/owulveryck/onnx-go"
 	"gorgonia.org/gorgonia"
 )
@@ -51,6 +53,10 @@ func (a *unsqueeze) apply(g *Graph, ns ...*Node) error {
 }
 
 func (a *unsqueeze) init(o onnx.Operation) error {
-	a.Axes, _ = o.Attributes["Axes"].([]int64)
+	var ok bool
+	a.Axes, ok = o.Attributes["axes"].([]int64)
+	if !ok {
+		return errors.New("unsqueeze: axes in not an []int64")
+	}
 	return nil
 }
