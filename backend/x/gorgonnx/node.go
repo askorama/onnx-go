@@ -37,3 +37,13 @@ func (n *Node) SetTensor(t tensor.Tensor) error {
 func (n *Node) GetTensor() tensor.Tensor {
 	return n.t
 }
+
+// GetName get the name of the node
+func (n *Node) GetName() string {
+	return n.name
+}
+
+// SetName set the name of the node
+func (n *Node) SetName(name string) {
+	n.name = name
+}
