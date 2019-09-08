@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/sanity-io/litter"
 )
 
 func main() {
@@ -20,10 +20,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	litter.Dump(m)
 
-	scs := spew.ConfigState{
-		Indent:                  "\t",
-		DisablePointerAddresses: true,
-	}
-	scs.Dump(m)
 }
