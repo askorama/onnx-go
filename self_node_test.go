@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"gonum.org/v1/gonum/graph"
 )
 
 func TestDecodeProto_self(t *testing.T) {
-	_ = pb.ModelProto{
+	input := &pb.ModelProto{
 		IrVersion: 5,
 		OpsetImport: []*pb.OperatorSetIdProto{
 			&pb.OperatorSetIdProto{
@@ -92,4 +93,28 @@ func TestDecodeProto_self(t *testing.T) {
 		},
 		MetadataProps: nil,
 	}
+	backend := newTestBackend()
+
+	m := NewModel(backend)
+	err := m.decodeProto(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	edges := backend.WeightedEdges()
+	if edges.Len() != 2 {
+		t.Fatal("expected 2 weighted edges")
+	}
+	ee := make([]graph.WeightedEdge, 2)
+	for i := 0; edges.Next(); i++ {
+		ee[i] = edges.WeightedEdge()
+	}
+	for i := 0; i < len(ee); i++ {
+		if ee[i].From() == ee[i].To() && ee[i].Weight() == self {
+			ee = ee[:len(ee)-1]
+		}
+		if ee[i].From() != ee[i].To() && ee[i].Weight() == 1 {
+			ee = ee[:len(ee)-1]
+		}
+	}
+
 }
