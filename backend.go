@@ -1,8 +1,13 @@
 package onnx
 
 import (
+	"math"
+
 	"gonum.org/v1/gonum/graph"
 )
+
+// SelfEdge is the weight of a self edge in the graph
+const SelfEdge = math.MaxFloat64
 
 // Backend represent any backend able to receive a computation graph
 type Backend interface {

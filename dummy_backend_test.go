@@ -90,7 +90,7 @@ func (n *nodeTest) ApplyTensor(t tensor.Tensor) error {
 // NewSimpleGraph ...
 func newTestBackend() *testBackend {
 	return &testBackend{
-		g: simple.NewWeightedDirectedGraph(self, -1),
+		g: simple.NewWeightedDirectedGraph(SelfEdge, -1),
 	}
 }
 

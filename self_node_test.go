@@ -109,7 +109,7 @@ func TestDecodeProto_self(t *testing.T) {
 		ee[i] = edges.WeightedEdge()
 	}
 	for i := 0; i < len(ee); i++ {
-		if ee[i].From() == ee[i].To() && ee[i].Weight() == self {
+		if ee[i].From() == ee[i].To() && ee[i].Weight() == SelfEdge {
 			ee = ee[:len(ee)-1]
 		}
 		if ee[i].From() != ee[i].To() && ee[i].Weight() == 1 {
