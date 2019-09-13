@@ -31,6 +31,24 @@ func checkCondition(children []*Node, arity int) error {
 	if len(children) != arity {
 		return fmt.Errorf("bad arity for operation (have %v, want %v)", len(children), arity)
 	}
+
+	return checkForNil(children)
+}
+
+// check conditions of the children.
+// It returns an error is:
+//  * children's length < arity
+//  * if at least one of the children's pointer fo gorgoniaNode is nil
+func checkMinimumCondition(children []*Node, minimumArity int) error {
+	if len(children) < minimumArity {
+		return fmt.Errorf("bad arity for operation (have %v, want at least %v)", len(children), minimumArity)
+	}
+
+	return checkForNil(children)
+}
+
+// check that no children is nil
+func checkForNil(children []*Node) error {
 	// fail fast
 	for i := range children {
 		if children[i].gorgoniaNode == nil {
