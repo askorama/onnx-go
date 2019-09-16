@@ -27,7 +27,11 @@ func (a *reshape) apply(g *Graph, ns ...*Node) error {
 	}
 
 	var toShape tensor.Shape
-	if to, ok := children[1].gorgoniaNode.Value().Data().([]int64); ok {
+	data := children[1].gorgoniaNode.Value().Data()
+	if to, ok := data.(int64); ok {
+		data = []int64{to}
+	}
+	if to, ok := data.([]int64); ok {
 		childShape := make([]int, len(to))
 		copy(childShape, children[0].gorgoniaNode.Shape())
 		toShape = make([]int, len(to))
