@@ -19,8 +19,11 @@ func (g *Graph) populateExprgraph() error {
 	for itN.Next() {
 		// if the node is a "tensor", set it!
 		n := itN.Node().(*Node)
-		if n.t != nil && n.gorgoniaNode == nil && n.operation == nil {
-			n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(getUniqNodeName("node")))
+		if n.gorgoniaNode == nil && n.operation == nil {
+			n.gorgoniaNode = &gorgonia.Node{}
+			if n.t != nil {
+				n.gorgoniaNode = gorgonia.NodeFromAny(g.exprgraph, n.t, gorgonia.WithName(getUniqNodeName("node")))
+			}
 		}
 	}
 	nodes := make([][]*Node, len(g.groups))
