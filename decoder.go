@@ -182,7 +182,8 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 				m.dbByName[output] = no
 			}
 			// input should be ordered for non-commutatives operations
-			for i, input := range node.Input {
+			for i := 0; i < len(node.Input); i++ {
+				input := node.Input[i]
 				var ni graph.Node
 				var ok bool
 				if ni, ok = m.dbByName[input]; !ok {
@@ -194,6 +195,10 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 					m.dbByName[input] = ni
 				}
 				e := dst.NewWeightedEdge(no, ni, float64(i))
+				if i < len(node.Input)-1 && contains(input, node.Input[i+1:]) {
+					node.Input = append(node.Input[:i], node.Input[i+1:]...)
+					e = dst.NewWeightedEdge(no, no, SelfEdge)
+				}
 				dst.SetWeightedEdge(e)
 			}
 			outputNodes[i] = no

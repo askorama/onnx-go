@@ -1,15 +1,13 @@
 package onnx
 
 import (
-	"math"
-
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/iterator"
 	"gonum.org/v1/gonum/graph/simple"
 )
 
 const (
-	self, absent = math.MaxFloat64, float64(-1)
+	absent = float64(-1)
 )
 
 type edge struct {
@@ -149,7 +147,7 @@ func (g *testExpectedGraph) To(id int64) graph.Nodes {
 // exists between x and y or if x and y have the same ID, false otherwise.
 func (g *testExpectedGraph) Weight(xid, yid int64) (w float64, ok bool) {
 	if xid == yid {
-		return self, true
+		return SelfEdge, true
 	}
 	if to, ok := g.from[xid]; ok {
 		if e, ok := to[yid]; ok {
