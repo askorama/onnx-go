@@ -130,6 +130,9 @@ func (g *testBackend) HasEdgeBetween(xid, yid int64) bool {
 	return g.g.HasEdgeBetween(xid, yid)
 }
 
+func (g *testBackend) Edges() graph.Edges {
+	return g.g.Edges()
+}
 func (g *testBackend) Edge(uid, vid int64) graph.Edge {
 	return g.g.Edge(uid, vid)
 }
