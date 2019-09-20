@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/awalterschulze/gographviz v0.0.0-20190522210029-fa59802746ab // indirect
 	github.com/chewxy/hm v1.0.0
+	github.com/chewxy/math32 v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.0
 	github.com/disintegration/imaging v1.6.0
 	github.com/gogo/protobuf v1.2.1
@@ -20,6 +21,6 @@ require (
 	golang.org/x/net v0.0.0-20190611141213-3f473d35a33a // indirect
 	golang.org/x/tools v0.0.0-20190606124116-d0a3d012864b
 	gonum.org/v1/gonum v0.0.0-20190606121551-14af50e936aa
-	gorgonia.org/gorgonia v0.0.0-20190629120756-e8196037ec06
+	gorgonia.org/gorgonia v0.9.3 //indirect
 	gorgonia.org/tensor v0.9.0-beta
 )
