@@ -181,6 +181,17 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 				dst.AddNode(no)
 				m.dbByName[output] = no
 			}
+			// If node is input-less, fake an input by creating an empty value
+			if len(node.Input) == 0 {
+				inputName := node.Name + "/input"
+				_, err := m.processValue(&pb.ValueInfoProto{
+					Name: inputName,
+				})
+				if err != nil {
+					return err
+				}
+				node.Input = append(node.Input, inputName)
+			}
 			// input should be ordered for non-commutatives operations
 			for i, input := range node.Input {
 				var ni graph.Node
