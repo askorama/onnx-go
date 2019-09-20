@@ -135,6 +135,7 @@ var testGemm = []struct {
 
 func TestGemm(t *testing.T) {
 	for _, tst := range testGemm {
+		tst := tst
 		t.Run(tst.name, func(t *testing.T) {
 			aT := tst.aT
 			bT := tst.bT
