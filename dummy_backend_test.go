@@ -2,7 +2,6 @@ package onnx
 
 import (
 	"fmt"
-	"math"
 
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/encoding"
@@ -91,7 +90,7 @@ func (n *nodeTest) ApplyTensor(t tensor.Tensor) error {
 // NewSimpleGraph ...
 func newTestBackend() *testBackend {
 	return &testBackend{
-		g: simple.NewWeightedDirectedGraph(math.MaxFloat64, -1),
+		g: simple.NewWeightedDirectedGraph(self, -1),
 	}
 }
 
@@ -107,6 +106,7 @@ func (g *testBackend) AddNode(n graph.Node) {
 	g.g.AddNode(n)
 
 }
+
 func (g *testBackend) NewNode() graph.Node {
 	n := g.g.NewNode()
 	return &nodeTest{
@@ -130,6 +130,9 @@ func (g *testBackend) HasEdgeBetween(xid, yid int64) bool {
 	return g.g.HasEdgeBetween(xid, yid)
 }
 
+func (g *testBackend) Edges() graph.Edges {
+	return g.g.Edges()
+}
 func (g *testBackend) Edge(uid, vid int64) graph.Edge {
 	return g.g.Edge(uid, vid)
 }
@@ -150,4 +153,9 @@ func (g *testBackend) ApplyOperation(_ Operation, _ ...graph.Node) error {
 // The node v must be directly reachable from u as defined by the From method.
 func (g *testBackend) WeightedEdge(uid, vid int64) graph.WeightedEdge {
 	return g.g.WeightedEdge(uid, vid)
+}
+
+// WeightedEdges returns all the weighted edges in the graph.
+func (g *testBackend) WeightedEdges() graph.WeightedEdges {
+	return g.g.WeightedEdges()
 }
