@@ -21,32 +21,32 @@ func TestToOperationAttributes(t *testing.T) {
 	    AttributeProto_GRAPHS    AttributeProto_AttributeType = 10
 	*/
 	attrs, err := toOperationAttributes([]*pb.AttributeProto{
-		&pb.AttributeProto{
+		{
 			Name:   "floats",
 			Type:   pb.AttributeProto_FLOATS,
 			Floats: []float32{1, 2},
 		},
-		&pb.AttributeProto{
+		{
 			Name: "float",
 			Type: pb.AttributeProto_FLOAT,
 			F:    1,
 		},
-		&pb.AttributeProto{
+		{
 			Name: "int",
 			Type: pb.AttributeProto_INT,
 			I:    1,
 		},
-		&pb.AttributeProto{
+		{
 			Name: "ints",
 			Type: pb.AttributeProto_INTS,
 			Ints: []int64{1, 2},
 		},
-		&pb.AttributeProto{
+		{
 			Name: "string",
 			Type: pb.AttributeProto_STRING,
 			S:    []byte("a"),
 		},
-		&pb.AttributeProto{
+		{
 			Name:    "strings",
 			Type:    pb.AttributeProto_STRINGS,
 			Strings: [][]byte{[]byte("a"), []byte("b")},
@@ -122,7 +122,7 @@ func TestToOperationAttributes(t *testing.T) {
 
 func TestToOperationAttributes_NotImplemented(t *testing.T) {
 	_, err := toOperationAttributes([]*pb.AttributeProto{
-		&pb.AttributeProto{
+		{
 			Type: pb.AttributeProto_GRAPH,
 		},
 	})
@@ -131,7 +131,7 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 		t.Fail()
 	}
 	_, err = toOperationAttributes([]*pb.AttributeProto{
-		&pb.AttributeProto{
+		{
 			Type: pb.AttributeProto_TENSORS,
 		},
 	})
@@ -140,7 +140,7 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 		t.Fail()
 	}
 	_, err = toOperationAttributes([]*pb.AttributeProto{
-		&pb.AttributeProto{
+		{
 			Type: pb.AttributeProto_GRAPHS,
 		},
 	})
@@ -149,7 +149,7 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 		t.Fail()
 	}
 	_, err = toOperationAttributes([]*pb.AttributeProto{
-		&pb.AttributeProto{
+		{
 			Type: pb.AttributeProto_AttributeType(-1),
 		},
 	})

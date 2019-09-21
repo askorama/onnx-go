@@ -15,7 +15,7 @@ func ggnBroadcast(a, b *gorgonia.Node) (*gorgonia.Node, *gorgonia.Node, error) {
 	if sameDim(a, b) {
 		return a, b, nil
 	}
-	// for NCHW tensors, the first dimension may be omited and must be broadcasted
+	// for NCHW tensors, the first dimension may be omitted and must be broadcasted
 	// TODO find a smarter way to achieve this
 	switch {
 	case len(a.Shape()) == 0:

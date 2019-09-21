@@ -43,11 +43,11 @@ func (n *Node) Attributes() []encoding.Attribute {
 	}
 	value = fmt.Sprintf(`"%v"`, value)
 	return []encoding.Attribute{
-		encoding.Attribute{
+		{
 			Key:   "shape",
 			Value: "Mrecord",
 		},
-		encoding.Attribute{
+		{
 			Key:   "label",
 			Value: value,
 		},
@@ -120,18 +120,28 @@ func NewSimpleGraph() *Graph {
 	}
 }
 
+// SetWeightedEdge adds a weighted edge from one node to another. If the nodes do not exist, they are added
+// and are set to the nodes of the edge otherwise.
+// It will panic if the IDs of the e.From and e.To are equal.
 func (g *Graph) SetWeightedEdge(e graph.WeightedEdge) {
 	g.g.SetWeightedEdge(e)
 
 }
+
+// NewWeightedEdge returns a new weighted edge from the source to the destination node.
 func (g *Graph) NewWeightedEdge(from, to graph.Node, w float64) graph.WeightedEdge {
 	return g.g.NewWeightedEdge(from, to, w)
 
 }
+
+// AddNode adds n to the graph. It panics if the added node ID matches an existing node ID.
 func (g *Graph) AddNode(n graph.Node) {
 	g.g.AddNode(n)
 
 }
+
+// NewNode returns a new unique Node to be added to g. The Node's ID does
+// not become valid in g until the Node is added to g.
 func (g *Graph) NewNode() graph.Node {
 	n := g.g.NewNode()
 	return &Node{
@@ -139,30 +149,40 @@ func (g *Graph) NewNode() graph.Node {
 	}
 }
 
+// Node returns the node with the given ID if it exists in the graph,
+// and nil otherwise.
 func (g *Graph) Node(id int64) graph.Node {
 	return g.g.Node(id)
 }
 
+// Nodes returns all the nodes in the graph.
 func (g *Graph) Nodes() graph.Nodes {
 	return g.g.Nodes()
 }
 
+// From returns all nodes in g that can be reached directly from n.
 func (g *Graph) From(id int64) graph.Nodes {
 	return g.g.From(id)
 }
 
+// HasEdgeBetween returns whether an edge exists between nodes x and y without
+// considering direction.
 func (g *Graph) HasEdgeBetween(xid, yid int64) bool {
 	return g.g.HasEdgeBetween(xid, yid)
 }
 
+// Edge returns the edge from u to v if such an edge exists and nil otherwise.
+// The node v must be directly reachable from u as defined by the From method.
 func (g *Graph) Edge(uid, vid int64) graph.Edge {
 	return g.g.Edge(uid, vid)
 }
 
+// HasEdgeFromTo returns whether an edge exists in the graph from u to v.
 func (g *Graph) HasEdgeFromTo(uid, vid int64) bool {
 	return g.g.HasEdgeFromTo(uid, vid)
 }
 
+// To returns all nodes in g that can reach directly to n.
 func (g *Graph) To(id int64) graph.Nodes {
 	return g.g.To(id)
 }

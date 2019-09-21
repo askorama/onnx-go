@@ -1,4 +1,5 @@
 package gorgonnx
+
 /*
 fizzBuzzOnnx is generated from:
 

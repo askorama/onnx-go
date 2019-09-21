@@ -43,7 +43,6 @@ func (a *hadamardProd) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type hadamardDiv struct{}
 
 func init() {
@@ -80,7 +79,6 @@ func (a *hadamardDiv) apply(g *Graph, n ...*Node) error {
 func (a *hadamardDiv) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type sub struct{}
 
@@ -119,7 +117,6 @@ func (a *sub) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type add struct{}
 
 func init() {
@@ -157,7 +154,6 @@ func (a *add) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type abs struct{}
 
 func init() {
@@ -188,7 +184,6 @@ func (a *abs) apply(g *Graph, n ...*Node) error {
 func (a *abs) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type sign struct{}
 
@@ -221,7 +216,6 @@ func (a *sign) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type ceil struct{}
 
 func init() {
@@ -252,7 +246,6 @@ func (a *ceil) apply(g *Graph, n ...*Node) error {
 func (a *ceil) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type floor struct{}
 
@@ -285,7 +278,6 @@ func (a *floor) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type sin struct{}
 
 func init() {
@@ -316,7 +308,6 @@ func (a *sin) apply(g *Graph, n ...*Node) error {
 func (a *sin) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type cos struct{}
 
@@ -349,7 +340,6 @@ func (a *cos) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type exp struct{}
 
 func init() {
@@ -380,7 +370,6 @@ func (a *exp) apply(g *Graph, n ...*Node) error {
 func (a *exp) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type logarithm struct{}
 
@@ -413,7 +402,6 @@ func (a *logarithm) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type log2 struct{}
 
 func init() {
@@ -444,7 +432,6 @@ func (a *log2) apply(g *Graph, n ...*Node) error {
 func (a *log2) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type relu struct{}
 
@@ -477,7 +464,6 @@ func (a *relu) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type neg struct{}
 
 func init() {
@@ -508,7 +494,6 @@ func (a *neg) apply(g *Graph, n ...*Node) error {
 func (a *neg) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type square struct{}
 
@@ -541,7 +526,6 @@ func (a *square) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type sqrt struct{}
 
 func init() {
@@ -572,7 +556,6 @@ func (a *sqrt) apply(g *Graph, n ...*Node) error {
 func (a *sqrt) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type inverse struct{}
 
@@ -605,7 +588,6 @@ func (a *inverse) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type cube struct{}
 
 func init() {
@@ -636,7 +618,6 @@ func (a *cube) apply(g *Graph, n ...*Node) error {
 func (a *cube) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type tanh struct{}
 
@@ -669,7 +650,6 @@ func (a *tanh) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type sigmoid struct{}
 
 func init() {
@@ -700,7 +680,6 @@ func (a *sigmoid) apply(g *Graph, n ...*Node) error {
 func (a *sigmoid) init(o onnx.Operation) error {
 	return nil
 }
-
 
 type log1p struct{}
 
@@ -733,7 +712,6 @@ func (a *log1p) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type expm1 struct{}
 
 func init() {
@@ -765,7 +743,6 @@ func (a *expm1) init(o onnx.Operation) error {
 	return nil
 }
 
-
 type softplus struct{}
 
 func init() {
@@ -796,4 +773,3 @@ func (a *softplus) apply(g *Graph, n ...*Node) error {
 func (a *softplus) init(o onnx.Operation) error {
 	return nil
 }
-

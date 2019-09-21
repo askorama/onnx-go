@@ -141,13 +141,7 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		}
 		n, ok := m.dbByName[name]
 		if !ok {
-			dst := m.backend
-			n = dst.NewNode()
-			if _, ok := n.(Namer); ok {
-				n.(Namer).SetName(name)
-			}
-			dst.AddNode(n)
-			m.dbByName[name] = n
+			n = insertNode(m, n, name)
 		}
 		// Remove it from the input
 		// find the ID
@@ -224,4 +218,15 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		}
 	}
 	return nil
+}
+
+func insertNode(m *Model, n graph.Node, name string) graph.Node {
+	dst := m.backend
+	n = dst.NewNode()
+	if n, ok := n.(Namer); ok {
+		n.SetName(name)
+	}
+	dst.AddNode(n)
+	m.dbByName[name] = n
+	return n
 }

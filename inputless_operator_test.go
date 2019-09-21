@@ -10,7 +10,7 @@ func TestDecodeProto_inputless(t *testing.T) {
 	proto := &pb.ModelProto{
 		IrVersion: 3,
 		OpsetImport: []*pb.OperatorSetIdProto{
-			&pb.OperatorSetIdProto{
+			{
 				Domain:  "",
 				Version: 9,
 			},
@@ -22,7 +22,7 @@ func TestDecodeProto_inputless(t *testing.T) {
 		DocString:       "",
 		Graph: &pb.GraphProto{
 			Node: []*pb.NodeProto{
-				&pb.NodeProto{
+				{
 					Input: nil,
 					Output: []string{
 						"values",
@@ -31,7 +31,7 @@ func TestDecodeProto_inputless(t *testing.T) {
 					OpType: "Constant",
 					Domain: "",
 					Attribute: []*pb.AttributeProto{
-						&pb.AttributeProto{
+						{
 							Name:        "value",
 							RefAttrName: "",
 							DocString:   "",
@@ -98,7 +98,7 @@ func TestDecodeProto_inputless(t *testing.T) {
 			DocString:   "",
 			Input:       nil,
 			Output: []*pb.ValueInfoProto{
-				&pb.ValueInfoProto{
+				{
 					Name: "values",
 					Type: &pb.TypeProto{
 						Value: &pb.TypeProto_TensorType{
@@ -106,13 +106,13 @@ func TestDecodeProto_inputless(t *testing.T) {
 								ElemType: 1,
 								Shape: &pb.TensorShapeProto{
 									Dim: []*pb.TensorShapeProto_Dimension{
-										&pb.TensorShapeProto_Dimension{
+										{
 											Value: &pb.TensorShapeProto_Dimension_DimValue{
 												DimValue: 5,
 											},
 											Denotation: "",
 										},
-										&pb.TensorShapeProto_Dimension{
+										{
 											Value: &pb.TensorShapeProto_Dimension_DimValue{
 												DimValue: 5,
 											},

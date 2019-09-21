@@ -94,34 +94,31 @@ func coerceInto2D(n *gorgonia.Node, k int) (*gorgonia.Node, error) {
 	return gorgonia.Reshape(n, []int{row, col})
 }
 
-// stabilize a node consits of substracting the max value from every row
+// stabilize a node consits of subtracting the max value from every row
 // this function returns an error is the input is not a tensor or a matrix
 func stabilizeNode(n *gorgonia.Node) (*gorgonia.Node, error) {
-	switch {
-	case len(n.Shape()) == 2 && n.Shape()[0] != 1:
-		m1, err := gorgonia.Max(n, 1)
-		if err != nil {
-			return nil, err
-		}
-
-		a1, b1, err := gorgonia.Broadcast(n, m1, gorgonia.NewBroadcastPattern(nil, []byte{1}))
-		if err != nil {
-			return nil, err
-		}
-		return gorgonia.Sub(a1, b1)
-	case len(n.Shape()) == 2 && n.Shape()[0] == 1:
-		m1, err := gorgonia.Max(n)
-		if err != nil {
-			return nil, err
-		}
-		a1, b1, err := gorgonia.Broadcast(n, m1, gorgonia.NewBroadcastPattern(nil, []byte{1}))
-		if err != nil {
-			return nil, err
-		}
-		return gorgonia.Sub(a1, b1)
-	default:
+	if len(n.Shape()) != 2 {
 		return nil, errors.New("can only stabilize a vector or a matrix")
 	}
+
+	var m1 *gorgonia.Node
+	var err error
+
+	if n.Shape()[0] == 1 {
+		m1, err = gorgonia.Max(n)
+	} else {
+		m1, err = gorgonia.Max(n, 1)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	a1, b1, err := gorgonia.Broadcast(n, m1, gorgonia.NewBroadcastPattern(nil, []byte{1}))
+	if err != nil {
+		return nil, err
+	}
+	return gorgonia.Sub(a1, b1)
 }
 
 func (s *stableSoftmax) init(o onnx.Operation) error {
