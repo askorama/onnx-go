@@ -31,12 +31,12 @@ var (
 		"contempt",
 	}
 	models = map[string]modelDemo{
-		"mnist": modelDemo{
+		"mnist": {
 			height: 28,
 			width:  28,
 			table:  mnistTable,
 		},
-		"emotion": modelDemo{
+		"emotion": {
 			height:         64,
 			width:          64,
 			table:          emotionTable,

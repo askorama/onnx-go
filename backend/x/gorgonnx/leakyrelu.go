@@ -52,7 +52,7 @@ func (l *leakyRELU) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 				vals[i] *= float64(l.alpha)
 			}
 		} else {
-			return nil, errors.New("expeced a []float64, but cannot cast")
+			return nil, errors.New("expected a []float64, but cannot cast")
 		}
 	case tensor.Float32:
 		if vals, ok := t.Data().([]float32); ok {

@@ -19,19 +19,19 @@ type testGraph struct {
 }
 
 var tests = []testGraph{
-	testGraph{
+	{
 		name:           "nil_graph",
 		onnxModelProto: nil,
 		expected:       &testExpectedGraph{},
 		err:            errModelIsNil,
 	},
-	testGraph{
+	{
 		name:           "empty model",
 		onnxModelProto: &pb.ModelProto{},
 		expected:       &testExpectedGraph{},
 		err:            errGraphIsNil,
 	},
-	testGraph{
+	{
 		name: "empty_graph",
 		onnxModelProto: &pb.ModelProto{
 			Graph: &pb.GraphProto{},
@@ -39,13 +39,13 @@ var tests = []testGraph{
 		expected: &testExpectedGraph{},
 		err:      errEmptyGraph,
 	},
-	testGraph{
+	{
 		// A
 		name: "graph with no input",
 		onnxModelProto: &pb.ModelProto{
 			Graph: &pb.GraphProto{
 				Node: []*pb.NodeProto{
-					&pb.NodeProto{
+					{
 						Name: "A",
 					},
 				},
@@ -54,13 +54,13 @@ var tests = []testGraph{
 		expected: &testExpectedGraph{},
 		err:      errGraphNoIO,
 	},
-	testGraph{
+	{
 		// A
 		name: "graph with empty input",
 		onnxModelProto: &pb.ModelProto{
 			Graph: &pb.GraphProto{
 				Node: []*pb.NodeProto{
-					&pb.NodeProto{
+					{
 						Name: "A",
 					},
 				},
@@ -70,7 +70,7 @@ var tests = []testGraph{
 		expected: &testExpectedGraph{},
 		err:      errGraphNoIO,
 	},
-	testGraph{
+	{
 		name: "initializer with no input",
 		// A is the Output
 		// B is the Input
@@ -78,19 +78,19 @@ var tests = []testGraph{
 		onnxModelProto: &pb.ModelProto{
 			Graph: &pb.GraphProto{
 				Node: []*pb.NodeProto{
-					&pb.NodeProto{
+					{
 						Name:   "output",
 						Input:  []string{"B"},
 						Output: []string{"A"},
 					},
 				},
 				Output: []*pb.ValueInfoProto{
-					&pb.ValueInfoProto{
+					{
 						Name: "A",
 					},
 				},
 				Initializer: []*pb.TensorProto{
-					&pb.TensorProto{
+					{
 						Name:      "B",
 						DataType:  pb.TensorProto_DataType_value["FLOAT"],
 						FloatData: []float32{0},
@@ -99,7 +99,7 @@ var tests = []testGraph{
 			},
 		},
 		expected: newExpectedGraph([]edge{
-			edge{
+			{
 				from: &nodeTest{
 					id:   0,
 					name: "A",
@@ -114,7 +114,7 @@ var tests = []testGraph{
 		}),
 		err: nil,
 	},
-	testGraph{
+	{
 		name: "simple graph",
 		// A is the Output
 		// B is the Input
@@ -122,26 +122,26 @@ var tests = []testGraph{
 		onnxModelProto: &pb.ModelProto{
 			Graph: &pb.GraphProto{
 				Node: []*pb.NodeProto{
-					&pb.NodeProto{
+					{
 						Name:   "output",
 						Input:  []string{"B"},
 						Output: []string{"A"},
 					},
 				},
 				Output: []*pb.ValueInfoProto{
-					&pb.ValueInfoProto{
+					{
 						Name: "A",
 					},
 				},
 				Input: []*pb.ValueInfoProto{
-					&pb.ValueInfoProto{
+					{
 						Name: "B",
 					},
 				},
 			},
 		},
 		expected: newExpectedGraph([]edge{
-			edge{
+			{
 				from: &nodeTest{
 					id:   0,
 					name: "A",

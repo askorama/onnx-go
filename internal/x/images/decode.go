@@ -18,7 +18,7 @@ import (
 //   - dst' second dimension is not 1
 //   - dst's third dimension != i.Bounds().Dy()
 //   - dst's fourth dimension != i.Bounds().Dx()
-//   - dst's type is not float32 or float64 (temporarly)
+//   - dst's type is not float32 or float64 (temporary)
 func ImageToBCHW(img image.Image, dst tensor.Tensor) error {
 	// check if tensor is a pointer
 	rv := reflect.ValueOf(dst)
@@ -75,7 +75,7 @@ func ImageToBCHW(img image.Image, dst tensor.Tensor) error {
 //   - dst' second dimension is not 1
 //   - dst's third dimension != i.Bounds().Dy()
 //   - dst's fourth dimension != i.Bounds().Dx()
-//   - dst's type is not float32 or float64 (temporarly)
+//   - dst's type is not float32 or float64 (temporary)
 func GrayToBCHW(img *image.Gray, dst tensor.Tensor) error {
 	// check if tensor is a pointer
 	rv := reflect.ValueOf(dst)

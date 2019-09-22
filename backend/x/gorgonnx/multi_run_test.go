@@ -39,7 +39,7 @@ func TestRun_multiple(t *testing.T) {
 	model.SetInput(0, inputA1)
 	model.SetInput(1, inputB1)
 	err = backend.Run()
-        if err != nil {
+	if err != nil {
 		t.Fatal(err)
 	}
 	output, err := model.GetOutputTensors()
@@ -52,7 +52,7 @@ func TestRun_multiple(t *testing.T) {
 	model.SetInput(0, inputA0)
 	model.SetInput(1, inputB1)
 	err = backend.Run()
-        if err != nil {
+	if err != nil {
 		t.Fatal(err)
 	}
 	output, err = model.GetOutputTensors()

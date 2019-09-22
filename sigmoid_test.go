@@ -27,42 +27,42 @@ var (
 	// see http://cs231n.github.io/optimization-2/ for a representation
 	sigmoidNeuron = &pb.GraphProto{
 		Node: []*pb.NodeProto{
-			&pb.NodeProto{
+			{
 				Input:  []string{x0, w0},
 				Output: []string{"x0w0"},
 				OpType: mul,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{x1, w1},
 				Output: []string{"x1w1"},
 				OpType: mul,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{"x0w0", "x1w1"},
 				Output: []string{"x0w0+x1w1"},
 				OpType: add,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{"x0w0+x1w1", w2},
 				Output: []string{"x0w0+x1w1+w2"},
 				OpType: add,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{"x0w0+x1w1+w2", minusOne},
 				Output: []string{"-(x0w0+x1w1+w2)"},
 				OpType: mul,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{"-(x0w0+x1w1+w2)"},
 				Output: []string{"exp(-(x0w0+x1w1+w2))"},
 				OpType: exp,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{one, "exp(-(x0w0+x1w1+w2))"},
 				Output: []string{"1+exp(-(x0w0+x1w1+w2))"},
 				OpType: add,
 			},
-			&pb.NodeProto{
+			{
 				Input:  []string{"1+exp(-(x0w0+x1w1+w2))", minusOne},
 				Output: []string{y},
 				OpType: pow,
@@ -101,7 +101,7 @@ func newValueProtoScalar(name string) *pb.ValueInfoProto {
 					ElemType: int32(pb.TensorProto_FLOAT),
 					Shape: &pb.TensorShapeProto{
 						Dim: []*pb.TensorShapeProto_Dimension{
-							&pb.TensorShapeProto_Dimension{
+							{
 								Value: &pb.TensorShapeProto_Dimension_DimValue{
 									DimValue: int64(1),
 								},

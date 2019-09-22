@@ -50,11 +50,11 @@ func (n *nodeTest) Attributes() []encoding.Attribute {
 	}
 	value = fmt.Sprintf(`"%v"`, value)
 	return []encoding.Attribute{
-		encoding.Attribute{
+		{
 			Key:   "shape",
 			Value: "Mrecord",
 		},
-		encoding.Attribute{
+		{
 			Key:   "label",
 			Value: value,
 		},

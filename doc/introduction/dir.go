@@ -155,18 +155,7 @@ func dirList(w io.Writer, name string) (isDir bool, err error) {
 			continue
 		}
 		if isDoc(e.Name) {
-			fn := filepath.ToSlash(filepath.Join(name, fi.Name()))
-			if p, err := parse(fn, present.TitlesOnly); err != nil {
-				log.Printf("parse(%q, present.TitlesOnly): %v", fn, err)
-			} else {
-				e.Title = p.Title
-			}
-			switch filepath.Ext(e.Path) {
-			case ".article":
-				d.Articles = append(d.Articles, e)
-			case ".slide":
-				d.Slides = append(d.Slides, e)
-			}
+			parseDoc(name, fi, e, d)
 		} else if showFile(e.Name) {
 			d.Other = append(d.Other, e)
 		}
@@ -179,6 +168,21 @@ func dirList(w io.Writer, name string) (isDir bool, err error) {
 	sort.Sort(d.Articles)
 	sort.Sort(d.Other)
 	return true, dirListTemplate.Execute(w, d)
+}
+
+func parseDoc(name string, fi os.FileInfo, e dirEntry, d *dirListData) {
+	fn := filepath.ToSlash(filepath.Join(name, fi.Name()))
+	if p, err := parse(fn, present.TitlesOnly); err != nil {
+		log.Printf("parse(%q, present.TitlesOnly): %v", fn, err)
+	} else {
+		e.Title = p.Title
+	}
+	switch filepath.Ext(e.Path) {
+	case ".article":
+		d.Articles = append(d.Articles, e)
+	case ".slide":
+		d.Slides = append(d.Slides, e)
+	}
 }
 
 // showFile reports whether the given file should be displayed in the list.
