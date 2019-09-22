@@ -1,13 +1,32 @@
 name: CI
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
 
 jobs:
-  test:
+  test-latest:
+    runs-on: ubuntu-latest
+    name: Go latest tests
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: '1.13'
+      - name: Get dependencies
+        run: go get -t ./...
+      - name: Run Unit tests.
+        run: go test ./...
+  test-matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.13' ]
+        go: [ '1.11','1.12','1.13' ]
     name: Go ${{ matrix.go }} tests
     steps:
       - name: Check out code
@@ -21,17 +40,4 @@ jobs:
       - name: Get dependencies
         run: go get -t ./...
       - name: Run Unit tests.
-        run: |
-          echo "" > coverage.txt
-          for d in $(go list ./... | grep -v vendor); do
-            go test -race -coverprofile=profile.out -covermode=atomic "$d"
-            if [ -f profile.out ]; then
-              cat profile.out >> coverage.txt
-              rm profile.out
-            fi
-          done
-      - name: Upload Coverage report to CodeCov
-        uses: codecov/codecov-action@v1.0.0
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          file: ./coverage.txt
+        run: go test ./...
