@@ -28,6 +28,9 @@ func Example_gorgonia() {
 	// Set the first input, the number depends of the model
 	model.SetInput(0, input)
 	err = backend.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Check error
 	output, _ := model.GetOutputTensors()
 	// write the first output to stdout
