@@ -32,7 +32,7 @@ func TestReshape_Scalar(t *testing.T) {
 	g.AddNode(output)
 	g.SetWeightedEdge(g.NewWeightedEdge(output, input1, 0))
 	input1.(*Node).SetTensor(inputT)
-	g.SetWeightedEdge(g.NewWeightedEdge(output, input2, 0))
+	g.SetWeightedEdge(g.NewWeightedEdge(output, input2, 1))
 	input2.(*Node).SetTensor(inputShape)
 	g.ApplyOperation(onnx.Operation{
 		Name: "Reshape",
