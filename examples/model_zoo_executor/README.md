@@ -4,7 +4,7 @@ This is a simple utility that runs a model from the model zoo thanks to the Gorg
 
 ## Example
 
-Download a pre-trained [model from the zoo](https://github.com/onnx/models) (for now, only [MNIST](https://github.com/onnx/models/tree/master/mnist) is known to work)
+Download a pre-trained [model from the zoo](https://github.com/onnx/models) (for now, only [MNIST](https://github.com/onnx/models/tree/master/vision/classification/mnist) is known to work)
 
 then smply run:
 

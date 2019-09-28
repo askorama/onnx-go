@@ -2,7 +2,7 @@
 
 to run this utility you need:
 
-- the onnx definition of tiny yolo v2 from the [model zoo](https://github.com/onnx/models/tree/master/tiny_yolov2).
+- the onnx definition of tiny yolo v2 from the [model zoo](https://github.com/onnx/models/tree/master/vision/object_detection_segmentation/tiny_yolov2).
 - a jpeg picture
 
 ## Usage
@@ -25,7 +25,7 @@ YOLO_CONFIDENCE_THRESHOLD    Float    0.30       true
 YOLO_PROBA_THRESHOLD         Float    0.90       true
 ```
 
-to run it, simply do a 
+to run it, simply do a
 `go run main.go -model /path/to/tiny_yolov2/model.onnx -img /path/to/picture.jpg`
 
 if you want to generate an anotated output picture in png, use the `-output` parameter

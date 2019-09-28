@@ -375,7 +375,7 @@ The model has been trained on the popular MNIST dataset.
 
 The model is trained in CNTK following the tutorial CNTK 103D: Convolutional Neural Network with MNIST. Note that the specific architecture used is the model with alternating convolution and max pooling layers (found under the "Solution" section at the end of the tutorial).
 
-.link https://github.com/onnx/models/tree/master/mnist model from the zoo
+.link https://github.com/onnx/models/tree/master/vision/classification/mnist model from the zoo
 
 * MNIST
 
@@ -384,12 +384,12 @@ The model is trained in CNTK following the tutorial CNTK 103D: Convolutional Neu
 
 * Emotion fer+
 
-The FER+ annotations provide a set of new labels for the standard Emotion FER dataset. 
+The FER+ annotations provide a set of new labels for the standard Emotion FER dataset.
 In FER+, each image has been labeled by 10 crowd-sourced taggers, which provide better quality ground truth for still image emotion than the original FER labels.
 Having 10 taggers for each image enables researchers to estimate an emotion probability distribution per face. This allows constructing algorithms that produce statistical distributions or multi-label outputs instead of the conventional single-label output.
 
 .link https://arxiv.org/abs/1608.01041
-.link https://github.com/onnx/models/tree/master/emotion_ferplus
+.link https://github.com/onnx/models/tree/master/vision/body_analysis/emotion_ferplus
 
 .image https://raw.githubusercontent.com/Microsoft/FERPlus/master/FER+vsFER.png
 
