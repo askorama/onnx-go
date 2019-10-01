@@ -187,6 +187,7 @@ func (g *Graph) To(id int64) graph.Nodes {
 	return g.g.To(id)
 }
 
+// Apply operation to fulfil the OperationCarrier interface
 func (g *Graph) ApplyOperation(_ onnx.Operation, _ ...graph.Node) error {
 	return nil
 }
