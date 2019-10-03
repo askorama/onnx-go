@@ -66,10 +66,10 @@ func TestToOperationAttributes_Strings(t *testing.T) {
 	
 	v, ok := attrs["strings"]
 	assert.Assert(t, ok)
-	v, ok := v.([]string)
+	value, ok := v.([]string)
 	assert.Assert(t, ok)
 	expected := []string{"a", "b"}
-	for i, v := range v {
+	for i, v := range value {
 		assert.Check(t, expected[i] == v)
 	}
 }
@@ -83,10 +83,10 @@ func TestToOperationAttributes_Ints(t *testing.T) {
 	
 	v, ok := attrs["ints"]
 	assert.Assert(t, ok)
-	v, ok := v.([]int64)
+	value, ok := v.([]int64)
 	assert.Assert(t, ok)
 	expected := []int64{1, 2}
-	for i, v := range v {
+	for i, v := range value {
 		assert.Check(t, expected[i] == v)
 	}
 }
@@ -100,10 +100,10 @@ func TestToOperationAttributes_Floats(t *testing.T) {
 	
 	v, ok := attrs["floats"]
 	assert.Assert(t, ok)
-	v, ok := v.([]float32)
+	value, ok := v.([]float32)
 	assert.Assert(t, ok)
 	expected := []float32{1, 2}
-	for i, v := range v {
+	for i, v := range value {
 		assert.Check(t, expected[i] == v)
 	}
 }
