@@ -61,9 +61,9 @@ func TestToOperationAttributes_Strings(t *testing.T) {
 	assert.NoError(err)
 	
 	v, ok := attrs["strings"]
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	value, ok := v.([]string)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	expected := []string{"a", "b"}
 	for i, v := range value {
 		assert.Equals(t, expected[i], v)
@@ -75,9 +75,9 @@ func TestToOperationAttributes_Ints(t *testing.T) {
 	assert.NoError(err)
 	
 	v, ok := attrs["ints"]
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	value, ok := v.([]int64)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	expected := []int64{1, 2}
 	for i, v := range value {
 		assert.Equals(t, expected[i], v)
@@ -89,9 +89,9 @@ func TestToOperationAttributes_Floats(t *testing.T) {
 	assert.NoError(err)
 	
 	v, ok := attrs["floats"]
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	value, ok := v.([]float32)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	expected := []float32{1, 2}
 	for i, v := range value {
 		assert.Equals(t, expected[i], v)
@@ -103,7 +103,7 @@ func TestToOperationAttributes_String(t *testing.T) {
 	assert.NoError(err)
 	
 	v, ok := attrs["string"]
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	assert.Equal(t, v.(string), "a")
 }
 
@@ -112,7 +112,7 @@ func TestToOperationAttributes_Int(t *testing.T) {
 	assert.NoError(err)
 
 	v, ok := attrs["int"]
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	assert.Equal(t, v.(int64), int64(1))
 }
 
@@ -121,7 +121,7 @@ func TestToOperationAttributes_Float(t *testing.T) {
 	assert.NoError(err)
 	
 	v, ok := attrs["float"]
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	assert.Equal(t, v.(float32), float32(1))
 }
 
@@ -132,26 +132,26 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 		},
 	})
 	_, ok := err.(*ErrNotImplemented)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	_, err = toOperationAttributes([]*pb.AttributeProto{
 		{
 			Type: pb.AttributeProto_TENSORS,
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	_, err = toOperationAttributes([]*pb.AttributeProto{
 		{
 			Type: pb.AttributeProto_GRAPHS,
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 	_, err = toOperationAttributes([]*pb.AttributeProto{
 		{
 			Type: pb.AttributeProto_AttributeType(-1),
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
-	assert.Condition(t, ok)
+	assert.True(t, ok)
 }
