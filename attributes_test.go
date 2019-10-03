@@ -66,7 +66,7 @@ func TestToOperationAttributes_Strings(t *testing.T) {
 	
 	v, ok := attrs["strings"]
 	assert.Assert(t, ok)
-	v, ok: = v.([]string)
+	v, ok := v.([]string)
 	assert.Assert(t, ok)
 	expected := []string{"a", "b"}
 	for i, v := range v {
