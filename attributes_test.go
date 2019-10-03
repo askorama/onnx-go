@@ -20,6 +20,7 @@ import (
 	AttributeProto_TENSORS   AttributeProto_AttributeType = 9
 	AttributeProto_GRAPHS    AttributeProto_AttributeType = 10
 */
+
 func GetTestPBAttributeProto() []*pb.AttributeProto {
 	return []*pb.AttributeProto{
 		{
