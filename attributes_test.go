@@ -63,40 +63,40 @@ func TestToOperationAttributes(t *testing.T) {
 	
 	v, ok := attrs["strings"]
 	assert.Assert(t, ok)
-	v, ok := v.([]string)
+	v, ok = v.([]string)
 	assert.Assert(t, ok)
 	expected := []string{"a", "b"}
 	for i, v := range v {
 		assert.Check(t, expected[i] == v)
 	}
 	
-	v, ok := attrs["ints"]
+	v, ok = attrs["ints"]
 	assert.Assert(t, ok)
-	v, ok := v.([]int64)
+	v, ok = v.([]int64)
 	assert.Assert(t, ok)
-	expected := []int64{1, 2}
+	expected = []int64{1, 2}
 	for i, v := range v {
 		assert.Check(t, expected[i] == v)
 	}
 	
-	v, ok := attrs["floats"]
+	v, ok = attrs["floats"]
 	assert.Assert(t, ok)
-	v, ok := v.([]float32)
+	v, ok = v.([]float32)
 	assert.Assert(t, ok)
-	expected := []float32{1, 2}
+	expected = []float32{1, 2}
 	for i, v := range v {
 		assert.Check(t, expected[i] == v)
 	}
 	
-	v, ok := attrs["float"]
+	v, ok = attrs["float"]
 	assert.Assert(t, ok)
 	assert.Check(t, v.(float32) == float32(1))
 	
-	v, ok := attrs["int"]
+	v, ok = attrs["int"]
 	assert.Assert(t, ok)
 	assert.Check(t, v.(int64) == int64(1))
 	
-	v, ok := attrs["string"]
+	v, ok = attrs["string"]
 	assert.Assert(t, ok)
 	assert.Check(t, v.(string) != "a")
 }
