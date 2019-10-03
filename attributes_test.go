@@ -1,10 +1,10 @@
 package onnx
 
 import (
-	"testify"
 	"testing"
 
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/stretchr/testify/assert"
 )
 
 /*
