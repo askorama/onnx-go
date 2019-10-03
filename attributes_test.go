@@ -2,10 +2,9 @@ package onnx
 
 import (
 	"testing"
+	"testify"
 
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
-	
-	"gotest.tools/assert"
 )
 
 /*
@@ -58,91 +57,72 @@ func GetTestPBAttributeProto() []*pb.AttributeProto {
 
 
 func TestToOperationAttributes_Strings(t *testing.T) {
-	
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(err)
 	
 	v, ok := attrs["strings"]
-	assert.Assert(t, ok)
+	assert.Condition(t, ok)
 	value, ok := v.([]string)
-	assert.Assert(t, ok)
+	assert.Condition(t, ok)
 	expected := []string{"a", "b"}
 	for i, v := range value {
-		assert.Check(t, expected[i] == v)
+		assert.Equals(t, expected[i], v)
 	}
 }
 
 func TestToOperationAttributes_Ints(t *testing.T) {
-	
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(err)
 	
 	v, ok := attrs["ints"]
-	assert.Assert(t, ok)
+	assert.Condition(t, ok)
 	value, ok := v.([]int64)
-	assert.Assert(t, ok)
+	assert.Condition(t, ok)
 	expected := []int64{1, 2}
 	for i, v := range value {
-		assert.Check(t, expected[i] == v)
+		assert.Equals(t, expected[i], v)
 	}
 }
 
-func TestToOperationAttributes_Floats(t *testing.T) {
-	
+func TestToOperationAttributes_Floats(t *testing.T) {	
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(err)
 	
 	v, ok := attrs["floats"]
-	assert.Assert(t, ok)
+	assert.Condition(t, ok)
 	value, ok := v.([]float32)
-	assert.Assert(t, ok)
+	assert.Condition(t, ok)
 	expected := []float32{1, 2}
 	for i, v := range value {
-		assert.Check(t, expected[i] == v)
+		assert.Equals(t, expected[i], v)
 	}
 }
 
-func TestToOperationAttributes_String(t *testing.T) {
-	
+func TestToOperationAttributes_String(t *testing.T) {	
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	if err != nil {
-		t.Fatal(err)
-	}
-	
+	assert.NoError(err)
 	
 	v, ok := attrs["string"]
-	assert.Assert(t, ok)
-	assert.Check(t, v.(string) == "a")
+	assert.Condition(t, ok)
+	assert.Equal(t, v.(string), "a")
 }
 
-func TestToOperationAttributes_Int(t *testing.T) {
-	
+func TestToOperationAttributes_Int(t *testing.T) {	
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(err)
 
 	v, ok := attrs["int"]
-	assert.Assert(t, ok)
-	assert.Check(t, v.(int64) == int64(1))
+	assert.Condition(t, ok)
+	assert.Equal(t, v.(int64), int64(1))
 }
 
 func TestToOperationAttributes_Float(t *testing.T) {
-	
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(err)
 	
 	v, ok := attrs["float"]
-	assert.Assert(t, ok)
-	assert.Check(t, v.(float32) == float32(1))
+	assert.Condition(t, ok)
+	assert.Equal(t, v.(float32), float32(1))
 }
 
 func TestToOperationAttributes_NotImplemented(t *testing.T) {
@@ -152,26 +132,26 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 		},
 	})
 	_, ok := err.(*ErrNotImplemented)
-	assert.Check(t, ok)
+	assert.Condition(t, ok)
 	_, err = toOperationAttributes([]*pb.AttributeProto{
 		{
 			Type: pb.AttributeProto_TENSORS,
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
-	assert.Check(t, ok)
+	assert.Condition(t, ok)
 	_, err = toOperationAttributes([]*pb.AttributeProto{
 		{
 			Type: pb.AttributeProto_GRAPHS,
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
-	assert.Check(t, ok)
+	assert.Condition(t, ok)
 	_, err = toOperationAttributes([]*pb.AttributeProto{
 		{
 			Type: pb.AttributeProto_AttributeType(-1),
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
-	assert.Check(t, ok)
+	assert.Condition(t, ok)
 }
