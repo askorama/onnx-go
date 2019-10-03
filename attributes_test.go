@@ -66,7 +66,7 @@ func TestToOperationAttributes_Strings(t *testing.T) {
 	assert.True(t, ok)
 	expected := []string{"a", "b"}
 	for i, v := range value {
-		assert.Equals(t, expected[i], v)
+		assert.Equal(t, expected[i], v)
 	}
 }
 
@@ -80,7 +80,7 @@ func TestToOperationAttributes_Ints(t *testing.T) {
 	assert.True(t, ok)
 	expected := []int64{1, 2}
 	for i, v := range value {
-		assert.Equals(t, expected[i], v)
+		assert.Equal(t, expected[i], v)
 	}
 }
 
@@ -94,13 +94,13 @@ func TestToOperationAttributes_Floats(t *testing.T) {
 	assert.True(t, ok)
 	expected := []float32{1, 2}
 	for i, v := range value {
-		assert.Equals(t, expected[i], v)
+		assert.Equal(t, expected[i], v)
 	}
 }
 
 func TestToOperationAttributes_String(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	assert.NoError(err)
+	assert.NoError(t, err)
 
 	v, ok := attrs["string"]
 	assert.True(t, ok)
@@ -109,7 +109,7 @@ func TestToOperationAttributes_String(t *testing.T) {
 
 func TestToOperationAttributes_Int(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	assert.NoError(err)
+	assert.NoError(t, err)
 
 	v, ok := attrs["int"]
 	assert.True(t, ok)
@@ -118,7 +118,7 @@ func TestToOperationAttributes_Int(t *testing.T) {
 
 func TestToOperationAttributes_Float(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	assert.NoError(err)
+	assert.NoError(t, err)
 
 	v, ok := attrs["float"]
 	assert.True(t, ok)
