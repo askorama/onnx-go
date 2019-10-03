@@ -290,9 +290,10 @@ func assertNodeEqual(t *testing.T, a, b *nodeTest) {
 	if a.value != nil && b.value != nil {
 		_, err := tensor.ElEq(a.value, b.value)
 		assert.NoError(t, err)
+	} else {
+		assert.Nil(t, a.value, fmt.Sprintf("nodes %v and %v differs", a, b))
+		assert.Nil(t, b.value, fmt.Sprintf("nodes %v and %v differs", a, b))
 	}
-	assert.NotNil(t, a.value, fmt.Sprintf("nodes %v and %v differs", a, b))
-	assert.NotNil(t, b.value, fmt.Sprintf("nodes %v and %v differs", a, b))
 	assert.Equal(t, a.name, b.name, fmt.Sprintf("nodes %v and %v differs", a, b))
 
 }
