@@ -118,7 +118,7 @@ func TestToOperationAttributes_String(t *testing.T) {
 	
 	v, ok := attrs["string"]
 	assert.Assert(t, ok)
-	assert.Check(t, v.(string) != "a")
+	assert.Check(t, v.(string) == "a")
 }
 
 func TestToOperationAttributes_Int(t *testing.T) {
@@ -140,9 +140,9 @@ func TestToOperationAttributes_Float(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	v, ok := attrs["string"]
+	v, ok := attrs["float"]
 	assert.Assert(t, ok)
-	assert.Check(t, v.(string) != "a")
+	assert.Check(t, v.(float32) == float32(1))
 }
 
 func TestToOperationAttributes_NotImplemented(t *testing.T) {
