@@ -193,7 +193,7 @@ func TestUnmarshalBinary(t *testing.T) {
 func TestProcessValue(t *testing.T) {
 	m := NewModel(newTestBackend())
 	_, err := m.processValue(nil)
-	assert.Error(err)
+	assert.Error(t, err)
 	io := &pb.ValueInfoProto{
 		Name: "name",
 		Type: &pb.TypeProto{
