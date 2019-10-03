@@ -58,7 +58,7 @@ func GetTestPBAttributeProto() []*pb.AttributeProto {
 
 func TestToOperationAttributes_Strings(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	assert.NoError(err)
+	assert.NoError(t, err)
 
 	v, ok := attrs["strings"]
 	assert.True(t, ok)
@@ -72,7 +72,7 @@ func TestToOperationAttributes_Strings(t *testing.T) {
 
 func TestToOperationAttributes_Ints(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	assert.NoError(err)
+	assert.NoError(t, err)
 
 	v, ok := attrs["ints"]
 	assert.True(t, ok)
@@ -86,7 +86,7 @@ func TestToOperationAttributes_Ints(t *testing.T) {
 
 func TestToOperationAttributes_Floats(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
-	assert.NoError(err)
+	assert.NoError(t, err)
 
 	v, ok := attrs["floats"]
 	assert.True(t, ok)
