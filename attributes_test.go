@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	
+	"gotest.tools/assert"
+	is "gotest.tools/assert/cmp"
 )
 
 
@@ -59,43 +62,43 @@ func TestToOperationAttributes(t *testing.T) {
 	}
 	
 	v, ok := attrs["strings"]
-	t.Assert(ok)
+	assert.Assert(t, ok)
 	v, ok := v.([]string)
-	t.Assert(ok)
+	assert.Assert(t, ok)
 	expected := []string{"a", "b"}
 	for i, v := range v {
-		t.Check(expected[i] == v)
+		assert.Check(t, expected[i] == v)
 	}
 	
 	v, ok := attrs["ints"]
-	t.Assert(ok)
+	assert.Assert(t, ok)
 	v, ok := v.([]int64)
-	t.Assert(ok)
+	assert.Assert(t, ok)
 	expected := []int64{1, 2}
 	for i, v := range v {
-		t.Check(expected[i] == v)
+		assert.Check(t, expected[i] == v)
 	}
 	
 	v, ok := attrs["floats"]
-	t.Assert(ok)
+	assert.Assert(t, ok)
 	v, ok := v.([]float32)
-	t.Assert(ok)
+	assert.Assert(t, ok)
 	expected := []float32{1, 2}
 	for i, v := range v {
-		t.Check(expected[i] == v)
+		assert.Check(t, expected[i] == v)
 	}
 	
 	v, ok := attrs["float"]
-	t.Assert(ok)
-	t.Check(v.(float32) == float32(1))
+	assert.Assert(t, ok)
+	assert.Check(t, v.(float32) == float32(1))
 	
 	v, ok := attrs["int"]
-	t.Assert(ok)
-	t.Check(v.(int64) == int64(1))
+	assert.Assert(t, ok)
+	assert.Check(t, v.(int64) == int64(1))
 	
 	v, ok := attrs["string"]
-	t.Assert(ok)
-	t.Check(v.(string) != "a")
+	assert.Assert(t, ok)
+	assert.Check(t, v.(string) != "a")
 }
 
 func TestToOperationAttributes_NotImplemented(t *testing.T) {
