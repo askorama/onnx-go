@@ -162,7 +162,7 @@ func TestDecodeProto_badBackend(t *testing.T) {
 	m := NewModel(nil)
 	err := m.decodeProto(nil)
 	_, ok := err.(*InvalidUnmarshalError)
-	assert.Condition(t, ok, fmt.Sprintf("Expected an InvalidUnmarshalError, but got %#v", err))
+	assert.True(t, ok, fmt.Sprintf("Expected an InvalidUnmarshalError, but got %#v", err))
 }
 
 func TestDecodeProto(t *testing.T) {
@@ -193,7 +193,7 @@ func TestUnmarshalBinary(t *testing.T) {
 func TestProcessValue(t *testing.T) {
 	m := NewModel(newTestBackend())
 	_, err := m.processValue(nil)
-	asser.Error(err)
+	assert.Error(err)
 	io := &pb.ValueInfoProto{
 		Name: "name",
 		Type: &pb.TypeProto{
@@ -239,7 +239,7 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 	assert.NotNil(t, dst)
 	itSrc := src.Nodes()
 	itDst := dst.Nodes()
-	assert.Equal(itSrc.Len(), itDst.Len(),
+	assert.Equal(t, itSrc.Len(), itDst.Len(),
 		     fmt.Sprintf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len()))
 	dstNodes := make(map[string]*nodeTest, itDst.Len())
 	for i := 0; itDst.Next(); i++ {
@@ -251,7 +251,7 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 		var dstNode *nodeTest
 		var ok bool
 		dstNode, ok = dstNodes[srcNode.name]
-		assert.Condition(t, ok, fmt.Sprintf("node %v not found in generated graph", srcNode.name))
+		assert.True(t, ok, fmt.Sprintf("node %v not found in generated graph", srcNode.name))
 		assertNodeEqual(t, srcNode, dstNode)
 		fromSrcNode := src.From(srcNode.ID())
 		fromDstNode := dst.From(dstNode.ID())
