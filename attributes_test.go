@@ -8,23 +8,21 @@ import (
 	"gotest.tools/assert"
 )
 
-
-
-func TestToOperationAttributes(t *testing.T) {
-	/*
-	 AttributeProto_UNDEFINED AttributeProto_AttributeType = 0
-	    AttributeProto_FLOAT     AttributeProto_AttributeType = 1
-	    AttributeProto_INT       AttributeProto_AttributeType = 2
-	    AttributeProto_STRING    AttributeProto_AttributeType = 3
-	    AttributeProto_TENSOR    AttributeProto_AttributeType = 4
-	    AttributeProto_GRAPH     AttributeProto_AttributeType = 5
-	    AttributeProto_FLOATS    AttributeProto_AttributeType = 6
-	    AttributeProto_INTS      AttributeProto_AttributeType = 7
-	    AttributeProto_STRINGS   AttributeProto_AttributeType = 8
-	    AttributeProto_TENSORS   AttributeProto_AttributeType = 9
-	    AttributeProto_GRAPHS    AttributeProto_AttributeType = 10
-	*/
-	attrs, err := toOperationAttributes([]*pb.AttributeProto{
+/*
+	AttributeProto_UNDEFINED AttributeProto_AttributeType = 0
+	AttributeProto_FLOAT     AttributeProto_AttributeType = 1
+	AttributeProto_INT       AttributeProto_AttributeType = 2
+	AttributeProto_STRING    AttributeProto_AttributeType = 3
+	AttributeProto_TENSOR    AttributeProto_AttributeType = 4
+	AttributeProto_GRAPH     AttributeProto_AttributeType = 5
+	AttributeProto_FLOATS    AttributeProto_AttributeType = 6
+	AttributeProto_INTS      AttributeProto_AttributeType = 7
+	AttributeProto_STRINGS   AttributeProto_AttributeType = 8
+	AttributeProto_TENSORS   AttributeProto_AttributeType = 9
+	AttributeProto_GRAPHS    AttributeProto_AttributeType = 10
+*/
+func GetTestPBAttributeProto() []*pb.AttributeProto {
+	return []*pb.AttributeProto{
 		{
 			Name:   "floats",
 			Type:   pb.AttributeProto_FLOATS,
@@ -55,61 +53,96 @@ func TestToOperationAttributes(t *testing.T) {
 			Type:    pb.AttributeProto_STRINGS,
 			Strings: [][]byte{[]byte("a"), []byte("b")},
 		},
-	})
+	}
+}
+
+
+func TestToOperationAttributes_Strings(t *testing.T) {
+	
+	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	if err != nil {
 		t.Fatal(err)
 	}
 	
-	{
-		v, ok := attrs["strings"]
-		assert.Assert(t, ok)
-		v, ok: = v.([]string)
-		assert.Assert(t, ok)
-		expected := []string{"a", "b"}
-		for i, v := range v {
-			assert.Check(t, expected[i] == v)
-		}
+	v, ok := attrs["strings"]
+	assert.Assert(t, ok)
+	v, ok: = v.([]string)
+	assert.Assert(t, ok)
+	expected := []string{"a", "b"}
+	for i, v := range v {
+		assert.Check(t, expected[i] == v)
+	}
+}
+
+func TestToOperationAttributes_Ints(t *testing.T) {
+	
+	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
+	if err != nil {
+		t.Fatal(err)
 	}
 	
-	{
-		v, ok := attrs["ints"]
-		assert.Assert(t, ok)
-		v, ok = v.([]int64)
-		assert.Assert(t, ok)
-		expected := []int64{1, 2}
-		for i, v := range v {
-			assert.Check(t, expected[i] == v)
-		}
+	v, ok := attrs["ints"]
+	assert.Assert(t, ok)
+	v, ok := v.([]int64)
+	assert.Assert(t, ok)
+	expected := []int64{1, 2}
+	for i, v := range v {
+		assert.Check(t, expected[i] == v)
+	}
+}
+
+func TestToOperationAttributes_Floats(t *testing.T) {
+	
+	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
+	if err != nil {
+		t.Fatal(err)
 	}
 	
-	{
-		v, ok := attrs["floats"]
-		assert.Assert(t, ok)
-		v, ok := v.([]float32)
-		assert.Assert(t, ok)
-		expected := []float32{1, 2}
-		for i, v := range v {
-			assert.Check(t, expected[i] == v)
-		}
+	v, ok := attrs["floats"]
+	assert.Assert(t, ok)
+	v, ok := v.([]float32)
+	assert.Assert(t, ok)
+	expected := []float32{1, 2}
+	for i, v := range v {
+		assert.Check(t, expected[i] == v)
+	}
+}
+
+func TestToOperationAttributes_String(t *testing.T) {
+	
+	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
+	if err != nil {
+		t.Fatal(err)
 	}
 	
-	{
-		v, ok := attrs["float"]
-		assert.Assert(t, ok)
-		assert.Check(t, v.(float32) == float32(1))
+	
+	v, ok := attrs["string"]
+	assert.Assert(t, ok)
+	assert.Check(t, v.(string) != "a")
+}
+
+func TestToOperationAttributes_Int(t *testing.T) {
+	
+	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	v, ok := attrs["int"]
+	assert.Assert(t, ok)
+	assert.Check(t, v.(int64) == int64(1))
+}
+
+func TestToOperationAttributes_Float(t *testing.T) {
+	
+	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
+	if err != nil {
+		t.Fatal(err)
 	}
 	
-	{
-		v, ok := attrs["int"]
-		assert.Assert(t, ok)
-		assert.Check(t, v.(int64) == int64(1))
-	}
-	
-	{
-		v, ok := attrs["string"]
-		assert.Assert(t, ok)
-		assert.Check(t, v.(string) != "a")
-	}
+	v, ok := attrs["string"]
+	assert.Assert(t, ok)
+	assert.Check(t, v.(string) != "a")
 }
 
 func TestToOperationAttributes_NotImplemented(t *testing.T) {
