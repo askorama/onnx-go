@@ -1,9 +1,9 @@
 package onnx
 
 import (
+	"fmt"
 	"sort"
 	"testing"
-	"fmt"
 
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
@@ -240,7 +240,7 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 	itSrc := src.Nodes()
 	itDst := dst.Nodes()
 	assert.Equal(t, itSrc.Len(), itDst.Len(),
-		     fmt.Sprintf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len()))
+		fmt.Sprintf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len()))
 	dstNodes := make(map[string]*nodeTest, itDst.Len())
 	for i := 0; itDst.Next(); i++ {
 		n := itDst.Node().(*nodeTest)
@@ -256,8 +256,8 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 		fromSrcNode := src.From(srcNode.ID())
 		fromDstNode := dst.From(dstNode.ID())
 		assert.Equal(t, fromSrcNode.Len(), fromDstNode.Len(),
-			     fmt.Sprintf("expected node %v has %v child(ren) but %v have %v",
-					 srcNode, fromSrcNode.Len(), dstNode, fromDstNode.Len()))
+			fmt.Sprintf("expected node %v has %v child(ren) but %v have %v",
+				srcNode, fromSrcNode.Len(), dstNode, fromDstNode.Len()))
 		srcWeightedEdges := make([]graph.WeightedEdge, fromSrcNode.Len())
 		dstWeightedEdges := make([]graph.WeightedEdge, fromDstNode.Len())
 		for i := 0; fromSrcNode.Next(); i++ {
@@ -277,8 +277,8 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 		// Compare the weights
 		for i := 0; i < len(srcWeightedEdges); i++ {
 			assert.Equal(t, srcWeightedEdges[i].Weight(), dstWeightedEdges[i].Weight(),
-				    fmt.Sprintf("Expected weight %v, got %v",
-						srcWeightedEdges[i].Weight(), dstWeightedEdges[i].Weight()))
+				fmt.Sprintf("Expected weight %v, got %v",
+					srcWeightedEdges[i].Weight(), dstWeightedEdges[i].Weight()))
 			assertNodeEqual(t, srcWeightedEdges[i].From().(*nodeTest), dstWeightedEdges[i].From().(*nodeTest))
 			assertNodeEqual(t, srcWeightedEdges[i].To().(*nodeTest), dstWeightedEdges[i].To().(*nodeTest))
 		}

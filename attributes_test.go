@@ -1,8 +1,8 @@
 package onnx
 
 import (
-	"testing"
 	"testify"
+	"testing"
 
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 )
@@ -56,11 +56,10 @@ func GetTestPBAttributeProto() []*pb.AttributeProto {
 	}
 }
 
-
 func TestToOperationAttributes_Strings(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	assert.NoError(err)
-	
+
 	v, ok := attrs["strings"]
 	assert.True(t, ok)
 	value, ok := v.([]string)
@@ -74,7 +73,7 @@ func TestToOperationAttributes_Strings(t *testing.T) {
 func TestToOperationAttributes_Ints(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	assert.NoError(err)
-	
+
 	v, ok := attrs["ints"]
 	assert.True(t, ok)
 	value, ok := v.([]int64)
@@ -85,10 +84,10 @@ func TestToOperationAttributes_Ints(t *testing.T) {
 	}
 }
 
-func TestToOperationAttributes_Floats(t *testing.T) {	
+func TestToOperationAttributes_Floats(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	assert.NoError(err)
-	
+
 	v, ok := attrs["floats"]
 	assert.True(t, ok)
 	value, ok := v.([]float32)
@@ -99,16 +98,16 @@ func TestToOperationAttributes_Floats(t *testing.T) {
 	}
 }
 
-func TestToOperationAttributes_String(t *testing.T) {	
+func TestToOperationAttributes_String(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	assert.NoError(err)
-	
+
 	v, ok := attrs["string"]
 	assert.True(t, ok)
 	assert.Equal(t, v.(string), "a")
 }
 
-func TestToOperationAttributes_Int(t *testing.T) {	
+func TestToOperationAttributes_Int(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	assert.NoError(err)
 
@@ -120,7 +119,7 @@ func TestToOperationAttributes_Int(t *testing.T) {
 func TestToOperationAttributes_Float(t *testing.T) {
 	attrs, err := toOperationAttributes(GetTestPBAttributeProto())
 	assert.NoError(err)
-	
+
 	v, ok := attrs["float"]
 	assert.True(t, ok)
 	assert.Equal(t, v.(float32), float32(1))
