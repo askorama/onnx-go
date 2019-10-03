@@ -5,7 +5,6 @@ import (
 	"testing"
 	"fmt"
 
-	"gotest.tools/assert"
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 	"github.com/stretchr/testify/assert"
@@ -163,7 +162,7 @@ func TestDecodeProto_badBackend(t *testing.T) {
 	m := NewModel(nil)
 	err := m.decodeProto(nil)
 	_, ok := err.(*InvalidUnmarshalError)
-	assert.Assert(t, ok, fmt.Sprintf("Expected an InvalidUnmarshalError, but got %#v", err))
+	assert.Condition(t, ok, fmt.Sprintf("Expected an InvalidUnmarshalError, but got %#v", err))
 }
 
 func TestDecodeProto(t *testing.T) {
@@ -186,7 +185,7 @@ func TestUnmarshalBinary(t *testing.T) {
 	assert.Error(t, err, "Expected an error")
 	model := &pb.ModelProto{}
 	b, err = proto.Marshal(model)
-	assert.NilError(t, err)
+	assert.NoError(t, err)
 	err = m.UnmarshalBinary(b)
 	assert.Equal(t, err, errGraphIsNil, fmt.Sprintf("bad error, expected errGraphIsNil, got %v", err))
 }
@@ -222,7 +221,7 @@ func TestProcessValue(t *testing.T) {
 		},
 	}
 	n, err := m.processValue(io)
-	assert.NilError(t, err)
+	assert.NoError(t, err)
 
 	expectedNode := &nodeTest{
 		name:  "name",
@@ -236,12 +235,12 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 	if src == nil && dst == nil {
 		return
 	}
-	assert.Assert(t, src != nil)
-	assert.Assert(t, dst != nil)
+	assert.NotNil(t, src)
+	assert.NotNil(t, dst)
 	itSrc := src.Nodes()
 	itDst := dst.Nodes()
 	assert.Equal(itSrc.Len(), itDst.Len(),
-		     fmt.Spintf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len()))
+		     fmt.Sprintf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len()))
 	dstNodes := make(map[string]*nodeTest, itDst.Len())
 	for i := 0; itDst.Next(); i++ {
 		n := itDst.Node().(*nodeTest)
@@ -252,7 +251,7 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 		var dstNode *nodeTest
 		var ok bool
 		dstNode, ok = dstNodes[srcNode.name]
-		assert.Assert(t, ok, fmt.Sprintf("node %v not found in generated graph", srcNode.name))
+		assert.Condition(t, ok, fmt.Sprintf("node %v not found in generated graph", srcNode.name))
 		assertNodeEqual(t, srcNode, dstNode)
 		fromSrcNode := src.From(srcNode.ID())
 		fromDstNode := dst.From(dstNode.ID())
@@ -290,10 +289,10 @@ func assertNodeEqual(t *testing.T, a, b *nodeTest) {
 	assert.Equal(t, a.opType, b.opType, fmt.Sprintf("nodes %v and %v differs", a, b))
 	if a.value != nil && b.value != nil {
 		_, err := tensor.ElEq(a.value, b.value)
-		assert.NilError(t, err)
+		assert.NoError(t, err)
 	}
-	assert.Assert(t, a.value != nil, fmt.Sprintf("nodes %v and %v differs", a, b))
-	assert.Assert(t, b.value != nil, fmt.Sprintf("nodes %v and %v differs", a, b))
+	assert.NotNil(t, a.value, fmt.Sprintf("nodes %v and %v differs", a, b))
+	assert.NotNil(t, b.value, fmt.Sprintf("nodes %v and %v differs", a, b))
 	assert.Equal(t, a.name, b.name, fmt.Sprintf("nodes %v and %v differs", a, b))
 
 }
