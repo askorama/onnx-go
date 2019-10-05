@@ -1,6 +1,7 @@
 package onnx
 
 import (
+	"fmt"
 	"sort"
 	"testing"
 
@@ -160,9 +161,8 @@ var tests = []testGraph{
 func TestDecodeProto_badBackend(t *testing.T) {
 	m := NewModel(nil)
 	err := m.decodeProto(nil)
-	if _, ok := err.(*InvalidUnmarshalError); !ok {
-		t.Fatalf("Expected an InvalidUnmarshalError, but got %#v", err)
-	}
+	_, ok := err.(*InvalidUnmarshalError)
+	assert.True(t, ok, fmt.Sprintf("Expected an InvalidUnmarshalError, but got %#v", err))
 }
 
 func TestDecodeProto(t *testing.T) {
@@ -182,26 +182,18 @@ func TestUnmarshalBinary(t *testing.T) {
 	m := NewModel(newTestBackend())
 	b := []byte{0}
 	err := m.UnmarshalBinary(b)
-	if err == nil {
-		t.Fatal("expected an error")
-	}
+	assert.Error(t, err, "Expected an error")
 	model := &pb.ModelProto{}
 	b, err = proto.Marshal(model)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	err = m.UnmarshalBinary(b)
-	if err != errGraphIsNil {
-		t.Fatalf("bad error, expected errGraphIsNil, got %v", err)
-	}
+	assert.Equal(t, err, errGraphIsNil, fmt.Sprintf("bad error, expected errGraphIsNil, got %v", err))
 }
 
 func TestProcessValue(t *testing.T) {
 	m := NewModel(newTestBackend())
 	_, err := m.processValue(nil)
-	if err == nil {
-		t.Fatal("expected error")
-	}
+	assert.Error(t, err)
 	io := &pb.ValueInfoProto{
 		Name: "name",
 		Type: &pb.TypeProto{
@@ -229,9 +221,7 @@ func TestProcessValue(t *testing.T) {
 		},
 	}
 	n, err := m.processValue(io)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 
 	expectedNode := &nodeTest{
 		name:  "name",
@@ -245,17 +235,12 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 	if src == nil && dst == nil {
 		return
 	}
-	if src == nil && dst != nil {
-		t.Fatalf("expected a nil graph, but result is %#v", dst)
-	}
-	if src != nil && dst == nil {
-		t.Fatal("expected a non nil graph, but result is nil")
-	}
+	assert.NotNil(t, src)
+	assert.NotNil(t, dst)
 	itSrc := src.Nodes()
 	itDst := dst.Nodes()
-	if itSrc.Len() != itDst.Len() {
-		t.Fatalf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len())
-	}
+	assert.Equal(t, itSrc.Len(), itDst.Len(),
+		fmt.Sprintf("graphs differs: expected %v node(s) but graph have %v node(s)", itSrc.Len(), itDst.Len()))
 	dstNodes := make(map[string]*nodeTest, itDst.Len())
 	for i := 0; itDst.Next(); i++ {
 		n := itDst.Node().(*nodeTest)
@@ -265,15 +250,14 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 		srcNode := itSrc.Node().(*nodeTest)
 		var dstNode *nodeTest
 		var ok bool
-		if dstNode, ok = dstNodes[srcNode.name]; !ok {
-			t.Fatalf("node %v not found in generated graph", srcNode.name)
-		}
+		dstNode, ok = dstNodes[srcNode.name]
+		assert.True(t, ok, fmt.Sprintf("node %v not found in generated graph", srcNode.name))
 		assertNodeEqual(t, srcNode, dstNode)
 		fromSrcNode := src.From(srcNode.ID())
 		fromDstNode := dst.From(dstNode.ID())
-		if fromSrcNode.Len() != fromDstNode.Len() {
-			t.Fatalf("expected node %v has %v child(ren) but %v have %v", srcNode, fromSrcNode.Len(), dstNode, fromDstNode.Len())
-		}
+		assert.Equal(t, fromSrcNode.Len(), fromDstNode.Len(),
+			fmt.Sprintf("expected node %v has %v child(ren) but %v have %v",
+				srcNode, fromSrcNode.Len(), dstNode, fromDstNode.Len()))
 		srcWeightedEdges := make([]graph.WeightedEdge, fromSrcNode.Len())
 		dstWeightedEdges := make([]graph.WeightedEdge, fromDstNode.Len())
 		for i := 0; fromSrcNode.Next(); i++ {
@@ -286,17 +270,15 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 			dstWeightedEdges[i] = dst.(weightedBackend).WeightedEdge(dstNode.ID(), dstNodeFrom.ID())
 		}
 		sort.Sort(weightedEdge(dstWeightedEdges))
-		if len(dstWeightedEdges) != len(srcWeightedEdges) {
-			t.Fatalf("not the same number of edges")
-		}
+		assert.Equal(t, len(dstWeightedEdges), len(srcWeightedEdges), "not the same number of edges")
 		if len(srcWeightedEdges) == 0 {
 			continue
 		}
 		// Compare the weights
 		for i := 0; i < len(srcWeightedEdges); i++ {
-			if srcWeightedEdges[i].Weight() != dstWeightedEdges[i].Weight() {
-				t.Fatalf("Expected weight %v, got %v", srcWeightedEdges[i].Weight(), dstWeightedEdges[i].Weight())
-			}
+			assert.Equal(t, srcWeightedEdges[i].Weight(), dstWeightedEdges[i].Weight(),
+				fmt.Sprintf("Expected weight %v, got %v",
+					srcWeightedEdges[i].Weight(), dstWeightedEdges[i].Weight()))
 			assertNodeEqual(t, srcWeightedEdges[i].From().(*nodeTest), dstWeightedEdges[i].From().(*nodeTest))
 			assertNodeEqual(t, srcWeightedEdges[i].To().(*nodeTest), dstWeightedEdges[i].To().(*nodeTest))
 		}
@@ -304,22 +286,15 @@ func assertGraphEqual(t *testing.T, src graph.WeightedDirected, dst Backend) {
 }
 
 func assertNodeEqual(t *testing.T, a, b *nodeTest) {
-	if a.opType != b.opType {
-		t.Fatalf("nodes %v and %v differs", a, b)
-	}
+	assert.Equal(t, a.opType, b.opType, fmt.Sprintf("nodes %v and %v differs", a, b))
 	if a.value != nil && b.value != nil {
 		_, err := tensor.ElEq(a.value, b.value)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.NoError(t, err)
+	} else {
+		assert.Nil(t, a.value, fmt.Sprintf("nodes %v and %v differs", a, b))
+		assert.Nil(t, b.value, fmt.Sprintf("nodes %v and %v differs", a, b))
 	}
-	if (a.value == nil && b.value != nil) ||
-		(a.value != nil && b.value == nil) {
-		t.Fatalf("nodes %v and %v differs", a, b)
-	}
-	if a.name != b.name {
-		t.Fatalf("nodes %v and %v differs", a, b)
-	}
+	assert.Equal(t, a.name, b.name, fmt.Sprintf("nodes %v and %v differs", a, b))
 
 }
 
