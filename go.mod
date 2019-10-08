@@ -15,6 +15,7 @@ require (
 	github.com/leesper/go_rng v0.0.0-20190531154944-a612b043e353 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/pkg/errors v0.8.1
+	github.com/sanity-io/litter v1.1.0
 	github.com/stretchr/testify v1.3.0
 	github.com/vincent-petithory/dataurl v0.0.0-20160330182126-9a301d65acbb
 	golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81
