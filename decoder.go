@@ -109,10 +109,18 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 	if len(model.Graph.Input)+len(model.Graph.Output) == 0 {
 		return errGraphNoIO
 	}
+	err := m.applyModelProtoGraph(model)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// applyModelProtoGraph apply model proto graph tensors to model
+func (m *Model) applyModelProtoGraph(model *pb.ModelProto) error {
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
-	dst := m.backend
 	// Well...
 	for i, io := range model.Graph.Input {
 		n, err := m.processValue(io)
@@ -134,6 +142,19 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 		}
 		m.Output[i] = n.ID()
 	}
+	err := m.applyModelProtoGraphTensors(model)
+	if err != nil {
+		return err
+	}
+	err = m.applyModelProtoGraphNodeOperations(model)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// applyModelProtoGraphTensors apply model proto graph tensors to model
+func (m *Model) applyModelProtoGraphTensors(model *pb.ModelProto) error {
 	for _, tensorProto := range model.Graph.GetInitializer() {
 		name := tensorProto.GetName()
 		if name == "" {
@@ -162,6 +183,12 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 			return err
 		}
 	}
+	return nil
+}
+
+// applyModelProtoGraphNodeOperations apply model proto graph node operations to model
+func (m *Model) applyModelProtoGraphNodeOperations(model *pb.ModelProto) error {
+	dst := m.backend
 	for _, node := range model.Graph.Node {
 		outputNodes := make([]graph.Node, len(node.Output))
 		for i, output := range node.Output {
