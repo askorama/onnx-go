@@ -72,6 +72,24 @@ func main() {
 		log.Fatal(err)
 	}
 
+	origin := setupOriginURL(ln, originHost, port)
+
+	initPlayground(*basePath, origin)
+	http.Handle("/static/", http.FileServer(http.Dir(*basePath)))
+
+	if !ln.Addr().(*net.TCPAddr).IP.IsLoopback() &&
+		present.PlayEnabled && !*nativeClient && !*usePlayground {
+		log.Print(localhostWarning)
+	}
+
+	log.Printf("Open your web browser and visit %s", origin.String())
+	if present.NotesEnabled {
+		log.Println("Notes are enabled, press 'N' from the browser to display them.")
+	}
+	log.Fatal(http.Serve(ln, nil))
+}
+
+func setupOriginURL(ln net.Listener, originHost *string, port string) *url.URL {
 	origin := &url.URL{Scheme: "http"}
 	if *originHost != "" {
 		origin.Host = net.JoinHostPort(*originHost, port)
@@ -89,20 +107,7 @@ func main() {
 			origin.Host = *httpAddr
 		}
 	}
-
-	initPlayground(*basePath, origin)
-	http.Handle("/static/", http.FileServer(http.Dir(*basePath)))
-
-	if !ln.Addr().(*net.TCPAddr).IP.IsLoopback() &&
-		present.PlayEnabled && !*nativeClient && !*usePlayground {
-		log.Print(localhostWarning)
-	}
-
-	log.Printf("Open your web browser and visit %s", origin.String())
-	if present.NotesEnabled {
-		log.Println("Notes are enabled, press 'N' from the browser to display them.")
-	}
-	log.Fatal(http.Serve(ln, nil))
+	return origin
 }
 
 func environ(vars ...string) []string {
