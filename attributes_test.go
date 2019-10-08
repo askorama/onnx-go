@@ -155,3 +155,15 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 	_, ok = err.(*ErrNotImplemented)
 	assert.True(t, ok)
 }
+
+func TestToOperationAttributes_Undefined(t *testing.T) {
+	attrs, err := toOperationAttributes([]*pb.AttributeProto{
+		nil,
+	})
+	assert.NoError(t, err)
+
+	v, ok := attrs[""]
+	assert.True(t, ok)
+	expected := struct{}{}
+	assert.Equal(t, expected, v)
+}
