@@ -10,8 +10,6 @@ import (
 // Dtype returns a compatible dtype from the source
 func (t TensorProto_DataType) Dtype() (tensor.Dtype, error) {
 	switch t {
-	case TensorProto_UNDEFINED:
-		return tensor.Dtype{}, nil
 	case TensorProto_FLOAT:
 		// As defined in the spec, a float is a 32 floating-point value
 		return tensor.Float32, nil
@@ -32,8 +30,6 @@ func (t TensorProto_DataType) Dtype() (tensor.Dtype, error) {
 	case TensorProto_BOOL:
 		return tensor.Bool, nil
 		// Advanced types
-	case TensorProto_FLOAT16:
-		return tensor.Dtype{}, errors.Wrapf(ErrNotYetImplemented, "type: %v", t)
 	case TensorProto_DOUBLE:
 		// BUG(): a double type is replaced by a Float64 on all plateforms.
 		return tensor.Float64, nil
@@ -45,6 +41,14 @@ func (t TensorProto_DataType) Dtype() (tensor.Dtype, error) {
 		return tensor.Complex64, nil
 	case TensorProto_COMPLEX128:
 		return tensor.Complex128, nil
+	}
+	return wrapUnknownTensorDtype(t)
+}
+
+func wrapUnknownTensorDtype(t TensorProto_DataType) (tensor.Dtype, error) {
+	switch t {
+	case TensorProto_FLOAT16:
+		return tensor.Dtype{}, errors.Wrapf(ErrNotYetImplemented, "type: %v", t)
 	}
 	return tensor.Dtype{}, fmt.Errorf("Unknown input type: %v", t)
 }
