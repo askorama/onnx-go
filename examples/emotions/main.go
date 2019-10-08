@@ -68,17 +68,7 @@ func main() {
 	}
 	// Set the first input, the number depends of the model
 	// TODO
-	var inputStream io.Reader
-	if *input != "-" {
-		imgContent, err := os.Open(*input)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer imgContent.Close()
-		inputStream = imgContent
-	} else {
-		inputStream = os.Stdin
-	}
+	inputStream := createInputStream(input)
 	img, err := png.Decode(inputStream)
 	if err != nil {
 		log.Fatal(err)
@@ -136,6 +126,21 @@ func classify(input []float32) emotions {
 	}
 	sort.Sort(sort.Reverse(result))
 	return result
+}
+
+func createInputStream(input *string) io.Reader {
+	var inputStream io.Reader
+	if *input != "-" {
+		imgContent, err := os.Open(*input)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer imgContent.Close()
+		inputStream = imgContent
+	} else {
+		inputStream = os.Stdin
+	}
+	return inputStream
 }
 
 type emotions []emotion
