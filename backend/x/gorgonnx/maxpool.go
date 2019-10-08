@@ -31,23 +31,10 @@ type maxpool struct {
 	divInt      func(a, b int) int
 }
 
-func (c *maxpool) apply(g *Graph, ns ...*Node) error {
-	if len(ns) > 1 {
-		return &onnx.ErrNotImplemented{
-			Operator: "maxpool",
-			Message:  "second output not yet supported",
-		}
-	}
-	n := ns[0]
-	children := getOrderedChildren(g.g, n)
-	err := checkCondition(children, 1)
-	if err != nil {
-		return err
-	}
-	x := children[0].gorgoniaNode
+func (c *maxpool) computePadding(inputShape []int) {
 	switch c.padding {
 	case "SAME_UPPER":
-		for i, v := range x.Shape()[2:] {
+		for i, v := range inputShape[2:] {
 			j := 2 * i
 			outputSpatialShape := ceilDivInt(v, c.stride[i])
 			c.pad[j] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
@@ -62,8 +49,46 @@ func (c *maxpool) apply(g *Graph, ns ...*Node) error {
 				c.pad[j+1] = c.pad[j]
 			}
 		}
+	case "VALID":
+		for i, v := range inputShape[2:] {
+			j := 2 * i
+			// VALID: output_spatial_shape[i] = ceil((input_spatial_shape[i] - ((kernel_spatial_shape[i] - 1) * dilations[i] + 1) + 1) / strides_spatial_shape[i])
+			//
+			// (input_spatial_shape[i] - ((kernel_spatial_shape[i] - 1) * dilations[i] + 1) + 1)
+			leftOperand := v - ((c.kernelShape[i]-1)*c.dilation[i] + 1) + 1
+			outputSpatialShape := ceilDivInt(leftOperand, c.stride[i])
+			c.pad[j] = (outputSpatialShape-1)*c.stride[i] + ((c.kernelShape[i]-1)*c.dilation[i] + 1) - v
+			if c.pad[j] < 0 {
+				c.pad[j] = 0
+			}
+			if c.pad[j]%2 != 0 {
+				c.pad[j] = c.pad[j]/2 + 1
+				c.pad[j+1] = c.pad[j] - 1
+			} else {
+				c.pad[j] /= 2
+				c.pad[j+1] = c.pad[j]
+			}
+		}
 	default:
 	}
+}
+
+func (c *maxpool) apply(g *Graph, ns ...*Node) error {
+	if len(ns) > 1 {
+		return &onnx.ErrNotImplemented{
+			Operator: "maxpool",
+			Message:  "second output not yet supported",
+		}
+	}
+	n := ns[0]
+	children := getOrderedChildren(g.g, n)
+	err := checkCondition(children, 1)
+	if err != nil {
+		return err
+	}
+	x := children[0].gorgoniaNode
+	c.computePadding(x.Shape())
+
 	n.gorgoniaNode, err = gorgonia.MaxPool2D(
 		children[0].gorgoniaNode,
 		c.kernelShape,
@@ -85,6 +110,8 @@ func (c *maxpool) init(o onnx.Operation) error {
 	switch autoPad {
 	case "NOTSET":
 	case "SAME_UPPER":
+		c.padding = autoPad
+	case "VALID":
 		c.padding = autoPad
 	case "":
 	default:
