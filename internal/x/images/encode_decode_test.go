@@ -22,7 +22,7 @@ func (c *circle) brightness(x, y float64) uint8 {
 	return 255
 }
 
-func TestEncodeDecode_RGBA(t *testing.T) {
+func generateImageForTesting() image.Image {
 	var w, h int = 280, 240
 	var hw, hh float64 = float64(w / 2), float64(h / 2)
 	r := 40.0
@@ -43,7 +43,11 @@ func TestEncodeDecode_RGBA(t *testing.T) {
 			img.Set(x, y, c)
 		}
 	}
+	return img
+}
 
+func TestEncodeDecode_RGBA(t *testing.T) {
+	img := generateImageForTesting()
 	dense := tensor.New(tensor.Of(tensor.Float32), tensor.WithShape(1, 3, img.Bounds().Max.Y, img.Bounds().Max.X))
 	err := ImageToBCHW(img, dense)
 	if err != nil {
