@@ -20,24 +20,13 @@ import (
 //   - dst's fourth dimension != i.Bounds().Dx()
 //   - dst's type is not float32 or float64 (temporary)
 func ImageToBCHW(img image.Image, dst tensor.Tensor) error {
-	// check if tensor is a pointer
-	rv := reflect.ValueOf(dst)
-	if rv.Kind() != reflect.Ptr || rv.IsNil() {
-		return errors.New("cannot decode image into a non pointer or a nil receiver")
-	}
-	// check if tensor is compatible with BCHW (4 dimensions)
-	if len(dst.Shape()) != 4 {
-		return fmt.Errorf("Expected a 4 dimension tensor, but receiver has only %v", len(dst.Shape()))
-	}
-	// Check the batch size
-	if dst.Shape()[0] != 1 {
-		return errors.New("only batch size of one is supported")
-	}
 	w := img.Bounds().Dx()
 	h := img.Bounds().Dy()
-	if dst.Shape()[2] != h || dst.Shape()[3] != w {
-		return fmt.Errorf("cannot fit image into tensor; image is %v*%v but tensor is %v*%v", h, w, dst.Shape()[2], dst.Shape()[3])
+	err := verifyBCHWTensor(dst, h, w, false)
+	if err != nil {
+		return err
 	}
+
 	switch dst.Dtype() {
 	case tensor.Float32:
 		for x := 0; x < w; x++ {
@@ -64,7 +53,6 @@ func ImageToBCHW(img image.Image, dst tensor.Tensor) error {
 		return fmt.Errorf("%v not handled yet", dst.Dtype())
 	}
 	return nil
-
 }
 
 // GrayToBCHW convert an image to a BCHW tensor
@@ -77,27 +65,13 @@ func ImageToBCHW(img image.Image, dst tensor.Tensor) error {
 //   - dst's fourth dimension != i.Bounds().Dx()
 //   - dst's type is not float32 or float64 (temporary)
 func GrayToBCHW(img *image.Gray, dst tensor.Tensor) error {
-	// check if tensor is a pointer
-	rv := reflect.ValueOf(dst)
-	if rv.Kind() != reflect.Ptr || rv.IsNil() {
-		return errors.New("cannot decode image into a non pointer or a nil receiver")
-	}
-	// check if tensor is compatible with BCHW (4 dimensions)
-	if len(dst.Shape()) != 4 {
-		return fmt.Errorf("Expected a 4 dimension tensor, but receiver has only %v", len(dst.Shape()))
-	}
-	// Check the batch size
-	if dst.Shape()[0] != 1 {
-		return errors.New("only batch size of one is supported")
-	}
-	if dst.Shape()[1] != 1 {
-		return errors.New("Cowardly refusing to insert a gray scale into a tensor with more than one channel")
-	}
 	w := img.Bounds().Dx()
 	h := img.Bounds().Dy()
-	if dst.Shape()[2] != h || dst.Shape()[3] != w {
-		return fmt.Errorf("cannot fit image into tensor; image is %v*%v but tensor is %v*%v", h, w, dst.Shape()[2], dst.Shape()[3])
+	err := verifyBCHWTensor(dst, h, w, true)
+	if err != nil {
+		return err
 	}
+
 	switch dst.Dtype() {
 	case tensor.Float32:
 		for x := 0; x < w; x++ {
@@ -164,4 +138,27 @@ func TensorToImg(t tensor.Tensor) (image.Image, error) {
 		}
 	}
 	return output, nil
+}
+
+func verifyBCHWTensor(dst tensor.Tensor, h, w int, cowardMode bool) error {
+	// check if tensor is a pointer
+	rv := reflect.ValueOf(dst)
+	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+		return errors.New("cannot decode image into a non pointer or a nil receiver")
+	}
+	// check if tensor is compatible with BCHW (4 dimensions)
+	if len(dst.Shape()) != 4 {
+		return fmt.Errorf("Expected a 4 dimension tensor, but receiver has only %v", len(dst.Shape()))
+	}
+	// Check the batch size
+	if dst.Shape()[0] != 1 {
+		return errors.New("only batch size of one is supported")
+	}
+	if cowardMode && dst.Shape()[1] != 1 {
+		return errors.New("Cowardly refusing to insert a gray scale into a tensor with more than one channel")
+	}
+	if dst.Shape()[2] != h || dst.Shape()[3] != w {
+		return fmt.Errorf("cannot fit image into tensor; image is %v*%v but tensor is %v*%v", h, w, dst.Shape()[2], dst.Shape()[3])
+	}
+	return nil
 }
