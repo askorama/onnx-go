@@ -11,7 +11,7 @@ func toOperationAttributes(attrs []*pb.AttributeProto) (map[string]interface{}, 
 		if err != nil {
 			return nil, err
 		}
-		output[attr.Name] = o
+		output[attr.GetName()] = o
 	}
 	return output, nil
 }
@@ -30,7 +30,7 @@ func toOperationAttribute(attr *pb.AttributeProto) (interface{}, error) {
 		return attr.GetT().Tensor()
 	case pb.AttributeProto_GRAPH:
 		return nil, &ErrNotImplemented{
-			AttributeName:  attr.Name,
+			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
 			Message:        "pb.AttributeProto_GRAPH not handled yet",
 		}
@@ -47,19 +47,19 @@ func toOperationAttribute(attr *pb.AttributeProto) (interface{}, error) {
 		return strings, nil
 	case pb.AttributeProto_TENSORS:
 		return nil, &ErrNotImplemented{
-			AttributeName:  attr.Name,
+			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
 			Message:        "pb.AttributeProto_TENSORS not handled yet",
 		}
 	case pb.AttributeProto_GRAPHS:
 		return nil, &ErrNotImplemented{
-			AttributeName:  attr.Name,
+			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
 			Message:        "pb.AttributeProto_GRAPHS not handled yet",
 		}
 	default:
 		return nil, &ErrNotImplemented{
-			AttributeName:  attr.Name,
+			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
 			Message:        "undefined attributeproto type",
 		}
