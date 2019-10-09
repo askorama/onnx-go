@@ -17,6 +17,9 @@ func (tx *TensorProto) Tensor() (tensor.Tensor, error) {
 		return nil, errors.Wrap(ErrNotYetImplemented, "This tensor is segmented")
 	}
 	// Get the data type
+	if tx.DataType == int32(TensorProto_UNDEFINED) {
+		return nil, errors.New("This tensor datatype is undefined")
+	}
 	dt, err := TensorProto_DataType(tx.DataType).Dtype()
 	if err != nil {
 		return nil, err
@@ -26,147 +29,169 @@ func (tx *TensorProto) Tensor() (tensor.Tensor, error) {
 		size[i] = int(tx.Dims[i])
 	}
 	opts := []tensor.ConsOpt{tensor.WithShape(size...), tensor.Of(dt)}
+	var consopts []tensor.ConsOpt
 	switch dt {
 	case tensor.Bool:
-		switch {
-		case tx.Int32Data != nil:
-			backing := make([]bool, len(tx.Int32Data))
-			for i := 0; i < len(tx.Int32Data); i++ {
-				if tx.Int32Data[i] == 1 {
-					backing[i] = true
-				}
-			}
-			opts = append(opts, tensor.WithBacking(backing))
-		case tx.RawData != nil:
-			buf := bytes.NewReader(tx.RawData)
-			element := make([]byte, 8)
-			var err error
-			var backing []bool
-			for {
-				var n int
-				n, err = buf.Read(element)
-				if err != nil || n != 8 {
-					break
-				}
-				if element[7] == 1 {
-					backing = append(backing, true)
-				} else {
-					backing = append(backing, false)
-				}
-			}
-			if err != io.EOF {
-				return nil, errors.Wrapf(err, "%v", ErrCorruptedData)
-			}
-			opts = append(opts, tensor.WithBacking(backing))
-		default:
-			return nil, errors.New("No data found")
-		}
-
+		consopts, err = generateConsOptsFromBoolTensor(tx)
 	case tensor.Float32:
-		switch {
-		case tx.RawData != nil:
-			buf := bytes.NewReader(tx.RawData)
-			element := make([]byte, 4)
-			var err error
-			var backing []float32
-			for {
-				var n int
-				n, err = buf.Read(element)
-				if err != nil || n != 4 {
-					break
-				}
-				uintElement := binary.LittleEndian.Uint32(element)
-				backing = append(backing, math.Float32frombits(uintElement))
-			}
-			if err != io.EOF {
-				return nil, errors.Wrapf(err, "%v", ErrCorruptedData)
-			}
-			opts = append(opts, tensor.WithBacking(backing))
-		case tx.FloatData != nil:
-			opts = append(opts, tensor.WithBacking(tx.FloatData))
-		default:
-			return nil, errors.New("No data found")
-		}
+		consopts, err = generateConsOptsFromFloat32Tensor(tx)
 	case tensor.Float64:
-		switch {
-		case tx.DoubleData != nil:
-			opts = append(opts, tensor.WithBacking(tx.DoubleData))
-		case tx.RawData != nil:
-			buf := bytes.NewReader(tx.RawData)
-			element := make([]byte, 8)
-			var err error
-			var backing []float64
-			for {
-				var n int
-				n, err = buf.Read(element)
-				if err != nil || n != 8 {
-					break
-				}
-				uintElement := binary.LittleEndian.Uint64(element)
-				backing = append(backing, math.Float64frombits(uintElement))
-			}
-			if err != io.EOF {
-				return nil, errors.Wrapf(err, "%v", ErrCorruptedData)
-			}
-			opts = append(opts, tensor.WithBacking(backing))
-		default:
-			return nil, errors.New("No data found")
-		}
+		consopts, err = generateConsOptsFromFloat64Tensor(tx)
 	case tensor.Int64:
-		switch {
-		case tx.RawData != nil:
-			buf := bytes.NewReader(tx.RawData)
-			element := make([]byte, 8)
-			var err error
-			var backing []int64
-			for {
-				var n int
-				n, err = buf.Read(element)
-				if err != nil || n != 8 {
-					break
-				}
-				uintElement := binary.LittleEndian.Uint64(element)
-				backing = append(backing, int64(uintElement))
-			}
-
-			if err != io.EOF {
-				return nil, errors.Wrapf(err, "%v", ErrCorruptedData)
-			}
-			opts = append(opts, tensor.WithBacking(backing))
-		case tx.Int64Data != nil:
-			opts = append(opts, tensor.WithBacking(tx.Int64Data))
-		default:
-			return nil, errors.New("No data found")
-		}
+		consopts, err = generateConsOptsFromInt64Tensor(tx)
 	case tensor.Int32:
-		switch {
-		case tx.RawData != nil:
-			buf := bytes.NewReader(tx.RawData)
-			element := make([]byte, 4)
-			var err error
-			var backing []int32
-			for {
-				var n int
-				n, err = buf.Read(element)
-				if err != nil || n != 4 {
-					break
-				}
-				uintElement := binary.LittleEndian.Uint32(element)
-				backing = append(backing, int32(uintElement))
-			}
-			if err != io.EOF {
-				return nil, errors.Wrapf(err, "%v", ErrCorruptedData)
-			}
-			opts = append(opts, tensor.WithBacking(backing))
-		case tx.Int32Data != nil:
-			opts = append(opts, tensor.WithBacking(tx.Int32Data))
-		default:
-			return nil, errors.New("No data found")
-		}
+		consopts, err = generateConsOptsFromInt32Tensor(tx)
 	default:
-		return nil, errors.Wrapf(ErrNotYetImplemented, "Unknown type %v", dt)
-
+		err = errors.Wrapf(ErrNotYetImplemented, "Unknown type %v", dt)
 	}
-
+	if err != nil {
+		return nil, err
+	}
+	opts = append(opts, consopts...)
 	return tensor.New(opts...), nil
+}
+
+func generateConsOptsFromBoolTensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
+	switch {
+	case tx.Int32Data != nil:
+		backing := make([]bool, len(tx.Int32Data))
+		for i := 0; i < len(tx.Int32Data); i++ {
+			if tx.Int32Data[i] == 1 {
+				backing[i] = true
+			}
+		}
+		return []tensor.ConsOpt{tensor.WithBacking(backing)}, nil
+	case tx.RawData != nil:
+		buf := bytes.NewReader(tx.RawData)
+		element := make([]byte, 8)
+		var err error
+		var backing []bool
+		for {
+			var n int
+			n, err = buf.Read(element)
+			if err != nil || n != 8 {
+				break
+			}
+			if element[7] == 1 {
+				backing = append(backing, true)
+			} else {
+				backing = append(backing, false)
+			}
+		}
+		if err != io.EOF {
+			return nil, errors.Wrapf(ErrCorruptedData, "%v", err)
+		}
+		return []tensor.ConsOpt{tensor.WithBacking(backing)}, nil
+	default:
+		return nil, errors.New("No data found")
+	}
+}
+
+func generateConsOptsFromFloat32Tensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
+	switch {
+	case tx.RawData != nil:
+		buf := bytes.NewReader(tx.RawData)
+		element := make([]byte, 4)
+		var err error
+		var backing []float32
+		for {
+			var n int
+			n, err = buf.Read(element)
+			if err != nil || n != 4 {
+				break
+			}
+			uintElement := binary.LittleEndian.Uint32(element)
+			backing = append(backing, math.Float32frombits(uintElement))
+		}
+		if err != io.EOF {
+			return nil, errors.Wrapf(ErrCorruptedData, "%v", err)
+		}
+		return []tensor.ConsOpt{tensor.WithBacking(backing)}, nil
+	case tx.FloatData != nil:
+		return []tensor.ConsOpt{tensor.WithBacking(tx.FloatData)}, nil
+	default:
+		return nil, errors.New("No data found")
+	}
+}
+
+func generateConsOptsFromFloat64Tensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
+	switch {
+	case tx.DoubleData != nil:
+		return []tensor.ConsOpt{tensor.WithBacking(tx.DoubleData)}, nil
+	case tx.RawData != nil:
+		buf := bytes.NewReader(tx.RawData)
+		element := make([]byte, 8)
+		var err error
+		var backing []float64
+		for {
+			var n int
+			n, err = buf.Read(element)
+			if err != nil || n != 8 {
+				break
+			}
+			uintElement := binary.LittleEndian.Uint64(element)
+			backing = append(backing, math.Float64frombits(uintElement))
+		}
+		if err != io.EOF {
+			return nil, errors.Wrapf(ErrCorruptedData, "%v", err)
+		}
+		return []tensor.ConsOpt{tensor.WithBacking(backing)}, nil
+	default:
+		return nil, errors.New("No data found")
+	}
+}
+
+func generateConsOptsFromInt64Tensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
+	switch {
+	case tx.RawData != nil:
+		buf := bytes.NewReader(tx.RawData)
+		element := make([]byte, 8)
+		var err error
+		var backing []int64
+		for {
+			var n int
+			n, err = buf.Read(element)
+			if err != nil || n != 8 {
+				break
+			}
+			uintElement := binary.LittleEndian.Uint64(element)
+			backing = append(backing, int64(uintElement))
+		}
+
+		if err != io.EOF {
+			return nil, errors.Wrapf(ErrCorruptedData, "%v", err)
+		}
+		return []tensor.ConsOpt{tensor.WithBacking(backing)}, nil
+	case tx.Int64Data != nil:
+		return []tensor.ConsOpt{tensor.WithBacking(tx.Int64Data)}, nil
+	default:
+		return nil, errors.New("No data found")
+	}
+}
+
+func generateConsOptsFromInt32Tensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
+	switch {
+	case tx.RawData != nil:
+		buf := bytes.NewReader(tx.RawData)
+		element := make([]byte, 4)
+		var err error
+		var backing []int32
+		for {
+			var n int
+			n, err = buf.Read(element)
+			if err != nil || n != 4 {
+				break
+			}
+			uintElement := binary.LittleEndian.Uint32(element)
+			backing = append(backing, int32(uintElement))
+		}
+		if err != io.EOF {
+			return nil, errors.Wrapf(ErrCorruptedData, "%v", err)
+		}
+		return []tensor.ConsOpt{tensor.WithBacking(backing)}, nil
+	case tx.Int32Data != nil:
+		return []tensor.ConsOpt{tensor.WithBacking(tx.Int32Data)}, nil
+	default:
+		return nil, errors.New("No data found")
+	}
 }
