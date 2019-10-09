@@ -15,8 +15,7 @@ import (
 	"text/template"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/owulveryck/onnx-go/internal/pb-onnx"
-	onnx "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
 )
 
 var (
@@ -86,7 +85,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 		return "", "", err
 	}
 	tv.ModelB = fmt.Sprintf("%#v", b)
-	model := new(onnx.ModelProto)
+	model := new(pb.ModelProto)
 	err = model.XXX_Unmarshal(b)
 	if err != nil {
 		return "", "", err
@@ -111,105 +110,22 @@ func processFile(file os.FileInfo) (string, string, error) {
 		return "", "", fmt.Errorf("graph with more than one node not supported by this utility")
 	}
 	node := model.GetGraph().GetNode()[0]
-	mv.Input = make([]valueInfoProto, len(model.Graph.Input))
-	for i := range model.Graph.Input {
-		mv.Input[i] = valueInfoProto{
-			Name:     model.Graph.Input[i].Name,
-			ElemType: fmt.Sprintf("%v", model.Graph.Input[i].Type.GetTensorType().ElemType),
-			Dims:     make([]string, len(model.Graph.Input[i].Type.GetTensorType().Shape.Dim)),
-		}
-		for j, v := range model.Graph.Input[i].Type.GetTensorType().Shape.Dim {
-			mv.Input[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
 
-		}
-	}
-	tv.Input = make([]iO, len(node.GetInput()))
-	for i := range node.GetInput() {
-		// Open the tensorproto sample file
-		filename := fmt.Sprintf("%v%v/test_data_set_0/input_%v.pb", *testdir, file.Name(), i)
-		b, err = ioutil.ReadFile(filename)
-		if err != nil {
-			return "", "", err
-		}
-		sampleTestData := new(onnx.TensorProto)
-		err = sampleTestData.XXX_Unmarshal(b)
-		if err != nil {
-			return "", "", err
-		}
-		t, err := sampleTestData.Tensor()
-		if err != nil {
-			return "", "", err
-		}
-		data := fmt.Sprintf("%#v", t.Data())
-		shape := fmt.Sprintf("%#v", t.Shape())
-		if len(t.Shape()) == 1 && t.Shape()[0] == 1 {
-			data = fmt.Sprintf("[]float32{%v}", t.Data())
-		}
-		if len(t.Shape()) == 0 {
-			data = fmt.Sprintf("[]float32{%v}", t.Data())
-			shape = "(1)"
-		}
-		tv.Input[i] = iO{
-			Shape: shape,
-			//Data:  fmt.Sprintf("%#v", t.Data()),
-			Data: data,
-		}
-	}
-	mv.Output = make([]valueInfoProto, len(model.Graph.Output))
-	for i := range model.Graph.Output {
-		mv.Output[i] = valueInfoProto{
-			Name:     model.Graph.Output[i].Name,
-			ElemType: fmt.Sprintf("%v", model.Graph.Output[i].Type.GetTensorType().ElemType),
-			Dims:     make([]string, len(model.Graph.Output[i].Type.GetTensorType().Shape.Dim)),
-		}
-		for j, v := range model.Graph.Output[i].Type.GetTensorType().Shape.Dim {
-			mv.Output[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
-		}
-	}
-	tv.ExpectedOutput = make([]iO, len(node.GetOutput()))
-	for i := range node.Output {
-		// Open the tensorproto sample file
-		filename := fmt.Sprintf("%v%v/test_data_set_0/output_%v.pb", *testdir, file.Name(), i)
-		b, err = ioutil.ReadFile(filename)
-		if err != nil {
-			return "", "", err
-		}
-		sampleTestData := new(onnx.TensorProto)
-		err = sampleTestData.XXX_Unmarshal(b)
-		if err != nil {
-			return "", "", err
+	processModelGraphInput(model, &mv)
 
-		}
-		t, err := sampleTestData.Tensor()
-		if err != nil {
-			return "", "", err
-		}
-		shape := fmt.Sprintf("%#v", t.Shape())
-		data := fmt.Sprintf("%#v", t.Data())
-		if len(t.Shape()) == 1 && t.Shape()[0] == 1 {
-			data = fmt.Sprintf("[]float32{%v}", t.Data())
-		}
-		if len(t.Shape()) == 0 {
-			data = fmt.Sprintf("[]float32{%v}", t.Data())
-			shape = "(1)"
-		}
-		tv.ExpectedOutput[i] = iO{
-			Shape: shape,
-			Data:  data,
-		}
+	err = processModelGraphNodeInput(file.Name(), node, &tv)
+	if err != nil {
+		return "", "", err
 	}
-	mv.ValueInfo = make([]valueInfoProto, len(model.Graph.ValueInfo))
-	for i := range model.Graph.ValueInfo {
-		mv.ValueInfo[i] = valueInfoProto{
-			Name:     model.Graph.ValueInfo[i].Name,
-			ElemType: fmt.Sprintf("%v", model.Graph.ValueInfo[i].Type.GetTensorType().ElemType),
-			Dims:     make([]string, len(model.Graph.ValueInfo[i].Type.GetTensorType().Shape.Dim)),
-		}
-		for j, v := range model.Graph.ValueInfo[i].Type.GetTensorType().Shape.Dim {
-			mv.ValueInfo[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
 
-		}
+	processModelGraphOutput(model, &mv)
+
+	err = processModelGraphNodeOutput(file.Name(), node, &tv)
+	if err != nil {
+		return "", "", err
 	}
+
+	processModelGraphValueInfo(model, &mv)
 
 	// TestTemplate
 	output := os.Stdout
@@ -242,6 +158,121 @@ func processFile(file os.FileInfo) (string, string, error) {
 		}
 	*/
 	return mv.NodeProto[0].OpType, tv.TestName, nil
+}
+
+func processModelGraphInput(model *pb.ModelProto, mv *modelValue) {
+	mv.Input = make([]valueInfoProto, len(model.Graph.Input))
+	for i := range model.Graph.Input {
+		mv.Input[i] = valueInfoProto{
+			Name:     model.Graph.Input[i].Name,
+			ElemType: fmt.Sprintf("%v", model.Graph.Input[i].Type.GetTensorType().ElemType),
+			Dims:     make([]string, len(model.Graph.Input[i].Type.GetTensorType().Shape.Dim)),
+		}
+		for j, v := range model.Graph.Input[i].Type.GetTensorType().Shape.Dim {
+			mv.Input[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
+		}
+	}
+}
+
+func processModelGraphOutput(model *pb.ModelProto, mv *modelValue) {
+	mv.Output = make([]valueInfoProto, len(model.Graph.Output))
+	for i := range model.Graph.Output {
+		mv.Output[i] = valueInfoProto{
+			Name:     model.Graph.Output[i].Name,
+			ElemType: fmt.Sprintf("%v", model.Graph.Output[i].Type.GetTensorType().ElemType),
+			Dims:     make([]string, len(model.Graph.Output[i].Type.GetTensorType().Shape.Dim)),
+		}
+		for j, v := range model.Graph.Output[i].Type.GetTensorType().Shape.Dim {
+			mv.Output[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
+		}
+	}
+}
+
+func processModelGraphValueInfo(model *pb.ModelProto, mv *modelValue) {
+	mv.ValueInfo = make([]valueInfoProto, len(model.Graph.ValueInfo))
+	for i := range model.Graph.ValueInfo {
+		mv.ValueInfo[i] = valueInfoProto{
+			Name:     model.Graph.ValueInfo[i].Name,
+			ElemType: fmt.Sprintf("%v", model.Graph.ValueInfo[i].Type.GetTensorType().ElemType),
+			Dims:     make([]string, len(model.Graph.ValueInfo[i].Type.GetTensorType().Shape.Dim)),
+		}
+		for j, v := range model.Graph.ValueInfo[i].Type.GetTensorType().Shape.Dim {
+			mv.ValueInfo[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
+
+		}
+	}
+}
+
+func processModelGraphNodeInput(filename string, node *pb.NodeProto, tv *testValue) error {
+	tv.Input = make([]iO, len(node.GetInput()))
+	for i := range node.GetInput() {
+		// Open the tensorproto sample file
+		filepath := fmt.Sprintf("%v%v/test_data_set_0/input_%v.pb", *testdir, filename, i)
+		b, err := ioutil.ReadFile(filepath)
+		if err != nil {
+			return err
+		}
+		sampleTestData := new(pb.TensorProto)
+		err = sampleTestData.XXX_Unmarshal(b)
+		if err != nil {
+			return err
+		}
+		t, err := sampleTestData.Tensor()
+		if err != nil {
+			return err
+		}
+		data := fmt.Sprintf("%#v", t.Data())
+		shape := fmt.Sprintf("%#v", t.Shape())
+		if len(t.Shape()) == 1 && t.Shape()[0] == 1 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+		}
+		if len(t.Shape()) == 0 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+			shape = "(1)"
+		}
+		tv.Input[i] = iO{
+			Shape: shape,
+			//Data:  fmt.Sprintf("%#v", t.Data()),
+			Data: data,
+		}
+	}
+	return nil
+}
+
+func processModelGraphNodeOutput(filename string, node *pb.NodeProto, tv *testValue) error {
+	tv.ExpectedOutput = make([]iO, len(node.GetOutput()))
+	for i := range node.Output {
+		// Open the tensorproto sample file
+		filepath := fmt.Sprintf("%v%v/test_data_set_0/output_%v.pb", *testdir, filename, i)
+		b, err := ioutil.ReadFile(filepath)
+		if err != nil {
+			return err
+		}
+		sampleTestData := new(pb.TensorProto)
+		err = sampleTestData.XXX_Unmarshal(b)
+		if err != nil {
+			return err
+
+		}
+		t, err := sampleTestData.Tensor()
+		if err != nil {
+			return err
+		}
+		shape := fmt.Sprintf("%#v", t.Shape())
+		data := fmt.Sprintf("%#v", t.Data())
+		if len(t.Shape()) == 1 && t.Shape()[0] == 1 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+		}
+		if len(t.Shape()) == 0 {
+			data = fmt.Sprintf("[]float32{%v}", t.Data())
+			shape = "(1)"
+		}
+		tv.ExpectedOutput[i] = iO{
+			Shape: shape,
+			Data:  data,
+		}
+	}
+	return nil
 }
 
 func processTemplate(t *template.Template, v interface{}, output io.Writer) error {
