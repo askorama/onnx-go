@@ -8,7 +8,9 @@ import (
 	"gorgonia.org/tensor"
 )
 
-type reshape struct{}
+type reshape struct {
+	toShape tensor.Shape
+}
 
 func init() {
 	register("Reshape", newReshape)
@@ -18,22 +20,15 @@ func newReshape() operator {
 	return &reshape{}
 }
 
-func (a *reshape) apply(g *Graph, ns ...*Node) error {
-	n := ns[0]
-	children := getOrderedChildren(g.g, n)
-	err := checkCondition(children, 2)
-	if err != nil {
-		return err
-	}
-
+func (a *reshape) inferShape(requiredShape interface{}, targetShape tensor.Shape) error {
 	var toShape tensor.Shape
-	data := children[1].gorgoniaNode.Value().Data()
+	data := requiredShape
 	if to, ok := data.(int64); ok {
 		data = []int64{to}
 	}
 	if to, ok := data.([]int64); ok {
 		childShape := make([]int, len(to))
-		copy(childShape, children[0].gorgoniaNode.Shape())
+		copy(childShape, targetShape)
 		toShape = make([]int, len(to))
 		dimSize := 1
 		for i := 0; i < len(childShape); i++ {
@@ -54,12 +49,32 @@ func (a *reshape) apply(g *Graph, ns ...*Node) error {
 		for i := 0; i < len(toShape); i++ {
 			if toShape[i] == -1 {
 				toShape[i] = dimSize / actualSize
+				if toShape[i] == 0 {
+					toShape = append(toShape[:i], toShape[i+1:]...)
+				}
 			}
 		}
 	} else {
-		return fmt.Errorf("Cannot reshape, bad output shape %#v", children[1].gorgoniaNode.Value().Data())
+		return fmt.Errorf("Cannot reshape, bad output shape %#v", requiredShape)
 	}
-	n.gorgoniaNode, err = gorgonia.Reshape(children[0].gorgoniaNode, toShape)
+	a.toShape = toShape
+	return nil
+}
+
+func (a *reshape) apply(g *Graph, ns ...*Node) error {
+	n := ns[0]
+	children := getOrderedChildren(g.g, n)
+	err := checkCondition(children, 2)
+	if err != nil {
+		return err
+	}
+
+	err = a.inferShape(children[1].gorgoniaNode.Value().Data(), children[0].gorgoniaNode.Shape())
+	if err != nil {
+		return err
+	}
+
+	n.gorgoniaNode, err = gorgonia.Reshape(children[0].gorgoniaNode, a.toShape)
 
 	return err
 }

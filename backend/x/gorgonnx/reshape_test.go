@@ -46,3 +46,16 @@ func TestReshape_Scalar(t *testing.T) {
 	outputT := output.(*Node).GetTensor()
 	assert.InDeltaSlice(t, expectedOutput.Data(), outputT.Data(), 1e-6, "the two tensors should be equal.")
 }
+
+func TestReshape_negativeZeroValue(t *testing.T) {
+	reshape := &reshape{}
+	err := reshape.inferShape([]float32{-1, 288}, []int{1, 6, 8, 8})
+	if err == nil {
+		t.Fail()
+	}
+	err = reshape.inferShape([]int64{-1, 288}, []int{1, 6, 8, 8})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(reshape)
+}
