@@ -22,6 +22,13 @@ type Graph struct {
 	groups    [][]*Node // a reference of all the nodes that belongs to a group
 }
 
+// SetVM used by the backend
+// A call to this method do not call the PopulateExprgraph method
+// it is the responsibility of the caller to call it before
+func (g *Graph) SetVM(vm gorgonia.VM) {
+	g.m = vm
+}
+
 // GetExprGraph returns the gorgonia graph; if the graph is nil, it populates the graph before returing it
 func (g *Graph) GetExprGraph() (*gorgonia.ExprGraph, error) {
 	var err error

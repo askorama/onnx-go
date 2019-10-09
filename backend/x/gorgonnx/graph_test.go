@@ -72,3 +72,24 @@ func TestGetExprGraph(t *testing.T) {
 		t.Fatalf("graph has %v node (expected %v)", len(expg.AllNodes()), 3)
 	}
 }
+
+type dummyVM struct{}
+
+func (d *dummyVM) RunAll() error {
+	return nil
+}
+
+func (d *dummyVM) Reset() {
+}
+
+func (d *dummyVM) Close() error {
+	return nil
+}
+
+func TestSetVM(t *testing.T) {
+	g := &Graph{}
+	g.SetVM(&dummyVM{})
+	if g.m == nil {
+		t.Fail()
+	}
+}
