@@ -100,6 +100,28 @@ func (c *maxpool) apply(g *Graph, ns ...*Node) error {
 }
 
 func (c *maxpool) init(o onnx.Operation) error {
+	err := c.initAutoPad(o)
+	if err != nil {
+		return err
+	}
+	err = c.initKernelShape(o)
+	if err != nil {
+		return err
+	}
+	c.initPads(o)
+	c.initStrides(o)
+	err = c.initDivInt(o)
+	if err != nil {
+		return err
+	}
+	err = c.initDilations(o)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *maxpool) initAutoPad(o onnx.Operation) error {
 	var autoPad string
 	if a, ok := o.Attributes["auto_pad"]; ok {
 		if autoPad, ok = a.(string); !ok {
@@ -120,6 +142,10 @@ func (c *maxpool) init(o onnx.Operation) error {
 			Message:  "auto_pad " + autoPad + " not implemented",
 		}
 	}
+	return nil
+}
+
+func (c *maxpool) initKernelShape(o onnx.Operation) error {
 	kernelShape, ok := o.Attributes["kernel_shape"]
 	if ok {
 		if kernelShape, ok := kernelShape.([]int64); ok {
@@ -135,7 +161,10 @@ func (c *maxpool) init(o onnx.Operation) error {
 			Message:  "maxpool for dim >2 not implemented",
 		}
 	}
+	return nil
+}
 
+func (c *maxpool) initPads(o onnx.Operation) {
 	c.pad = []int{0, 0, 0, 0}
 	pad, ok := o.Attributes["pads"]
 	if ok {
@@ -150,6 +179,9 @@ func (c *maxpool) init(o onnx.Operation) error {
 			}
 		}
 	}
+}
+
+func (c *maxpool) initStrides(o onnx.Operation) {
 	c.stride = []int{1, 1}
 	stride, ok := o.Attributes["strides"]
 	if ok {
@@ -165,6 +197,9 @@ func (c *maxpool) init(o onnx.Operation) error {
 			}
 		}
 	}
+}
+
+func (c *maxpool) initDivInt(o onnx.Operation) error {
 	c.divInt = floorDivInt
 	if ceilMode, ok := o.Attributes["ceil_mode"]; ok {
 		if mode, ok := ceilMode.(int64); ok {
@@ -180,8 +215,12 @@ func (c *maxpool) init(o onnx.Operation) error {
 			}
 		}
 	}
+	return nil
+}
+
+func (c *maxpool) initDilations(o onnx.Operation) error {
 	c.dilation = []int{1, 1}
-	_, ok = o.Attributes["dilations"]
+	_, ok := o.Attributes["dilations"]
 	if ok {
 		return &onnx.ErrNotImplemented{
 			Operator: "maxpool",

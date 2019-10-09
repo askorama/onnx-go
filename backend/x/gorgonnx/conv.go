@@ -109,14 +109,16 @@ func (c *conv) apply(g *Graph, ns ...*Node) error {
 func (c *conv) init(o onnx.Operation) error {
 	autoPad, ok := o.Attributes["auto_pad"]
 	if ok {
-		switch autoPad.(string) {
-		case "NOTSET":
-		case "VALID":
-			c.pad = []int{0, 0}
-		default:
-			c.autopad = autoPad.(string)
-		}
+		c.autopad = autoPad.(string)
 	}
+	c.initKernelShape(o)
+	err := c.initPads(o)
+	c.initStrides(o)
+	c.initDilations(o)
+	return err
+}
+
+func (c *conv) initKernelShape(o onnx.Operation) {
 	kernelShape, ok := o.Attributes["kernel_shape"]
 	if ok {
 		if kernelShape, ok := kernelShape.([]int64); ok {
@@ -126,6 +128,9 @@ func (c *conv) init(o onnx.Operation) error {
 			}
 		}
 	}
+}
+
+func (c *conv) initPads(o onnx.Operation) error {
 	c.pad = []int{0, 0}
 	pad, ok := o.Attributes["pads"]
 	if ok {
@@ -151,6 +156,10 @@ func (c *conv) init(o onnx.Operation) error {
 			}
 		}
 	}
+	return nil
+}
+
+func (c *conv) initStrides(o onnx.Operation) {
 	c.stride = []int{1, 1}
 	stride, ok := o.Attributes["strides"]
 	if ok {
@@ -166,6 +175,9 @@ func (c *conv) init(o onnx.Operation) error {
 			}
 		}
 	}
+}
+
+func (c *conv) initDilations(o onnx.Operation) {
 	c.dilation = []int{1, 1}
 	dilation, ok := o.Attributes["dilations"]
 	if ok {
@@ -176,5 +188,4 @@ func (c *conv) init(o onnx.Operation) error {
 			}
 		}
 	}
-	return nil
 }

@@ -86,17 +86,11 @@ func (o *gemm) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 }
 
 func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
-	var a, b, c tensor.Tensor
-	var ok bool
-	if a, ok = inputs[0].(tensor.Tensor); !ok {
-		return nil, errors.New("gemm: not a tensor")
+	a, b, c, err := gorgoniaValueToTensors(inputs...)
+	if err != nil {
+		return nil, err
 	}
-	if b, ok = inputs[1].(tensor.Tensor); !ok {
-		return nil, errors.New("gemm: not a tensor")
-	}
-	if c, ok = inputs[2].(tensor.Tensor); !ok {
-		return nil, errors.New("gemm: not a tensor")
-	}
+
 	s, err := o.InferShape(a.Shape(), b.Shape(), c.Shape())
 	if err != nil {
 		return nil, err
@@ -154,21 +148,12 @@ func (o *gemm) do32(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	return tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend)), nil
 }
 func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
-	var a, b, c tensor.Tensor
-	var ok bool
-	if a, ok = inputs[0].(tensor.Tensor); !ok {
-		return nil, errors.New("gemm: not a tensor")
-	}
-	if b, ok = inputs[1].(tensor.Tensor); !ok {
-		return nil, errors.New("gemm: not a tensor")
-	}
-	if c, ok = inputs[2].(tensor.Tensor); !ok {
-		return nil, errors.New("gemm: not a tensor")
-	}
-	s, err := o.InferShape(a.Shape(), b.Shape(), c.Shape())
+	a, b, c, err := gorgoniaValueToTensors(inputs...)
 	if err != nil {
 		return nil, err
 	}
+
+	s, err := o.InferShape(a.Shape(), b.Shape(), c.Shape())
 	m := s[0]
 	n := s[1]
 	backend, ok := c.Data().([]float64)
@@ -223,6 +208,21 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 		})
 
 	return tensor.New(tensor.WithShape(m, n), tensor.WithBacking(backend)), nil
+}
+
+func gorgoniaValueToTensors(inputs ...gorgonia.Value) (tensor.Tensor, tensor.Tensor, tensor.Tensor, error) {
+	var a, b, c tensor.Tensor
+	var ok bool
+	if a, ok = inputs[0].(tensor.Tensor); !ok {
+		return nil, nil, nil, errors.New("gemm: not a tensor")
+	}
+	if b, ok = inputs[1].(tensor.Tensor); !ok {
+		return nil, nil, nil, errors.New("gemm: not a tensor")
+	}
+	if c, ok = inputs[2].(tensor.Tensor); !ok {
+		return nil, nil, nil, errors.New("gemm: not a tensor")
+	}
+	return a, b, c, nil
 }
 
 func (*gemm) ReturnsPtr() bool {
