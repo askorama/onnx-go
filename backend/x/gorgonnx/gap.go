@@ -84,42 +84,14 @@ func (g *gap) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 		output := tensor.New(tensor.Of(v.Dtype()), tensor.WithShape(s...))
 		switch v.Dtype() {
 		case tensor.Float64:
-			for b := 0; b < B; b++ {
-				for c := 0; c < C; c++ {
-					var sum float64
-					for h := 0; h < H; h++ {
-						for w := 0; w < W; w++ {
-							val, err := v.At(b, c, h, w)
-							if err != nil {
-								return nil, err
-							}
-							sum += val.(float64)
-						}
-					}
-					err := output.SetAt(sum/float64(H*W), b, c, 0, 0)
-					if err != nil {
-						return nil, err
-					}
-				}
+			err = setFloat64AtTensor(v, B, C, H, W, output)
+			if err != nil {
+				return nil, err
 			}
 		case tensor.Float32:
-			for b := 0; b < B; b++ {
-				for c := 0; c < C; c++ {
-					var sum float32
-					for h := 0; h < H; h++ {
-						for w := 0; w < W; w++ {
-							val, err := v.At(b, c, h, w)
-							if err != nil {
-								return nil, err
-							}
-							sum += val.(float32)
-						}
-					}
-					err := output.SetAt(sum/float32(H*W), b, c, 0, 0)
-					if err != nil {
-						return nil, err
-					}
-				}
+			err = setFloat32AtTensor(v, B, C, H, W, output)
+			if err != nil {
+				return nil, err
 			}
 		default:
 			return nil, &onnx.ErrNotImplemented{
@@ -136,6 +108,50 @@ func (g *gap) Do(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 			Message:  fmt.Sprintf("invalid input %v", inputs),
 		}
 	}
+}
+
+func setFloat64AtTensor(v tensor.Tensor, B, C, H, W int, output tensor.Tensor) error {
+	for b := 0; b < B; b++ {
+		for c := 0; c < C; c++ {
+			var sum float64
+			for h := 0; h < H; h++ {
+				for w := 0; w < W; w++ {
+					val, err := v.At(b, c, h, w)
+					if err != nil {
+						return err
+					}
+					sum += val.(float64)
+				}
+			}
+			err := output.SetAt(sum/float64(H*W), b, c, 0, 0)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func setFloat32AtTensor(v tensor.Tensor, B, C, H, W int, output tensor.Tensor) error {
+	for b := 0; b < B; b++ {
+		for c := 0; c < C; c++ {
+			var sum float32
+			for h := 0; h < H; h++ {
+				for w := 0; w < W; w++ {
+					val, err := v.At(b, c, h, w)
+					if err != nil {
+						return err
+					}
+					sum += val.(float32)
+				}
+			}
+			err := output.SetAt(sum/float32(H*W), b, c, 0, 0)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (g *gap) ReturnsPtr() bool {

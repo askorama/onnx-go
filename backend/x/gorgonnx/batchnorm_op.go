@@ -37,41 +37,48 @@ func (b *fastBatchnorm) InferShape(ns ...gorgonia.DimSizer) (tensor.Shape, error
 
 var errNotSupported = errors.New("not supported")
 
-func (b *fastBatchnorm) check(v gorgonia.Value) (*tensor.Dense, error) {
-	x, ok := v.(*tensor.Dense)
+func (b *fastBatchnorm) check(values ...gorgonia.Value) (*tensor.Dense, error) {
+	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
+	// output = scaleN * xNorm + biasN
+	if len(values) != b.Arity() {
+		return nil, errors.New("bad arity for fastBatchnorm")
+	}
+	x, ok := values[0].(*tensor.Dense)
 	if !ok {
 		return nil, errNotSupported
 	}
-
 	if len(x.Shape()) != 4 {
 		return nil, errNotSupported
 	}
 	if x.Shape()[0] != 1 {
 		return nil, errNotSupported
 	}
-	if b.scale == nil || b.bias == nil ||
-		b.mean == nil || b.varN == nil {
-		return nil, errNotSupported
-	}
-	if len(b.scale.Shape()) != 1 || len(b.bias.Shape()) != 1 ||
-		len(b.mean.Shape()) != 1 || len(b.varN.Shape()) != 1 {
-		return nil, errNotSupported
-	}
-	ch := x.Shape()[1]
-	if b.scale.Shape()[0] != ch || b.bias.Shape()[0] != ch ||
-		b.mean.Shape()[0] != ch || b.varN.Shape()[0] != ch {
-		return nil, errNotSupported
+	err := checkFastBatchnormWithDenseTensor(b, x)
+	if err != nil {
+		return nil, err
 	}
 	return x, nil
 }
 
-func (b *fastBatchnorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
-	// xNorm = (x - meanN) / sqrt( varN + b.epsilon)
-	// output = scaleN * xNorm + biasN
-	if len(values) != b.Arity() {
-		return nil, errors.New("bad arity for fastBatchnorm")
+func checkFastBatchnormWithDenseTensor(b *fastBatchnorm, x *tensor.Dense) error {
+	if b.scale == nil || b.bias == nil ||
+		b.mean == nil || b.varN == nil {
+		return errNotSupported
 	}
-	x, err := b.check(values[0])
+	if len(b.scale.Shape()) != 1 || len(b.bias.Shape()) != 1 ||
+		len(b.mean.Shape()) != 1 || len(b.varN.Shape()) != 1 {
+		return errNotSupported
+	}
+	ch := x.Shape()[1]
+	if b.scale.Shape()[0] != ch || b.bias.Shape()[0] != ch ||
+		b.mean.Shape()[0] != ch || b.varN.Shape()[0] != ch {
+		return errNotSupported
+	}
+	return nil
+}
+
+func (b *fastBatchnorm) Do(values ...gorgonia.Value) (gorgonia.Value, error) {
+	x, err := b.check(values...)
 	if err != nil {
 		return nil, err
 	}
