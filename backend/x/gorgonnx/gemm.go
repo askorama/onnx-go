@@ -154,6 +154,9 @@ func (o *gemm) do64(inputs ...gorgonia.Value) (gorgonia.Value, error) {
 	}
 
 	s, err := o.InferShape(a.Shape(), b.Shape(), c.Shape())
+	if err != nil {
+		return nil, err
+	}
 	m := s[0]
 	n := s[1]
 	backend, ok := c.Data().([]float64)
