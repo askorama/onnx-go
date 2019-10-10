@@ -20,12 +20,12 @@ func NewTestSliceDefaultAxes() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "starts", "ends"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Slice",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

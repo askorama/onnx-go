@@ -20,12 +20,12 @@ func NewTestNeg() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Neg",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

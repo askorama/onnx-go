@@ -20,16 +20,16 @@ func NewTestRoialign() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"X", "rois", "batch_indices"},
 		     Output:    []string{"Y"},
 		     Name:      "",
 		     OpType:    "RoiAlign",
-		     Attributes: ([]*pb.AttributeProto) (len=4 cap=4) {
-		    (*pb.AttributeProto)(0xc000236300)(name:"output_height" type:INT i:5 ),
-		    (*pb.AttributeProto)(0xc000236400)(name:"output_width" type:INT i:5 ),
-		    (*pb.AttributeProto)(0xc000236500)(name:"sampling_ratio" type:INT i:2 ),
-		    (*pb.AttributeProto)(0xc000236600)(name:"spatial_scale" type:FLOAT f:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
+		    (*ir.AttributeProto)(0xc000236300)(name:"output_height" type:INT i:5 ),
+		    (*ir.AttributeProto)(0xc000236400)(name:"output_width" type:INT i:5 ),
+		    (*ir.AttributeProto)(0xc000236500)(name:"sampling_ratio" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc000236600)(name:"spatial_scale" type:FLOAT f:1 )
 		   }
 		   ,
 		   },

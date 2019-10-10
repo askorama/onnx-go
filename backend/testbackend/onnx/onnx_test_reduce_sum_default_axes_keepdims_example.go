@@ -20,13 +20,13 @@ func NewTestReduceSumDefaultAxesKeepdimsExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data"},
 		     Output:    []string{"reduced"},
 		     Name:      "",
 		     OpType:    "ReduceSum",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000126c00)(name:"keepdims" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000126c00)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

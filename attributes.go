@@ -1,10 +1,10 @@
 package onnx
 
 import (
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
-func toOperationAttributes(attrs []*pb.AttributeProto) (map[string]interface{}, error) {
+func toOperationAttributes(attrs []*ir.AttributeProto) (map[string]interface{}, error) {
 	output := make(map[string]interface{}, len(attrs))
 	for _, attr := range attrs {
 		o, err := toOperationAttribute(attr)
@@ -16,46 +16,46 @@ func toOperationAttributes(attrs []*pb.AttributeProto) (map[string]interface{}, 
 	return output, nil
 }
 
-func toOperationAttribute(attr *pb.AttributeProto) (interface{}, error) {
+func toOperationAttribute(attr *ir.AttributeProto) (interface{}, error) {
 	switch attr.GetType() {
-	case pb.AttributeProto_UNDEFINED:
+	case ir.AttributeProto_UNDEFINED:
 		return struct{}{}, nil
-	case pb.AttributeProto_FLOAT:
+	case ir.AttributeProto_FLOAT:
 		return attr.GetF(), nil
-	case pb.AttributeProto_INT:
+	case ir.AttributeProto_INT:
 		return attr.GetI(), nil
-	case pb.AttributeProto_STRING:
+	case ir.AttributeProto_STRING:
 		return string(attr.GetS()), nil
-	case pb.AttributeProto_TENSOR:
+	case ir.AttributeProto_TENSOR:
 		return attr.GetT().Tensor()
-	case pb.AttributeProto_GRAPH:
+	case ir.AttributeProto_GRAPH:
 		return nil, &ErrNotImplemented{
 			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
-			Message:        "pb.AttributeProto_GRAPH not handled yet",
+			Message:        "ir.AttributeProto_GRAPH not handled yet",
 		}
-	case pb.AttributeProto_FLOATS:
+	case ir.AttributeProto_FLOATS:
 		return attr.GetFloats(), nil
-	case pb.AttributeProto_INTS:
+	case ir.AttributeProto_INTS:
 		return attr.GetInts(), nil
-	case pb.AttributeProto_STRINGS:
+	case ir.AttributeProto_STRINGS:
 		s := attr.GetStrings()
 		strings := make([]string, len(s))
 		for i := 0; i < len(s); i++ {
 			strings[i] = string(s[i])
 		}
 		return strings, nil
-	case pb.AttributeProto_TENSORS:
+	case ir.AttributeProto_TENSORS:
 		return nil, &ErrNotImplemented{
 			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
-			Message:        "pb.AttributeProto_TENSORS not handled yet",
+			Message:        "ir.AttributeProto_TENSORS not handled yet",
 		}
-	case pb.AttributeProto_GRAPHS:
+	case ir.AttributeProto_GRAPHS:
 		return nil, &ErrNotImplemented{
 			AttributeName:  attr.GetName(),
 			AttributeValue: attr,
-			Message:        "pb.AttributeProto_GRAPHS not handled yet",
+			Message:        "ir.AttributeProto_GRAPHS not handled yet",
 		}
 	default:
 		return nil, &ErrNotImplemented{

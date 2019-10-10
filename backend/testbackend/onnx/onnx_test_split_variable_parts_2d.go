@@ -20,14 +20,14 @@ func NewTestSplitVariableParts2d() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"input"},
 		     Output:    []string{"output_1", "output_2"},
 		     Name:      "",
 		     OpType:    "Split",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000126600)(name:"axis" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc000126700)(name:"split" type:INTS ints:2 ints:4 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000126600)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000126700)(name:"split" type:INTS ints:2 ints:4 )
 		   }
 		   ,
 		   },

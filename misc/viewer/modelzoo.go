@@ -7,7 +7,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/kr/pretty"
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	model := &pb.ModelProto{}
+	model := &ir.ModelProto{}
 	err = proto.Unmarshal(b, model)
 	if err != nil {
 		log.Fatal(err)

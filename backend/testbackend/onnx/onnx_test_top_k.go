@@ -20,12 +20,12 @@ func NewTestTopK() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "k"},
 		     Output:    []string{"values", "indices"},
 		     Name:      "",
 		     OpType:    "TopK",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

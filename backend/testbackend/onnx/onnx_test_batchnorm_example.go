@@ -20,12 +20,12 @@ func NewTestBatchnormExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "s", "bias", "mean", "var"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "BatchNormalization",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

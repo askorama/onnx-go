@@ -20,13 +20,13 @@ func NewTestConstantofshapeFloatOnes() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "ConstantOfShape",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000132400)(name:"value" type:TENSOR t:<dims:1 data_type:1 float_data:1 name:"value" > )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000132400)(name:"value" type:TENSOR t:<dims:1 data_type:1 float_data:1 name:"value" > )
 		   }
 		   ,
 		   },

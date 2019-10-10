@@ -20,14 +20,14 @@ func NewTestReduceLogSumExpKeepdimsRandom() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data"},
 		     Output:    []string{"reduced"},
 		     Name:      "",
 		     OpType:    "ReduceLogSumExp",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000118a00)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc000118b00)(name:"keepdims" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000118a00)(name:"axes" type:INTS ints:1 ),
+		    (*ir.AttributeProto)(0xc000118b00)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

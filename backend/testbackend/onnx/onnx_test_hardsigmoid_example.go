@@ -20,14 +20,14 @@ func NewTestHardsigmoidExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "HardSigmoid",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00023aa00)(name:"alpha" type:FLOAT f:0.5 ),
-		    (*pb.AttributeProto)(0xc00023ab00)(name:"beta" type:FLOAT f:0.6 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc00023aa00)(name:"alpha" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc00023ab00)(name:"beta" type:FLOAT f:0.6 )
 		   }
 		   ,
 		   },

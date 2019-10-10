@@ -20,12 +20,12 @@ func NewTestSubBcast() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "y"},
 		     Output:    []string{"z"},
 		     Name:      "",
 		     OpType:    "Sub",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

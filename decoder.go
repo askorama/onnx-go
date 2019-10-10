@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/gogo/protobuf/proto"
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 	"github.com/pkg/errors"
 	"gonum.org/v1/gonum/graph"
 	"gorgonia.org/tensor"
@@ -30,7 +30,7 @@ func NewModel(dst Backend) *Model {
 
 // UnmarshalBinary decodes the binary data in onnx format into the model
 func (m *Model) UnmarshalBinary(data []byte) error {
-	pbModel := &pb.ModelProto{}
+	pbModel := &ir.ModelProto{}
 	err := proto.Unmarshal(data, pbModel)
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func (m *Model) GetNodeByName(name string) (graph.Node, bool) {
 	return n, ok
 }
 
-func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
+func (m *Model) processValue(io *ir.ValueInfoProto) (graph.Node, error) {
 	if io == nil {
 		return nil, errors.New("cannot process nil value")
 	}
@@ -66,14 +66,14 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 	if ttype.GetShape() != nil {
 		var shape []int
 		for i := range ttype.Shape.Dim {
-			_, ok := ttype.Shape.Dim[i].GetValue().(*pb.TensorShapeProto_Dimension_DimValue)
+			_, ok := ttype.Shape.Dim[i].GetValue().(*ir.TensorShapeProto_Dimension_DimValue)
 			if ok {
 				shape = append(shape, int(ttype.Shape.Dim[i].GetDimValue()))
 			}
 		}
 		opts = append(opts, tensor.WithShape(shape...))
 	}
-	dtype, err := pb.TensorProto_DataType(ttype.GetElemType()).Dtype()
+	dtype, err := ir.TensorProto_DataType(ttype.GetElemType()).Dtype()
 	if err != nil {
 		return n, err
 	}
@@ -88,7 +88,7 @@ func (m *Model) processValue(io *pb.ValueInfoProto) (graph.Node, error) {
 }
 
 // decodeProto decode a protobuf definition inside the model
-func (m *Model) decodeProto(model *pb.ModelProto) error {
+func (m *Model) decodeProto(model *ir.ModelProto) error {
 	rv := reflect.ValueOf(m.backend)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return &InvalidUnmarshalError{reflect.TypeOf(m.backend)}
@@ -117,7 +117,7 @@ func (m *Model) decodeProto(model *pb.ModelProto) error {
 }
 
 // applyModelProtoGraph apply model proto graph tensors to model
-func (m *Model) applyModelProtoGraph(model *pb.ModelProto) error {
+func (m *Model) applyModelProtoGraph(model *ir.ModelProto) error {
 	m.Input = make([]int64, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
@@ -154,7 +154,7 @@ func (m *Model) applyModelProtoGraph(model *pb.ModelProto) error {
 }
 
 // applyModelProtoGraphTensors apply model proto graph tensors to model
-func (m *Model) applyModelProtoGraphTensors(model *pb.ModelProto) error {
+func (m *Model) applyModelProtoGraphTensors(model *ir.ModelProto) error {
 	for _, tensorProto := range model.Graph.GetInitializer() {
 		name := tensorProto.GetName()
 		if name == "" {
@@ -187,7 +187,7 @@ func (m *Model) applyModelProtoGraphTensors(model *pb.ModelProto) error {
 }
 
 // applyModelProtoGraphNodeOperations apply model proto graph node operations to model
-func (m *Model) applyModelProtoGraphNodeOperations(model *pb.ModelProto) error {
+func (m *Model) applyModelProtoGraphNodeOperations(model *ir.ModelProto) error {
 	dst := m.backend
 	for _, node := range model.Graph.Node {
 		outputNodes := make([]graph.Node, len(node.Output))
@@ -205,7 +205,7 @@ func (m *Model) applyModelProtoGraphNodeOperations(model *pb.ModelProto) error {
 			// If node is input-less, fake an input by creating an empty value
 			if len(node.Input) == 0 {
 				inputName := node.Name + "/input"
-				_, err := m.processValue(&pb.ValueInfoProto{
+				_, err := m.processValue(&ir.ValueInfoProto{
 					Name: inputName,
 				})
 				if err != nil {

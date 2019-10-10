@@ -20,12 +20,12 @@ func NewTestAtanExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Atan",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

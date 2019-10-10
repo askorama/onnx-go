@@ -20,12 +20,12 @@ func NewTestAddBcast() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "y"},
 		     Output:    []string{"sum"},
 		     Name:      "",
 		     OpType:    "Add",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

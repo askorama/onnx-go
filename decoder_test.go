@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 	"github.com/stretchr/testify/assert"
 	"gonum.org/v1/gonum/graph"
 	"gorgonia.org/tensor"
@@ -14,7 +14,7 @@ import (
 
 type testGraph struct {
 	name           string
-	onnxModelProto *pb.ModelProto
+	onnxModelProto *ir.ModelProto
 	expected       graph.WeightedDirected
 	err            error
 }
@@ -28,14 +28,14 @@ var tests = []testGraph{
 	},
 	{
 		name:           "empty model",
-		onnxModelProto: &pb.ModelProto{},
+		onnxModelProto: &ir.ModelProto{},
 		expected:       &testExpectedGraph{},
 		err:            errGraphIsNil,
 	},
 	{
 		name: "empty_graph",
-		onnxModelProto: &pb.ModelProto{
-			Graph: &pb.GraphProto{},
+		onnxModelProto: &ir.ModelProto{
+			Graph: &ir.GraphProto{},
 		},
 		expected: &testExpectedGraph{},
 		err:      errEmptyGraph,
@@ -43,9 +43,9 @@ var tests = []testGraph{
 	{
 		// A
 		name: "graph with no input",
-		onnxModelProto: &pb.ModelProto{
-			Graph: &pb.GraphProto{
-				Node: []*pb.NodeProto{
+		onnxModelProto: &ir.ModelProto{
+			Graph: &ir.GraphProto{
+				Node: []*ir.NodeProto{
 					{
 						Name: "A",
 					},
@@ -58,14 +58,14 @@ var tests = []testGraph{
 	{
 		// A
 		name: "graph with empty input",
-		onnxModelProto: &pb.ModelProto{
-			Graph: &pb.GraphProto{
-				Node: []*pb.NodeProto{
+		onnxModelProto: &ir.ModelProto{
+			Graph: &ir.GraphProto{
+				Node: []*ir.NodeProto{
 					{
 						Name: "A",
 					},
 				},
-				Input: []*pb.ValueInfoProto{},
+				Input: []*ir.ValueInfoProto{},
 			},
 		},
 		expected: &testExpectedGraph{},
@@ -76,24 +76,24 @@ var tests = []testGraph{
 		// A is the Output
 		// B is the Input
 		// A -> B
-		onnxModelProto: &pb.ModelProto{
-			Graph: &pb.GraphProto{
-				Node: []*pb.NodeProto{
+		onnxModelProto: &ir.ModelProto{
+			Graph: &ir.GraphProto{
+				Node: []*ir.NodeProto{
 					{
 						Name:   "output",
 						Input:  []string{"B"},
 						Output: []string{"A"},
 					},
 				},
-				Output: []*pb.ValueInfoProto{
+				Output: []*ir.ValueInfoProto{
 					{
 						Name: "A",
 					},
 				},
-				Initializer: []*pb.TensorProto{
+				Initializer: []*ir.TensorProto{
 					{
 						Name:      "B",
-						DataType:  pb.TensorProto_DataType_value["FLOAT"],
+						DataType:  ir.TensorProto_DataType_value["FLOAT"],
 						FloatData: []float32{0},
 					},
 				},
@@ -120,21 +120,21 @@ var tests = []testGraph{
 		// A is the Output
 		// B is the Input
 		// A -> B
-		onnxModelProto: &pb.ModelProto{
-			Graph: &pb.GraphProto{
-				Node: []*pb.NodeProto{
+		onnxModelProto: &ir.ModelProto{
+			Graph: &ir.GraphProto{
+				Node: []*ir.NodeProto{
 					{
 						Name:   "output",
 						Input:  []string{"B"},
 						Output: []string{"A"},
 					},
 				},
-				Output: []*pb.ValueInfoProto{
+				Output: []*ir.ValueInfoProto{
 					{
 						Name: "A",
 					},
 				},
-				Input: []*pb.ValueInfoProto{
+				Input: []*ir.ValueInfoProto{
 					{
 						Name: "B",
 					},
@@ -183,7 +183,7 @@ func TestUnmarshalBinary(t *testing.T) {
 	b := []byte{0}
 	err := m.UnmarshalBinary(b)
 	assert.Error(t, err, "Expected an error")
-	model := &pb.ModelProto{}
+	model := &ir.ModelProto{}
 	b, err = proto.Marshal(model)
 	assert.NoError(t, err)
 	err = m.UnmarshalBinary(b)
@@ -194,25 +194,25 @@ func TestProcessValue(t *testing.T) {
 	m := NewModel(newTestBackend())
 	_, err := m.processValue(nil)
 	assert.Error(t, err)
-	io := &pb.ValueInfoProto{
+	io := &ir.ValueInfoProto{
 		Name: "name",
-		Type: &pb.TypeProto{
-			Value: &pb.TypeProto_TensorType{
-				TensorType: &pb.TypeProto_Tensor{
-					ElemType: pb.AttributeProto_AttributeType_value["FLOAT"],
-					Shape: &pb.TensorShapeProto{
-						Dim: []*pb.TensorShapeProto_Dimension{
+		Type: &ir.TypeProto{
+			Value: &ir.TypeProto_TensorType{
+				TensorType: &ir.TypeProto_Tensor{
+					ElemType: ir.AttributeProto_AttributeType_value["FLOAT"],
+					Shape: &ir.TensorShapeProto{
+						Dim: []*ir.TensorShapeProto_Dimension{
 							{
-								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+								Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 							},
 							{
-								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 2},
+								Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 2},
 							},
 							{
-								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 3},
+								Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 3},
 							},
 							{
-								Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 4},
+								Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 4},
 							},
 						},
 					},

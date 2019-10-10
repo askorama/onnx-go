@@ -20,12 +20,12 @@ func NewTestFlattenDefaultAxis() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"a"},
 		     Output:    []string{"b"},
 		     Name:      "",
 		     OpType:    "Flatten",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

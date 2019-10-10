@@ -20,14 +20,14 @@ func NewTestSeluExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Selu",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000118e00)(name:"alpha" type:FLOAT f:2 ),
-		    (*pb.AttributeProto)(0xc000118f00)(name:"gamma" type:FLOAT f:3 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000118e00)(name:"alpha" type:FLOAT f:2 ),
+		    (*ir.AttributeProto)(0xc000118f00)(name:"gamma" type:FLOAT f:3 )
 		   }
 		   ,
 		   },

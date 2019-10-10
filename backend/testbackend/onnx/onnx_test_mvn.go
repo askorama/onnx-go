@@ -20,12 +20,12 @@ func NewTestMvn() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"X"},
 		     Output:    []string{"Y"},
 		     Name:      "",
 		     OpType:    "MeanVarianceNormalization",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

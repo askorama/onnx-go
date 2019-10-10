@@ -20,13 +20,13 @@ func NewTestConcat3dAxis2() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"value0", "value1"},
 		     Output:    []string{"output"},
 		     Name:      "",
 		     OpType:    "Concat",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc0003a0300)(name:"axis" type:INT i:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc0003a0300)(name:"axis" type:INT i:2 )
 		   }
 		   ,
 		   },

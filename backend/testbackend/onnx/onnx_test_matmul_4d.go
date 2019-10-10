@@ -20,12 +20,12 @@ func NewTestMatmul4d() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"a", "b"},
 		     Output:    []string{"c"},
 		     Name:      "",
 		     OpType:    "MatMul",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

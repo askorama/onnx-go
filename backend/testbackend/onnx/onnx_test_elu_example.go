@@ -20,13 +20,13 @@ func NewTestEluExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Elu",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000133500)(name:"alpha" type:FLOAT f:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000133500)(name:"alpha" type:FLOAT f:2 )
 		   }
 		   ,
 		   },

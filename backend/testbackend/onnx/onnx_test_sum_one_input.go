@@ -20,12 +20,12 @@ func NewTestSumOneInput() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data_0"},
 		     Output:    []string{"result"},
 		     Name:      "",
 		     OpType:    "Sum",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

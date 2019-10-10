@@ -20,14 +20,14 @@ func NewTestEdgePad() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Pad",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000119f00)(name:"mode" type:STRING s:"edge" ),
-		    (*pb.AttributeProto)(0xc000132300)(name:"pads" type:INTS ints:0 ints:0 ints:1 ints:1 ints:0 ints:0 ints:1 ints:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000119f00)(name:"mode" type:STRING s:"edge" ),
+		    (*ir.AttributeProto)(0xc000132300)(name:"pads" type:INTS ints:0 ints:0 ints:1 ints:1 ints:0 ints:0 ints:1 ints:1 )
 		   }
 		   ,
 		   },

@@ -20,12 +20,12 @@ func NewTestSplitEqualPartsDefaultAxis() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"input"},
 		     Output:    []string{"output_1", "output_2", "output_3"},
 		     Name:      "",
 		     OpType:    "Split",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

@@ -20,13 +20,13 @@ func NewTestSqueeze() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Squeeze",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000119d00)(name:"axes" type:INTS ints:0 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000119d00)(name:"axes" type:INTS ints:0 )
 		   }
 		   ,
 		   },

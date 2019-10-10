@@ -20,14 +20,14 @@ func NewTestAveragepool2dSameLower() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "AveragePool",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000127200)(name:"auto_pad" type:STRING s:"SAME_LOWER" ),
-		    (*pb.AttributeProto)(0xc000127300)(name:"kernel_shape" type:INTS ints:2 ints:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000127200)(name:"auto_pad" type:STRING s:"SAME_LOWER" ),
+		    (*ir.AttributeProto)(0xc000127300)(name:"kernel_shape" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

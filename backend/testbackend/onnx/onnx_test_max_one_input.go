@@ -20,12 +20,12 @@ func NewTestMaxOneInput() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data_0"},
 		     Output:    []string{"result"},
 		     Name:      "",
 		     OpType:    "Max",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

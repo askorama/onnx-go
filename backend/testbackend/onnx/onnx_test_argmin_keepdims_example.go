@@ -20,14 +20,14 @@ func NewTestArgminKeepdimsExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data"},
 		     Output:    []string{"result"},
 		     Name:      "",
 		     OpType:    "ArgMin",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000434000)(name:"axis" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc000434100)(name:"keepdims" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000434000)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000434100)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

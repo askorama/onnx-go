@@ -20,12 +20,12 @@ func NewTestSliceEndOutOfBounds() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "starts", "ends", "axes", "steps"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Slice",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

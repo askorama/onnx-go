@@ -20,12 +20,12 @@ func NewTestOnehotWithoutAxis() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"indices", "depth", "values"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "OneHot",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

@@ -20,14 +20,14 @@ func NewTestBasicConvWithoutPadding() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "W"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Conv",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000132d00)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*pb.AttributeProto)(0xc000132e00)(name:"pads" type:INTS ints:0 ints:0 ints:0 ints:0 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000132d00)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*ir.AttributeProto)(0xc000132e00)(name:"pads" type:INTS ints:0 ints:0 ints:0 ints:0 )
 		   }
 		   ,
 		   },

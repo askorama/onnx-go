@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
 func TestNewTestArgmaxDefaultAxisRandom(t *testing.T) {
 	mytest := NewTestArgmaxDefaultAxisRandom()
-	var model pb.ModelProto
+	var model ir.ModelProto
 	err := proto.Unmarshal(mytest.ModelB, &model)
 	if err != nil {
 		t.Fatal(err)

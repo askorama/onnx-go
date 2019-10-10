@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 	"github.com/sanity-io/litter"
 )
 
@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var m pb.ModelProto
+	var m ir.ModelProto
 	err = m.XXX_Unmarshal(b)
 	if err != nil {
 		log.Fatal(err)

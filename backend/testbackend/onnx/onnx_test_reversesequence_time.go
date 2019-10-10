@@ -20,14 +20,14 @@ func NewTestReversesequenceTime() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "sequence_lens"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "ReverseSequence",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000358a00)(name:"batch_axis" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc000358b00)(name:"time_axis" type:INT )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000358a00)(name:"batch_axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000358b00)(name:"time_axis" type:INT )
 		   }
 		   ,
 		   },
