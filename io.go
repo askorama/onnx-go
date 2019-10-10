@@ -1,7 +1,7 @@
 package onnx
 
 import (
-	fmt "fmt"
+	"fmt"
 
 	"gorgonia.org/tensor"
 )

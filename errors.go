@@ -1,7 +1,7 @@
 package onnx
 
 import (
-	fmt "fmt"
+	"fmt"
 	"reflect"
 
 	"github.com/pkg/errors"

@@ -1,7 +1,7 @@
 package pb
 
 import (
-	fmt "fmt"
+	"fmt"
 
 	"github.com/pkg/errors"
 )

@@ -1,7 +1,7 @@
 package onnx_test
 
 import (
-	fmt "fmt"
+	"fmt"
 	"io/ioutil"
 	"log"
 

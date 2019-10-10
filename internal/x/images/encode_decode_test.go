@@ -14,7 +14,7 @@ type circle struct {
 }
 
 func (c *circle) brightness(x, y float64) uint8 {
-	var dx, dy float64 = c.X - x, c.Y - y
+	dx, dy := c.X-x, c.Y-y
 	d := math.Sqrt(dx*dx+dy*dy) / c.R
 	if d > 1 {
 		return 0
@@ -23,8 +23,8 @@ func (c *circle) brightness(x, y float64) uint8 {
 }
 
 func generateImageForTesting() image.Image {
-	var w, h int = 280, 240
-	var hw, hh float64 = float64(w / 2), float64(h / 2)
+	w, h := 280, 240
+	hw, hh := float64(w/2), float64(h/2)
 	r := 40.0
 	θ := 2 * math.Pi / 3
 	cr := &circle{hw - r*math.Sin(0), hh - r*math.Cos(0), 60}

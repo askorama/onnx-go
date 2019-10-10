@@ -13,8 +13,7 @@ if (isParentWindow) {
     localStorage.clear();
     if (notesWindow) notesWindow.close();
   }
-};
-
+}
 function toggleNotesWindow() {
   if (!isParentWindow) return;
   if (notesWindow) {
@@ -24,8 +23,7 @@ function toggleNotesWindow() {
   }
 
   initNotes();
-};
-
+}
 function initNotes() {
   notesWindow = window.open('', '', 'width=1000,height=700');
   var w = notesWindow;
@@ -77,8 +75,7 @@ function initNotes() {
   // Add listener on notesWindow to update notes when triggered from
   // parent window
   w.addEventListener('storage', updateNotes, false);
-};
-
+}
 function formatNotes(notes) {
   var formattedNotes = '';
   if (notes) {
@@ -87,8 +84,7 @@ function formatNotes(notes) {
     }
   }
   return formattedNotes;
-};
-
+}
 function updateNotes() {
   // When triggered from parent window, notesWindow is null
   // The storage event listener on notesWindow will update notes
@@ -106,8 +102,7 @@ function updateNotes() {
   }  else {
     el.innerHTML = '';
   }
-};
-
+}
 /* Playground syncing */
 
 // When presenter notes are enabled, playground click handlers are
@@ -136,8 +131,7 @@ function updatePlay(e) {
 			out.style = localStorage.getItem('output-style');
 			return;
 	}
-};
-
+}
 // Reset 'run', 'kill', 'close' storage items when synced
 // so that successive actions can be synced correctly
 function updatePlayStorage(action, index, e) {
@@ -158,4 +152,4 @@ function updatePlayStorage(action, index, e) {
 			localStorage.setItem('play-shiftKey', e.shiftKey);
 		}
 	}
-};
+}
