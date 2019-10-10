@@ -42,6 +42,8 @@ func (c *conv) apply(g *Graph, ns ...*Node) error {
 	switch c.autopad {
 	case "NOTSET":
 	case "":
+	case "VALID":
+		c.pad = []int{0, 0}
 	case "SAME_UPPER":
 		for i, v := range children[0].gorgoniaNode.Shape()[2:] {
 			outputD := ceilDivInt(v, c.stride[i])
