@@ -15,5 +15,5 @@ func Coverage(tests []*testbackend.TestCase) float64 {
 			tested++
 		}
 	}
-	return (float64(100) - skipped*float64(100)/tested)
+	return float64(100) - skipped*float64(100)/tested
 }
