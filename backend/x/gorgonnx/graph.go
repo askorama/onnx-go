@@ -7,6 +7,8 @@ import (
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gorgonia.org/gorgonia"
+
+	xvm "gorgonia.org/gorgonia/x/vm"
 	"gorgonia.org/tensor"
 )
 
@@ -58,9 +60,8 @@ func (g *Graph) Run() error {
 		}
 	}
 	if g.m == nil {
-		g.m = gorgonia.NewTapeMachine(g.exprgraph)
-	} else {
-		g.m.Reset()
+		//g.m = gorgonia.NewTapeMachine(g.exprgraph)
+		g.m = xvm.NewGoMachine(g.exprgraph)
 	}
 
 	err := g.m.RunAll()

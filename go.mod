@@ -22,6 +22,6 @@ require (
 	golang.org/x/net v0.0.0-20190611141213-3f473d35a33a // indirect
 	golang.org/x/tools v0.0.0-20190606124116-d0a3d012864b
 	gonum.org/v1/gonum v0.0.0-20190606121551-14af50e936aa
-	gorgonia.org/gorgonia v0.9.3 //indirect
+	gorgonia.org/gorgonia v0.9.4-0.20191012062525-c66230060887
 	gorgonia.org/tensor v0.9.0-beta
 )
