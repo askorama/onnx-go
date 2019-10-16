@@ -38,34 +38,9 @@ func (c *conv) apply(g *Graph, ns ...*Node) error {
 	if len(children) < 2 || len(children) > 3 {
 		return errors.New("Conv: bad arity")
 	}
-	// autopadding needs to be applied now because it needs to be aware of the shape of the nodes
-	switch c.autopad {
-	case "NOTSET":
-	case "":
-	case "VALID":
-		c.pad = []int{0, 0}
-	case "SAME_UPPER":
-		for i, v := range children[0].gorgoniaNode.Shape()[2:] {
-			outputD := ceilDivInt(v, c.stride[i])
-			c.pad[i] = (outputD-1)*c.stride[i] + (c.kernelShape[i]-1)*c.dilation[i] + 1 - v
-			if c.pad[i] < 0 {
-				c.pad[i] = 0
-			}
-			if c.pad[i]%2 != 0 {
-				return &onnx.ErrNotImplemented{
-					Operator:       "conv",
-					AttributeName:  "pads",
-					AttributeValue: c.pad[i],
-					Message:        "Asymetric padding",
-				}
-			}
-			c.pad[i] /= 2
-		}
-	default:
-		return &onnx.ErrNotImplemented{
-			Operator: "Conv",
-			Message:  "auto_pad " + c.autopad + " not implemented",
-		}
+	err = c.autopadding(children)
+	if err != nil {
+		return err
 	}
 	convN, err := nnops.Conv2d(
 		children[0].gorgoniaNode,
@@ -104,6 +79,39 @@ func (c *conv) apply(g *Graph, ns ...*Node) error {
 		}
 	} else {
 		n.gorgoniaNode = convN
+	}
+	return nil
+}
+
+// autopadding needs to be applied now because it needs to be aware of the shape of the nodes
+func (c *conv) autopadding(children []*Node) error {
+	switch c.autopad {
+	case "NOTSET":
+	case "":
+	case "VALID":
+		c.pad = []int{0, 0}
+	case "SAME_UPPER":
+		for i, v := range children[0].gorgoniaNode.Shape()[2:] {
+			outputD := ceilDivInt(v, c.stride[i])
+			c.pad[i] = (outputD-1)*c.stride[i] + (c.kernelShape[i]-1)*c.dilation[i] + 1 - v
+			if c.pad[i] < 0 {
+				c.pad[i] = 0
+			}
+			if c.pad[i]%2 != 0 {
+				return &onnx.ErrNotImplemented{
+					Operator:       "conv",
+					AttributeName:  "pads",
+					AttributeValue: c.pad[i],
+					Message:        "Asymetric padding",
+				}
+			}
+			c.pad[i] /= 2
+		}
+	default:
+		return &onnx.ErrNotImplemented{
+			Operator: "Conv",
+			Message:  "auto_pad " + c.autopad + " not implemented",
+		}
 	}
 	return nil
 }
