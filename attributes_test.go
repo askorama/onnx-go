@@ -3,7 +3,7 @@ package onnx
 import (
 	"testing"
 
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,36 +21,36 @@ import (
 	AttributeProto_GRAPHS    AttributeProto_AttributeType = 10
 */
 
-func GetTestPBAttributeProto() []*pb.AttributeProto {
-	return []*pb.AttributeProto{
+func GetTestPBAttributeProto() []*ir.AttributeProto {
+	return []*ir.AttributeProto{
 		{
 			Name:   "floats",
-			Type:   pb.AttributeProto_FLOATS,
+			Type:   ir.AttributeProto_FLOATS,
 			Floats: []float32{1, 2},
 		},
 		{
 			Name: "float",
-			Type: pb.AttributeProto_FLOAT,
+			Type: ir.AttributeProto_FLOAT,
 			F:    1,
 		},
 		{
 			Name: "int",
-			Type: pb.AttributeProto_INT,
+			Type: ir.AttributeProto_INT,
 			I:    1,
 		},
 		{
 			Name: "ints",
-			Type: pb.AttributeProto_INTS,
+			Type: ir.AttributeProto_INTS,
 			Ints: []int64{1, 2},
 		},
 		{
 			Name: "string",
-			Type: pb.AttributeProto_STRING,
+			Type: ir.AttributeProto_STRING,
 			S:    []byte("a"),
 		},
 		{
 			Name:    "strings",
-			Type:    pb.AttributeProto_STRINGS,
+			Type:    ir.AttributeProto_STRINGS,
 			Strings: [][]byte{[]byte("a"), []byte("b")},
 		},
 	}
@@ -126,30 +126,30 @@ func TestToOperationAttributes_Float(t *testing.T) {
 }
 
 func TestToOperationAttributes_NotImplemented(t *testing.T) {
-	_, err := toOperationAttributes([]*pb.AttributeProto{
+	_, err := toOperationAttributes([]*ir.AttributeProto{
 		{
-			Type: pb.AttributeProto_GRAPH,
+			Type: ir.AttributeProto_GRAPH,
 		},
 	})
 	_, ok := err.(*ErrNotImplemented)
 	assert.True(t, ok)
-	_, err = toOperationAttributes([]*pb.AttributeProto{
+	_, err = toOperationAttributes([]*ir.AttributeProto{
 		{
-			Type: pb.AttributeProto_TENSORS,
+			Type: ir.AttributeProto_TENSORS,
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
 	assert.True(t, ok)
-	_, err = toOperationAttributes([]*pb.AttributeProto{
+	_, err = toOperationAttributes([]*ir.AttributeProto{
 		{
-			Type: pb.AttributeProto_GRAPHS,
+			Type: ir.AttributeProto_GRAPHS,
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
 	assert.True(t, ok)
-	_, err = toOperationAttributes([]*pb.AttributeProto{
+	_, err = toOperationAttributes([]*ir.AttributeProto{
 		{
-			Type: pb.AttributeProto_AttributeType(-1),
+			Type: ir.AttributeProto_AttributeType(-1),
 		},
 	})
 	_, ok = err.(*ErrNotImplemented)
@@ -157,7 +157,7 @@ func TestToOperationAttributes_NotImplemented(t *testing.T) {
 }
 
 func TestToOperationAttributes_Undefined(t *testing.T) {
-	attrs, err := toOperationAttributes([]*pb.AttributeProto{
+	attrs, err := toOperationAttributes([]*ir.AttributeProto{
 		nil,
 	})
 	assert.NoError(t, err)

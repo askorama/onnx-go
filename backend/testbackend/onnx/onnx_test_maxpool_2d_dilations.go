@@ -20,15 +20,15 @@ func NewTestMaxpool2dDilations() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "MaxPool",
-		     Attributes: ([]*pb.AttributeProto) (len=3 cap=4) {
-		    (*pb.AttributeProto)(0xc000126100)(name:"dilations" type:INTS ints:2 ints:2 ),
-		    (*pb.AttributeProto)(0xc000126300)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
-		    (*pb.AttributeProto)(0xc000126400)(name:"strides" type:INTS ints:1 ints:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
+		    (*ir.AttributeProto)(0xc000126100)(name:"dilations" type:INTS ints:2 ints:2 ),
+		    (*ir.AttributeProto)(0xc000126300)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
+		    (*ir.AttributeProto)(0xc000126400)(name:"strides" type:INTS ints:1 ints:1 )
 		   }
 		   ,
 		   },

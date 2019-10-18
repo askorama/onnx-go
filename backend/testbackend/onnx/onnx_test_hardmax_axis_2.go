@@ -20,13 +20,13 @@ func NewTestHardmaxAxis2() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Hardmax",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc00023a400)(name:"axis" type:INT i:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc00023a400)(name:"axis" type:INT i:2 )
 		   }
 		   ,
 		   },

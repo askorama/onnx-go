@@ -30,13 +30,13 @@ func TestMain(m *testing.M) {
 		log.Println(err)
 		os.Exit(0)
 	}
-	inputFile := filepath.Join(dir, "test_data_set_0/input_0.pb")
+	inputFile := filepath.Join(dir, "test_data_set_0/input_0.ir")
 	input, err = ioutil.ReadFile(inputFile)
 	if err != nil {
 		log.Println(err)
 		os.Exit(0)
 	}
-	outputFile := filepath.Join(dir, "test_data_set_0/output_0.pb")
+	outputFile := filepath.Join(dir, "test_data_set_0/output_0.ir")
 	output, err = ioutil.ReadFile(outputFile)
 	if err != nil {
 		log.Println(err)

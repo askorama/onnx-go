@@ -3,13 +3,13 @@ package onnx
 import (
 	"testing"
 
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
 func TestDecodeProto_inputless(t *testing.T) {
-	proto := &pb.ModelProto{
+	proto := &ir.ModelProto{
 		IrVersion: 3,
-		OpsetImport: []*pb.OperatorSetIdProto{
+		OpsetImport: []*ir.OperatorSetIdProto{
 			{
 				Domain:  "",
 				Version: 9,
@@ -20,8 +20,8 @@ func TestDecodeProto_inputless(t *testing.T) {
 		Domain:          "",
 		ModelVersion:    0,
 		DocString:       "",
-		Graph: &pb.GraphProto{
-			Node: []*pb.NodeProto{
+		Graph: &ir.GraphProto{
+			Node: []*ir.NodeProto{
 				{
 					Input: nil,
 					Output: []string{
@@ -30,7 +30,7 @@ func TestDecodeProto_inputless(t *testing.T) {
 					Name:   "",
 					OpType: "Constant",
 					Domain: "",
-					Attribute: []*pb.AttributeProto{
+					Attribute: []*ir.AttributeProto{
 						{
 							Name:        "value",
 							RefAttrName: "",
@@ -39,7 +39,7 @@ func TestDecodeProto_inputless(t *testing.T) {
 							F:           0,
 							I:           0,
 							S:           nil,
-							T: &pb.TensorProto{
+							T: &ir.TensorProto{
 								Dims: []int64{
 									5,
 									5,
@@ -97,23 +97,23 @@ func TestDecodeProto_inputless(t *testing.T) {
 			Initializer: nil,
 			DocString:   "",
 			Input:       nil,
-			Output: []*pb.ValueInfoProto{
+			Output: []*ir.ValueInfoProto{
 				{
 					Name: "values",
-					Type: &pb.TypeProto{
-						Value: &pb.TypeProto_TensorType{
-							TensorType: &pb.TypeProto_Tensor{
+					Type: &ir.TypeProto{
+						Value: &ir.TypeProto_TensorType{
+							TensorType: &ir.TypeProto_Tensor{
 								ElemType: 1,
-								Shape: &pb.TensorShapeProto{
-									Dim: []*pb.TensorShapeProto_Dimension{
+								Shape: &ir.TensorShapeProto{
+									Dim: []*ir.TensorShapeProto_Dimension{
 										{
-											Value: &pb.TensorShapeProto_Dimension_DimValue{
+											Value: &ir.TensorShapeProto_Dimension_DimValue{
 												DimValue: 5,
 											},
 											Denotation: "",
 										},
 										{
-											Value: &pb.TensorShapeProto_Dimension_DimValue{
+											Value: &ir.TensorShapeProto_Dimension_DimValue{
 												DimValue: 5,
 											},
 											Denotation: "",

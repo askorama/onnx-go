@@ -20,14 +20,14 @@ func NewTestEyelikePopulateOffMainDiagonal() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "EyeLike",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000119600)(name:"dtype" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc000119700)(name:"k" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000119600)(name:"dtype" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000119700)(name:"k" type:INT i:1 )
 		   }
 		   ,
 		   },

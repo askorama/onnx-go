@@ -20,12 +20,12 @@ func NewTestReshapeNegativeDim() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data", "shape"},
 		     Output:    []string{"reshaped"},
 		     Name:      "",
 		     OpType:    "Reshape",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

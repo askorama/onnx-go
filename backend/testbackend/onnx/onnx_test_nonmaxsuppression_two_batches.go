@@ -20,12 +20,12 @@ func NewTestNonmaxsuppressionTwoBatches() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"boxes", "scores", "max_output_boxes_per_class", "iou_threshold", "score_threshold"},
 		     Output:    []string{"selected_indices"},
 		     Name:      "",
 		     OpType:    "NonMaxSuppression",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

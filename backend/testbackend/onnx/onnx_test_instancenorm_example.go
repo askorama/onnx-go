@@ -20,12 +20,12 @@ func NewTestInstancenormExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "s", "bias"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "InstanceNormalization",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

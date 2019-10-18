@@ -20,12 +20,12 @@ func NewTestReduceLogSumDefault() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data"},
 		     Output:    []string{"reduced"},
 		     Name:      "",
 		     OpType:    "ReduceLogSum",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

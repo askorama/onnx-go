@@ -20,12 +20,12 @@ func NewTestPowExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "y"},
 		     Output:    []string{"z"},
 		     Name:      "",
 		     OpType:    "Pow",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

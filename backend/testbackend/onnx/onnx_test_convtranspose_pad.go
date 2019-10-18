@@ -20,14 +20,14 @@ func NewTestConvtransposePad() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"X", "W"},
 		     Output:    []string{"Y"},
 		     Name:      "",
 		     OpType:    "ConvTranspose",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000118e00)(name:"output_padding" type:INTS ints:1 ints:1 ),
-		    (*pb.AttributeProto)(0xc000118f00)(name:"strides" type:INTS ints:3 ints:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000118e00)(name:"output_padding" type:INTS ints:1 ints:1 ),
+		    (*ir.AttributeProto)(0xc000118f00)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

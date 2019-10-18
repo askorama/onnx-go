@@ -20,16 +20,16 @@ func NewTestConvtransposeWithKernel() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "w"},
 		     Output:    []string{"y"},
 		     Name:      "test",
 		     OpType:    "ConvTranspose",
-		     Attributes: ([]*pb.AttributeProto) (len=4 cap=4) {
-		    (*pb.AttributeProto)(0xc00045bb00)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*pb.AttributeProto)(0xc00045bc00)(name:"output_padding" type:INTS ints:1 ints:1 ),
-		    (*pb.AttributeProto)(0xc00045bd00)(name:"output_shape" type:INTS ints:10 ints:8 ),
-		    (*pb.AttributeProto)(0xc00045be00)(name:"strides" type:INTS ints:3 ints:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
+		    (*ir.AttributeProto)(0xc00045bb00)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*ir.AttributeProto)(0xc00045bc00)(name:"output_padding" type:INTS ints:1 ints:1 ),
+		    (*ir.AttributeProto)(0xc00045bd00)(name:"output_shape" type:INTS ints:10 ints:8 ),
+		    (*ir.AttributeProto)(0xc00045be00)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

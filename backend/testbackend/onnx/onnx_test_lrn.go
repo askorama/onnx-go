@@ -20,16 +20,16 @@ func NewTestLrn() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "LRN",
-		     Attributes: ([]*pb.AttributeProto) (len=4 cap=4) {
-		    (*pb.AttributeProto)(0xc000133e00)(name:"alpha" type:FLOAT f:0.0002 ),
-		    (*pb.AttributeProto)(0xc000133f00)(name:"beta" type:FLOAT f:0.5 ),
-		    (*pb.AttributeProto)(0xc000126000)(name:"bias" type:FLOAT f:2 ),
-		    (*pb.AttributeProto)(0xc000126100)(name:"size" type:INT i:3 )
+		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
+		    (*ir.AttributeProto)(0xc000133e00)(name:"alpha" type:FLOAT f:0.0002 ),
+		    (*ir.AttributeProto)(0xc000133f00)(name:"beta" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc000126000)(name:"bias" type:FLOAT f:2 ),
+		    (*ir.AttributeProto)(0xc000126100)(name:"size" type:INT i:3 )
 		   }
 		   ,
 		   },

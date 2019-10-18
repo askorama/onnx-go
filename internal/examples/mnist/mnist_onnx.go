@@ -1,13 +1,13 @@
 package mnist
 
 import (
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
 // Mnist model represented in an onnx compatible format
-var Mnist = &pb.ModelProto{
+var Mnist = &ir.ModelProto{
 	IrVersion: 3,
-	OpsetImport: []*pb.OperatorSetIdProto{
+	OpsetImport: []*ir.OperatorSetIdProto{
 		{
 			Domain:  "",
 			Version: 7,
@@ -17,8 +17,8 @@ var Mnist = &pb.ModelProto{
 	ProducerVersion: "2.5.1",
 	Domain:          "ai.cntk",
 	ModelVersion:    1,
-	Graph: &pb.GraphProto{
-		Node: []*pb.NodeProto{
+	Graph: &ir.GraphProto{
+		Node: []*ir.NodeProto{
 			{
 				Input:     []string{"Parameter193", "Parameter193_reshape1_shape"},
 				Output:    []string{"Parameter193_reshape1"},
@@ -33,7 +33,7 @@ var Mnist = &pb.ModelProto{
 				Name:   "Convolution28",
 				OpType: "Conv",
 				Domain: "",
-				Attribute: []*pb.AttributeProto{
+				Attribute: []*ir.AttributeProto{
 					{
 						Name: "kernel_shape",
 						Type: 7,
@@ -84,7 +84,7 @@ var Mnist = &pb.ModelProto{
 				Name:   "Pooling66",
 				OpType: "MaxPool",
 				Domain: "",
-				Attribute: []*pb.AttributeProto{
+				Attribute: []*ir.AttributeProto{
 					{
 						Name: "kernel_shape",
 						Type: 7,
@@ -114,7 +114,7 @@ var Mnist = &pb.ModelProto{
 				Name:   "Convolution110",
 				OpType: "Conv",
 				Domain: "",
-				Attribute: []*pb.AttributeProto{
+				Attribute: []*ir.AttributeProto{
 					{
 						Name: "kernel_shape",
 						Type: 7,
@@ -165,7 +165,7 @@ var Mnist = &pb.ModelProto{
 				Name:   "Pooling160",
 				OpType: "MaxPool",
 				Domain: "",
-				Attribute: []*pb.AttributeProto{
+				Attribute: []*ir.AttributeProto{
 					{
 						Name: "kernel_shape",
 						Type: 7,
@@ -215,7 +215,7 @@ var Mnist = &pb.ModelProto{
 			},
 		},
 		Name: "CNTKGraph",
-		Initializer: []*pb.TensorProto{
+		Initializer: []*ir.TensorProto{
 			{
 				Dims:      []int64{16, 4, 4, 10},
 				DataType:  1,
@@ -265,26 +265,26 @@ var Mnist = &pb.ModelProto{
 				Name:      "Parameter194",
 			},
 		},
-		Input: []*pb.ValueInfoProto{
+		Input: []*ir.ValueInfoProto{
 			{
 				Name: "Input3",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 								},
 							},
@@ -294,23 +294,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter5",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 5},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 5},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 5},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 5},
 									},
 								},
 							},
@@ -320,20 +320,20 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter6",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 								},
 							},
@@ -343,23 +343,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter87",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 5},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 5},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 5},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 5},
 									},
 								},
 							},
@@ -369,20 +369,20 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter88",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 								},
 							},
@@ -392,14 +392,14 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Pooling160_Output_0_reshape0_shape",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 7,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 2},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 2},
 									},
 								},
 							},
@@ -409,23 +409,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter193",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 4},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 4},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 4},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 4},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 10},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 10},
 									},
 								},
 							},
@@ -435,14 +435,14 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter193_reshape1_shape",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 7,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 2},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 2},
 									},
 								},
 							},
@@ -452,17 +452,17 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter194",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 10},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 10},
 									},
 								},
 							},
@@ -471,20 +471,20 @@ var Mnist = &pb.ModelProto{
 				},
 			},
 		},
-		Output: []*pb.ValueInfoProto{
+		Output: []*ir.ValueInfoProto{
 			{
 				Name: "Plus214_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 10},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 10},
 									},
 								},
 							},
@@ -493,26 +493,26 @@ var Mnist = &pb.ModelProto{
 				},
 			},
 		},
-		ValueInfo: []*pb.ValueInfoProto{
+		ValueInfo: []*ir.ValueInfoProto{
 			{
 				Name: "Convolution28_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 								},
 							},
@@ -522,23 +522,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Plus30_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 								},
 							},
@@ -548,23 +548,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "ReLU32_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 28},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 28},
 									},
 								},
 							},
@@ -574,23 +574,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Pooling66_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 8},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 8},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 								},
 							},
@@ -600,23 +600,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Convolution110_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 								},
 							},
@@ -626,23 +626,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Plus112_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 								},
 							},
@@ -652,23 +652,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "ReLU114_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 14},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 14},
 									},
 								},
 							},
@@ -678,23 +678,23 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Pooling160_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 16},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 16},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 4},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 4},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 4},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 4},
 									},
 								},
 							},
@@ -704,17 +704,17 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Pooling160_Output_0_reshape0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 256},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 256},
 									},
 								},
 							},
@@ -724,17 +724,17 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Parameter193_reshape1",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 256},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 256},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 10},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 10},
 									},
 								},
 							},
@@ -744,17 +744,17 @@ var Mnist = &pb.ModelProto{
 			},
 			{
 				Name: "Times212_Output_0",
-				Type: &pb.TypeProto{
-					Value: &pb.TypeProto_TensorType{
-						TensorType: &pb.TypeProto_Tensor{
+				Type: &ir.TypeProto{
+					Value: &ir.TypeProto_TensorType{
+						TensorType: &ir.TypeProto_Tensor{
 							ElemType: 1,
-							Shape: &pb.TensorShapeProto{
-								Dim: []*pb.TensorShapeProto_Dimension{
+							Shape: &ir.TensorShapeProto{
+								Dim: []*ir.TensorShapeProto_Dimension{
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 1},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 1},
 									},
 									{
-										Value: &pb.TensorShapeProto_Dimension_DimValue{DimValue: 10},
+										Value: &ir.TensorShapeProto_Dimension_DimValue{DimValue: 10},
 									},
 								},
 							},

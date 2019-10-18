@@ -21,7 +21,7 @@ type nodeTest struct {
 	description string
 	value       tensor.Tensor
 	opType      string
-	//attributes  []*pb.Attribute
+	//attributes  []*ir.Attribute
 }
 
 func (n *nodeTest) SetTensor(t tensor.Tensor) error {

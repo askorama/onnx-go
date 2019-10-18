@@ -20,12 +20,12 @@ func NewTestMulExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "y"},
 		     Output:    []string{"z"},
 		     Name:      "",
 		     OpType:    "Mul",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

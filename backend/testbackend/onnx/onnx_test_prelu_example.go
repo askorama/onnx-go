@@ -20,12 +20,12 @@ func NewTestPreluExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x", "slope"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "PRelu",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

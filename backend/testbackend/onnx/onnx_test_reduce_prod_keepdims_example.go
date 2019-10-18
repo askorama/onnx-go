@@ -20,14 +20,14 @@ func NewTestReduceProdKeepdimsExample() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data"},
 		     Output:    []string{"reduced"},
 		     Name:      "",
 		     OpType:    "ReduceProd",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000126500)(name:"axes" type:INTS ints:1 ),
-		    (*pb.AttributeProto)(0xc000126600)(name:"keepdims" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000126500)(name:"axes" type:INTS ints:1 ),
+		    (*ir.AttributeProto)(0xc000126600)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

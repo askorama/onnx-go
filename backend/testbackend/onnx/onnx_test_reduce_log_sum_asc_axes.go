@@ -20,14 +20,14 @@ func NewTestReduceLogSumAscAxes() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data"},
 		     Output:    []string{"reduced"},
 		     Name:      "",
 		     OpType:    "ReduceLogSum",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000126b00)(name:"axes" type:INTS ints:0 ints:1 ),
-		    (*pb.AttributeProto)(0xc000126c00)(name:"keepdims" type:INT )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000126b00)(name:"axes" type:INTS ints:0 ints:1 ),
+		    (*ir.AttributeProto)(0xc000126c00)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

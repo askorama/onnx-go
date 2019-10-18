@@ -20,16 +20,16 @@ func NewTestGemmBroadcast() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"a", "b", "c"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Gemm",
-		     Attributes: ([]*pb.AttributeProto) (len=4 cap=4) {
-		    (*pb.AttributeProto)(0xc000118b00)(name:"alpha" type:FLOAT f:0.5 ),
-		    (*pb.AttributeProto)(0xc000118c00)(name:"beta" type:FLOAT f:0.5 ),
-		    (*pb.AttributeProto)(0xc000118d00)(name:"transA" type:INT i:1 ),
-		    (*pb.AttributeProto)(0xc000118e00)(name:"transB" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
+		    (*ir.AttributeProto)(0xc000118b00)(name:"alpha" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc000118c00)(name:"beta" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc000118d00)(name:"transA" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000118e00)(name:"transB" type:INT i:1 )
 		   }
 		   ,
 		   },

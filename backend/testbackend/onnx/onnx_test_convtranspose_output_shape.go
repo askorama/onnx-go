@@ -20,14 +20,14 @@ func NewTestConvtransposeOutputShape() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"X", "W"},
 		     Output:    []string{"Y"},
 		     Name:      "",
 		     OpType:    "ConvTranspose",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc00045a600)(name:"output_shape" type:INTS ints:10 ints:8 ),
-		    (*pb.AttributeProto)(0xc00045a700)(name:"strides" type:INTS ints:3 ints:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc00045a600)(name:"output_shape" type:INTS ints:10 ints:8 ),
+		    (*ir.AttributeProto)(0xc00045a700)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

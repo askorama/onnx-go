@@ -4,14 +4,14 @@ import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 	"gorgonia.org/tensor"
 )
 
 func TestNewTensor(t *testing.T) {
-	tp := &pb.TensorProto{
+	tp := &ir.TensorProto{
 		Dims:      []int64{1, 1, 1, 1},
-		DataType:  pb.TensorProto_DataType_value["FLOAT"],
+		DataType:  ir.TensorProto_DataType_value["FLOAT"],
 		FloatData: []float32{1},
 	}
 	b, err := proto.Marshal(tp)

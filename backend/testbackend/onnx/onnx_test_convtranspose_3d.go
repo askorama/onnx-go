@@ -20,12 +20,12 @@ func NewTestConvtranspose3d() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"X", "W"},
 		     Output:    []string{"Y"},
 		     Name:      "",
 		     OpType:    "ConvTranspose",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

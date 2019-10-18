@@ -8,7 +8,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend"
-	"github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 	"github.com/stretchr/testify/assert"
 	"gorgonia.org/tensor"
 )
@@ -149,7 +149,7 @@ func (tc *TestCase) RunTest(b backend.ComputationBackend, parallel bool) func(t 
 // Dump a raw version of the onnx data decoded in the protobuf structure.
 // Useful for debugging
 func (tc *TestCase) Dump(w io.Writer) error {
-	model := new(pb.ModelProto)
+	model := new(ir.ModelProto)
 	err := model.XXX_Unmarshal(tc.ModelB)
 	if err != nil {
 		return err

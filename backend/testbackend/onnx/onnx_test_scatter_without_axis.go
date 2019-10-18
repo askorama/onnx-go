@@ -20,12 +20,12 @@ func NewTestScatterWithoutAxis() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data", "indices", "updates"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Scatter",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 

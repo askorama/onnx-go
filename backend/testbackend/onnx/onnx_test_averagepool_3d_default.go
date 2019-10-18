@@ -20,13 +20,13 @@ func NewTestAveragepool3dDefault() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "AveragePool",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000126100)(name:"kernel_shape" type:INTS ints:2 ints:2 ints:2 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000126100)(name:"kernel_shape" type:INTS ints:2 ints:2 ints:2 )
 		   }
 		   ,
 		   },

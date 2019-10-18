@@ -63,12 +63,12 @@ import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
 func TestNew{{ .TestName }}(t *testing.T) {
 	mytest := New{{ .TestName }}()
-	var model pb.ModelProto
+	var model ir.ModelProto
 	err := proto.Unmarshal(mytest.ModelB, &model)
 	if err != nil {
 		t.Fatal(err)
@@ -131,7 +131,7 @@ return &testbackend.TestCase{
 {{ define "doc" }}
 /*
 {{ range .NodeProto }}
-&pb.NodeProto{
+&ir.NodeProto{
   Input:     {{ .Input }},
   Output:    {{ .Output }},
   Name:      {{ .Name }},
@@ -144,26 +144,26 @@ return &testbackend.TestCase{
 {{ end }} 
 
 {{ define "modelCase" }}
-&pb.ModelProto{
+&ir.ModelProto{
       IrVersion: {{ .IrVersion }},
-      OpsetImport: []*pb.OperatorSetIdProto{
-	      &pb.OperatorSetIdProto{
+      OpsetImport: []*ir.OperatorSetIdProto{
+	      &ir.OperatorSetIdProto{
 		      Domain:  "",
 		      Version: {{ .OpsetVersion }},
 	      },
       },
-      Graph: &pb.GraphProto{
-	      Node: []*pb.NodeProto{
+      Graph: &ir.GraphProto{
+	      Node: []*ir.NodeProto{
 		      {{ range .NodeProto }}
-		      &pb.NodeProto{
+		      &ir.NodeProto{
 			      Input:     {{ .Input }},
 			      Output:    {{ .Output }},
 			      Name:      {{ .Name }},
 			      OpType:    {{ .OpType }},
 			      {{ if .Attributes }}
-			      Attribute: []*pb.AttributeProto{
+			      Attribute: []*ir.AttributeProto{
 			      {{ range .Attributes }}
-				  &pb.AttributeProto{
+				  &ir.AttributeProto{
 						Name: {{ .Name }},
 						Type: {{ .Type }},
 						{{ if .Ints }}Ints: {{ .Ints }}, {{ end }}
@@ -182,9 +182,9 @@ return &testbackend.TestCase{
 		      },
 		      {{ end }}
 	      },
-	      Initializer: []*pb.TensorProto{
+	      Initializer: []*ir.TensorProto{
 		      /*
-		      &pb.TensorProto{
+		      &ir.TensorProto{
 			      Dims:      []int64{16, 4, 4, 10},
 			      DataType:  1,
 			      FloatData: parameter193,
@@ -192,19 +192,19 @@ return &testbackend.TestCase{
 		      },
 		      */
 	      },  
-	      Input: []*pb.ValueInfoProto{
+	      Input: []*ir.ValueInfoProto{
 		      {{ range .Input }}
-		      &pb.ValueInfoProto{
+		      &ir.ValueInfoProto{
 			      Name: "{{ .Name }}",
-			      Type: &pb.TypeProto{
-				      Value: &pb.TypeProto_TensorType{
-					      TensorType: &pb.TypeProto_Tensor{
+			      Type: &ir.TypeProto{
+				      Value: &ir.TypeProto_TensorType{
+					      TensorType: &ir.TypeProto_Tensor{
 						      ElemType: {{ .ElemType }},
-						      Shape: &pb.TensorShapeProto{
-							      Dim: []*pb.TensorShapeProto_Dimension{
+						      Shape: &ir.TensorShapeProto{
+							      Dim: []*ir.TensorShapeProto_Dimension{
 								      {{ range .Dims }}
-								      &pb.TensorShapeProto_Dimension{
-									      Value: &pb.TensorShapeProto_Dimension_DimValue{
+								      &ir.TensorShapeProto_Dimension{
+									      Value: &ir.TensorShapeProto_Dimension_DimValue{
 									      DimValue: {{ . }},
 									      },
 								      },
@@ -217,19 +217,19 @@ return &testbackend.TestCase{
 		      },
 		      {{ end }}
 	      },
-	      Output: []*pb.ValueInfoProto{
+	      Output: []*ir.ValueInfoProto{
 		      {{ range .Output }}
-		      &pb.ValueInfoProto{
+		      &ir.ValueInfoProto{
 			      Name: "{{ .Name }}",
-			      Type: &pb.TypeProto{
-				      Value: &pb.TypeProto_TensorType{
-					      TensorType: &pb.TypeProto_Tensor{
+			      Type: &ir.TypeProto{
+				      Value: &ir.TypeProto_TensorType{
+					      TensorType: &ir.TypeProto_Tensor{
 						      ElemType: {{ .ElemType }},
-						      Shape: &pb.TensorShapeProto{
-							      Dim: []*pb.TensorShapeProto_Dimension{
+						      Shape: &ir.TensorShapeProto{
+							      Dim: []*ir.TensorShapeProto_Dimension{
 								      {{ range .Dims }}
-								      &pb.TensorShapeProto_Dimension{
-									      Value: &pb.TensorShapeProto_Dimension_DimValue{
+								      &ir.TensorShapeProto_Dimension{
+									      Value: &ir.TensorShapeProto_Dimension_DimValue{
 									      DimValue: {{ . }},
 									      },
 								      },
@@ -243,19 +243,19 @@ return &testbackend.TestCase{
 		      {{ end }}
 	      },
 	      {{ if .ValueInfo }}
-	      ValueInfo: []*pb.ValueInfoProto{
+	      ValueInfo: []*ir.ValueInfoProto{
 		      {{ range .ValueInfo }}
-		      &pb.ValueInfoProto{
+		      &ir.ValueInfoProto{
 			      Name: "{{ .Name }}",
-			      Type: &pb.TypeProto{
-				      Value: &pb.TypeProto_TensorType{
-					      TensorType: &pb.TypeProto_Tensor{
+			      Type: &ir.TypeProto{
+				      Value: &ir.TypeProto_TensorType{
+					      TensorType: &ir.TypeProto_Tensor{
 						      ElemType: {{ .ElemType }},
-						      Shape: &pb.TensorShapeProto{
-							      Dim: []*pb.TensorShapeProto_Dimension{
+						      Shape: &ir.TensorShapeProto{
+							      Dim: []*ir.TensorShapeProto_Dimension{
 								      {{ range .Dims }}
-								      &pb.TensorShapeProto_Dimension{
-									      Value: &pb.TensorShapeProto_Dimension_DimValue{
+								      &ir.TensorShapeProto_Dimension{
+									      Value: &ir.TensorShapeProto_Dimension_DimValue{
 									      DimValue: {{ . }},
 									      },
 								      },

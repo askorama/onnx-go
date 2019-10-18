@@ -20,13 +20,13 @@ func NewTestGather1() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data", "indices"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Gather",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000118400)(name:"axis" type:INT i:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000118400)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

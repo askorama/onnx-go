@@ -15,7 +15,7 @@ import (
 	"text/template"
 
 	"github.com/davecgh/go-spew/spew"
-	pb "github.com/owulveryck/onnx-go/internal/pb-onnx"
+	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
 
 var (
@@ -85,7 +85,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 		return "", "", err
 	}
 	tv.ModelB = fmt.Sprintf("%#v", b)
-	model := new(pb.ModelProto)
+	model := new(ir.ModelProto)
 	err = model.XXX_Unmarshal(b)
 	if err != nil {
 		return "", "", err
@@ -160,7 +160,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 	return mv.NodeProto[0].OpType, tv.TestName, nil
 }
 
-func processModelGraphInput(model *pb.ModelProto, mv *modelValue) {
+func processModelGraphInput(model *ir.ModelProto, mv *modelValue) {
 	mv.Input = make([]valueInfoProto, len(model.Graph.Input))
 	for i := range model.Graph.Input {
 		mv.Input[i] = valueInfoProto{
@@ -169,12 +169,12 @@ func processModelGraphInput(model *pb.ModelProto, mv *modelValue) {
 			Dims:     make([]string, len(model.Graph.Input[i].Type.GetTensorType().Shape.Dim)),
 		}
 		for j, v := range model.Graph.Input[i].Type.GetTensorType().Shape.Dim {
-			mv.Input[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
+			mv.Input[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*ir.TensorShapeProto_Dimension_DimValue).DimValue)
 		}
 	}
 }
 
-func processModelGraphOutput(model *pb.ModelProto, mv *modelValue) {
+func processModelGraphOutput(model *ir.ModelProto, mv *modelValue) {
 	mv.Output = make([]valueInfoProto, len(model.Graph.Output))
 	for i := range model.Graph.Output {
 		mv.Output[i] = valueInfoProto{
@@ -183,12 +183,12 @@ func processModelGraphOutput(model *pb.ModelProto, mv *modelValue) {
 			Dims:     make([]string, len(model.Graph.Output[i].Type.GetTensorType().Shape.Dim)),
 		}
 		for j, v := range model.Graph.Output[i].Type.GetTensorType().Shape.Dim {
-			mv.Output[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
+			mv.Output[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*ir.TensorShapeProto_Dimension_DimValue).DimValue)
 		}
 	}
 }
 
-func processModelGraphValueInfo(model *pb.ModelProto, mv *modelValue) {
+func processModelGraphValueInfo(model *ir.ModelProto, mv *modelValue) {
 	mv.ValueInfo = make([]valueInfoProto, len(model.Graph.ValueInfo))
 	for i := range model.Graph.ValueInfo {
 		mv.ValueInfo[i] = valueInfoProto{
@@ -197,22 +197,22 @@ func processModelGraphValueInfo(model *pb.ModelProto, mv *modelValue) {
 			Dims:     make([]string, len(model.Graph.ValueInfo[i].Type.GetTensorType().Shape.Dim)),
 		}
 		for j, v := range model.Graph.ValueInfo[i].Type.GetTensorType().Shape.Dim {
-			mv.ValueInfo[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*pb.TensorShapeProto_Dimension_DimValue).DimValue)
+			mv.ValueInfo[i].Dims[j] = fmt.Sprintf("%v", v.GetValue().(*ir.TensorShapeProto_Dimension_DimValue).DimValue)
 
 		}
 	}
 }
 
-func processModelGraphNodeInput(filename string, node *pb.NodeProto, tv *testValue) error {
+func processModelGraphNodeInput(filename string, node *ir.NodeProto, tv *testValue) error {
 	tv.Input = make([]iO, len(node.GetInput()))
 	for i := range node.GetInput() {
 		// Open the tensorproto sample file
-		filepath := fmt.Sprintf("%v%v/test_data_set_0/input_%v.pb", *testdir, filename, i)
+		filepath := fmt.Sprintf("%v%v/test_data_set_0/input_%v.ir", *testdir, filename, i)
 		b, err := ioutil.ReadFile(filepath)
 		if err != nil {
 			return err
 		}
-		sampleTestData := new(pb.TensorProto)
+		sampleTestData := new(ir.TensorProto)
 		err = sampleTestData.XXX_Unmarshal(b)
 		if err != nil {
 			return err
@@ -239,16 +239,16 @@ func processModelGraphNodeInput(filename string, node *pb.NodeProto, tv *testVal
 	return nil
 }
 
-func processModelGraphNodeOutput(filename string, node *pb.NodeProto, tv *testValue) error {
+func processModelGraphNodeOutput(filename string, node *ir.NodeProto, tv *testValue) error {
 	tv.ExpectedOutput = make([]iO, len(node.GetOutput()))
 	for i := range node.Output {
 		// Open the tensorproto sample file
-		filepath := fmt.Sprintf("%v%v/test_data_set_0/output_%v.pb", *testdir, filename, i)
+		filepath := fmt.Sprintf("%v%v/test_data_set_0/output_%v.ir", *testdir, filename, i)
 		b, err := ioutil.ReadFile(filepath)
 		if err != nil {
 			return err
 		}
-		sampleTestData := new(pb.TensorProto)
+		sampleTestData := new(ir.TensorProto)
 		err = sampleTestData.XXX_Unmarshal(b)
 		if err != nil {
 			return err

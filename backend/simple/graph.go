@@ -23,7 +23,7 @@ type Node struct {
 	description string
 	value       tensor.Tensor
 	opType      string
-	//attributes  []*pb.Attribute
+	//attributes  []*ir.Attribute
 }
 
 // ID to fulfil the graph.Node interface

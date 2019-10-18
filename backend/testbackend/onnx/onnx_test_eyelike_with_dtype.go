@@ -20,13 +20,13 @@ func NewTestEyelikeWithDtype() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "EyeLike",
-		     Attributes: ([]*pb.AttributeProto) (len=1 cap=1) {
-		    (*pb.AttributeProto)(0xc000132900)(name:"dtype" type:INT i:11 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc000132900)(name:"dtype" type:INT i:11 )
 		   }
 		   ,
 		   },

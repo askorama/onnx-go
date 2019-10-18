@@ -20,14 +20,14 @@ func NewTestClipInbounds() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"x"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Clip",
-		     Attributes: ([]*pb.AttributeProto) (len=2 cap=2) {
-		    (*pb.AttributeProto)(0xc000133a00)(name:"max" type:FLOAT f:5 ),
-		    (*pb.AttributeProto)(0xc000133b00)(name:"min" type:FLOAT f:-5 )
+		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
+		    (*ir.AttributeProto)(0xc000133a00)(name:"max" type:FLOAT f:5 ),
+		    (*ir.AttributeProto)(0xc000133b00)(name:"min" type:FLOAT f:-5 )
 		   }
 		   ,
 		   },

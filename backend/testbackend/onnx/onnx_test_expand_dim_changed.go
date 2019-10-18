@@ -20,12 +20,12 @@ func NewTestExpandDimChanged() *testbackend.TestCase {
 
 		/*
 
-		   &pb.NodeProto{
+		   &ir.NodeProto{
 		     Input:     []string{"data", "new_shape"},
 		     Output:    []string{"expanded"},
 		     Name:      "",
 		     OpType:    "Expand",
-		     Attributes: ([]*pb.AttributeProto) <nil>
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 
