@@ -19,7 +19,7 @@ help:
 
 ## install: Install missing dependencies.
 ## Runs `go get` internally. e.g;
-install:
+install: go-get
 	@./scripts/git-hooks.sh
 
 go-get:
