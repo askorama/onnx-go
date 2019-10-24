@@ -5,10 +5,10 @@ go:
   - 1.13.x
 
 before_install:
-  - go get -t -v ./...
+  - make install
 
 script:
-  - ./go.test.sh
+  - ./scripts/go.test.sh
   - make coverage
 
 after_success:
