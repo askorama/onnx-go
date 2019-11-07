@@ -1,0 +1,15 @@
+# Hey there o/!
+#
+# Please use the following guidelines to format all your commit
+# messages:
+#
+  <type>(<scope>): <subject>
+  <BLANK LINE>
+  <body>
+  <BLANK LINE>
+  <footer>
+
+# Thank you <3
+
+# NOTE: The coverage report is generated automatically, please check
+# the `make coverage` task if you wish to know more about it.
