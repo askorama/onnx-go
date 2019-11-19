@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/base64"
+	"flag"
 	"fmt"
 	"image"
 	"image/color"
@@ -20,8 +21,13 @@ var (
 func main() {
 	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(img8))
 	im, _, _ = image.Decode(reader)
-	//outputConsole()
-	outputValues()
+	console := flag.Bool("c", false, "console output")
+	flag.Parse()
+	if *console {
+		outputConsole()
+	} else {
+		outputValues()
+	}
 }
 
 func outputConsole() {
