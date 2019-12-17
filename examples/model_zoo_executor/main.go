@@ -14,8 +14,8 @@ import (
 
 func main() {
 	model := flag.String("model", "model.onnx", "path to the model file")
-	input := flag.String("input", "test_data_set_0/input_0.ir", "path to the input file")
-	output := flag.String("output", "test_data_set_0/output_0.ir", "path to the output file")
+	input := flag.String("input", "test_data_set_0/input_0.pb", "path to the input file")
+	output := flag.String("output", "test_data_set_0/output_0.pb", "path to the output file")
 	h := flag.Bool("h", false, "help")
 	flag.Parse()
 	if *h {
