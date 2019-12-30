@@ -42,7 +42,7 @@ func (m *Model) GetOutputTensors() ([]tensor.Tensor, error) {
 // GetInpuTensors from the graph. This function is useful to get informations if the tensor is a placeholder
 // and does not contain any data yet.
 func (m *Model) GetInputTensors() []tensor.Tensor {
-	output := make([]tensor.Tensor, len(m.Output))
+	output := make([]tensor.Tensor, len(m.Input))
 	for i := range m.Input {
 		n := m.backend.Node(int64(m.Input[i]))
 		if n != nil {
