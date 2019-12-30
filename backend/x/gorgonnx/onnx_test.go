@@ -31,7 +31,7 @@ func TestONNX(t *testing.T) {
 	for i := 0; i < len(testConstructors); i++ {
 		tc := testConstructors[i]() // capture range variable
 		tests = append(tests, tc)
-		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), false))
+		t.Run(tc.GetInfo(), tc.RunTest(NewGraph(), true))
 	}
 	file, ok := os.LookupEnv("ONNX_COVERAGE")
 	if ok {
