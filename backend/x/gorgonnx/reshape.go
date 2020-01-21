@@ -26,6 +26,9 @@ func (a *reshape) inferShape(requiredShape interface{}, targetShape tensor.Shape
 	if to, ok := data.(int64); ok {
 		data = []int64{to}
 	}
+	if to, ok := data.(float32); ok {
+		data = []int64{int64(to)}
+	}
 	if to, ok := data.([]int64); ok {
 		childShape := make([]int, len(to))
 		copy(childShape, targetShape)
@@ -72,6 +75,16 @@ func (a *reshape) apply(g *Graph, ns ...*Node) error {
 	err = a.inferShape(children[1].gorgoniaNode.Value().Data(), children[0].gorgoniaNode.Shape())
 	if err != nil {
 		return err
+	}
+	if len(a.toShape) > 1 {
+		for _, v := range a.toShape {
+			if v < 0 {
+				return &onnx.ErrNotImplemented{
+					Operator: "Reshape",
+					Message:  "Negative axis not supported",
+				}
+			}
+		}
 	}
 
 	n.gorgoniaNode, err = gorgonia.Reshape(children[0].gorgoniaNode, a.toShape)

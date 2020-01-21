@@ -132,5 +132,11 @@ func (s *stableSoftmax) init(o onnx.Operation) error {
 		s.axis = int(axis)
 		err = nil
 	}
+	if s.axis < 0 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Softmax",
+			Message:  "Negative axis not supported",
+		}
+	}
 	return err
 }
