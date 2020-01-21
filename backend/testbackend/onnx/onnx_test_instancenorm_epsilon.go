@@ -26,7 +26,7 @@ func NewTestInstancenormEpsilon() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "InstanceNormalization",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0004ce000)(name:"epsilon" type:FLOAT f:0.01 )
+		    (*ir.AttributeProto)(0xc0000c68c0)(name:"epsilon" type:FLOAT f:0.01 )
 		   }
 		   ,
 		   },

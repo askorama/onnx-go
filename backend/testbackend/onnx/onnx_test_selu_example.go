@@ -26,8 +26,8 @@ func NewTestSeluExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Selu",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000118e00)(name:"alpha" type:FLOAT f:2 ),
-		    (*ir.AttributeProto)(0xc000118f00)(name:"gamma" type:FLOAT f:3 )
+		    (*ir.AttributeProto)(0xc0000c6700)(name:"alpha" type:FLOAT f:2 ),
+		    (*ir.AttributeProto)(0xc0000c67e0)(name:"gamma" type:FLOAT f:3 )
 		   }
 		   ,
 		   },

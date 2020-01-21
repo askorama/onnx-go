@@ -26,10 +26,10 @@ func NewTestLrn() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "LRN",
 		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
-		    (*ir.AttributeProto)(0xc000133e00)(name:"alpha" type:FLOAT f:0.0002 ),
-		    (*ir.AttributeProto)(0xc000133f00)(name:"beta" type:FLOAT f:0.5 ),
-		    (*ir.AttributeProto)(0xc000126000)(name:"bias" type:FLOAT f:2 ),
-		    (*ir.AttributeProto)(0xc000126100)(name:"size" type:INT i:3 )
+		    (*ir.AttributeProto)(0xc0000c6460)(name:"alpha" type:FLOAT f:0.0002 ),
+		    (*ir.AttributeProto)(0xc0000c6540)(name:"beta" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc0000c6620)(name:"bias" type:FLOAT f:2 ),
+		    (*ir.AttributeProto)(0xc0000c6700)(name:"size" type:INT i:3 )
 		   }
 		   ,
 		   },

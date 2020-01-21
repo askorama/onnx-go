@@ -26,7 +26,7 @@ func NewTestConcat3dAxis1() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Concat",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0003a0200)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0020ef5e0)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

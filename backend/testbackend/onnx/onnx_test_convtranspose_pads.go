@@ -26,8 +26,8 @@ func NewTestConvtransposePads() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConvTranspose",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc00045b100)(name:"pads" type:INTS ints:1 ints:2 ints:1 ints:2 ),
-		    (*ir.AttributeProto)(0xc00045b200)(name:"strides" type:INTS ints:3 ints:2 )
+		    (*ir.AttributeProto)(0xc0000c75e0)(name:"pads" type:INTS ints:1 ints:2 ints:1 ints:2 ),
+		    (*ir.AttributeProto)(0xc0000c76c0)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

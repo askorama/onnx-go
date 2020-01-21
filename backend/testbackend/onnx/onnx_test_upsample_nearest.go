@@ -26,7 +26,7 @@ func NewTestUpsampleNearest() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Upsample",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000133000)(name:"mode" type:STRING s:"nearest" )
+		    (*ir.AttributeProto)(0xc0000c77a0)(name:"mode" type:STRING s:"nearest" )
 		   }
 		   ,
 		   },

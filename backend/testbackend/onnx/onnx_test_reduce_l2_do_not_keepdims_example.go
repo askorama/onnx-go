@@ -26,8 +26,8 @@ func NewTestReduceL2DoNotKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceL2",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0002e1a00)(name:"axes" type:INTS ints:2 ),
-		    (*ir.AttributeProto)(0xc0002e1b00)(name:"keepdims" type:INT )
+		    (*ir.AttributeProto)(0xc0000c7960)(name:"axes" type:INTS ints:2 ),
+		    (*ir.AttributeProto)(0xc0000c7a40)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

@@ -26,8 +26,8 @@ func NewTestScan9Sum() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Scan",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000359500)(name:"body" type:GRAPH g:<node:<input:"sum_in" input:"next" output:"sum_out" op_type:"Add" > node:<input:"sum_out" output:"scan_out" op_type:"Identity" > name:"scan_body" input:<name:"sum_in" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > input:<name:"next" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"sum_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"scan_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > > ),
-		    (*ir.AttributeProto)(0xc000359600)(name:"num_scan_inputs" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc00036cfc0)(name:"body" type:GRAPH g:<node:<input:"sum_in" input:"next" output:"sum_out" op_type:"Add" > node:<input:"sum_out" output:"scan_out" op_type:"Identity" > name:"scan_body" input:<name:"sum_in" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > input:<name:"next" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"sum_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"scan_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > > ),
+		    (*ir.AttributeProto)(0xc00036d0a0)(name:"num_scan_inputs" type:INT i:1 )
 		   }
 		   ,
 		   },

@@ -26,8 +26,8 @@ func NewTestReduceLogSum() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceLogSum",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000132700)(name:"axes" type:INTS ints:2 ints:1 ),
-		    (*ir.AttributeProto)(0xc000132800)(name:"keepdims" type:INT )
+		    (*ir.AttributeProto)(0xc0000c6460)(name:"axes" type:INTS ints:2 ints:1 ),
+		    (*ir.AttributeProto)(0xc0000c6540)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

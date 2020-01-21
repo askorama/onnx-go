@@ -26,7 +26,7 @@ func NewTestReduceL1DefaultAxesKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceL1",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000133f00)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c6b60)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

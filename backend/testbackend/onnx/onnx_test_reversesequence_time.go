@@ -26,8 +26,8 @@ func NewTestReversesequenceTime() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReverseSequence",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000358a00)(name:"batch_axis" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000358b00)(name:"time_axis" type:INT )
+		    (*ir.AttributeProto)(0xc00036c8c0)(name:"batch_axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc00036c9a0)(name:"time_axis" type:INT )
 		   }
 		   ,
 		   },

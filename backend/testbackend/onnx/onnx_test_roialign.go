@@ -26,10 +26,10 @@ func NewTestRoialign() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "RoiAlign",
 		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
-		    (*ir.AttributeProto)(0xc000236300)(name:"output_height" type:INT i:5 ),
-		    (*ir.AttributeProto)(0xc000236400)(name:"output_width" type:INT i:5 ),
-		    (*ir.AttributeProto)(0xc000236500)(name:"sampling_ratio" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc000236600)(name:"spatial_scale" type:FLOAT f:1 )
+		    (*ir.AttributeProto)(0xc00036cc40)(name:"output_height" type:INT i:5 ),
+		    (*ir.AttributeProto)(0xc00036cd20)(name:"output_width" type:INT i:5 ),
+		    (*ir.AttributeProto)(0xc00036ce00)(name:"sampling_ratio" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc00036cee0)(name:"spatial_scale" type:FLOAT f:1 )
 		   }
 		   ,
 		   },

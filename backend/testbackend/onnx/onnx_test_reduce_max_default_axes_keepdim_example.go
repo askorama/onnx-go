@@ -26,7 +26,7 @@ func NewTestReduceMaxDefaultAxesKeepdimExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMax",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000119100)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c76c0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

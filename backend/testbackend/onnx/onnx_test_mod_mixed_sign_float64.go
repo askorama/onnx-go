@@ -26,7 +26,7 @@ func NewTestModMixedSignFloat64() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Mod",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc00030c400)(name:"fmod" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c6700)(name:"fmod" type:INT i:1 )
 		   }
 		   ,
 		   },

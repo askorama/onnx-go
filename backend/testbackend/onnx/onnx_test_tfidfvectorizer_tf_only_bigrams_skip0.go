@@ -26,13 +26,13 @@ func NewTestTfidfvectorizerTfOnlyBigramsSkip0() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "TfIdfVectorizer",
 		     Attributes: ([]*ir.AttributeProto) (len=7 cap=8) {
-		    (*ir.AttributeProto)(0xc0002ccd00)(name:"max_gram_length" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc0002cce00)(name:"max_skip_count" type:INT ),
-		    (*ir.AttributeProto)(0xc0002ccf00)(name:"min_gram_length" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc0002cd000)(name:"mode" type:STRING s:"TF" ),
-		    (*ir.AttributeProto)(0xc0002cd100)(name:"ngram_counts" type:INTS ints:0 ints:4 ),
-		    (*ir.AttributeProto)(0xc0002cd200)(name:"ngram_indexes" type:INTS ints:0 ints:1 ints:2 ints:3 ints:4 ints:5 ints:6 ),
-		    (*ir.AttributeProto)(0xc0002cd300)(name:"pool_int64s" type:INTS ints:2 ints:3 ints:5 ints:4 ints:5 ints:6 ints:7 ints:8 ints:6 ints:7 )
+		    (*ir.AttributeProto)(0xc0000c7500)(name:"max_gram_length" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc0000c75e0)(name:"max_skip_count" type:INT ),
+		    (*ir.AttributeProto)(0xc0000c76c0)(name:"min_gram_length" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc0000c77a0)(name:"mode" type:STRING s:"TF" ),
+		    (*ir.AttributeProto)(0xc0000c7880)(name:"ngram_counts" type:INTS ints:0 ints:4 ),
+		    (*ir.AttributeProto)(0xc0000c7960)(name:"ngram_indexes" type:INTS ints:0 ints:1 ints:2 ints:3 ints:4 ints:5 ints:6 ),
+		    (*ir.AttributeProto)(0xc0000c7a40)(name:"pool_int64s" type:INTS ints:2 ints:3 ints:5 ints:4 ints:5 ints:6 ints:7 ints:8 ints:6 ints:7 )
 		   }
 		   ,
 		   },

@@ -26,7 +26,7 @@ func NewTestSoftmaxAxis2() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Softmax",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000126800)(name:"axis" type:INT i:2 )
+		    (*ir.AttributeProto)(0xc0000c6540)(name:"axis" type:INT i:2 )
 		   }
 		   ,
 		   },

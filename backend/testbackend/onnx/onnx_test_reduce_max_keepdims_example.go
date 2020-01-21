@@ -26,8 +26,8 @@ func NewTestReduceMaxKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMax",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000234d00)(name:"axes" type:INTS ints:1 ),
-		    (*ir.AttributeProto)(0xc000234e00)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c7c00)(name:"axes" type:INTS ints:1 ),
+		    (*ir.AttributeProto)(0xc0000c7ce0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

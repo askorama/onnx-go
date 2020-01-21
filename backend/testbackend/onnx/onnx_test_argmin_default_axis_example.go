@@ -26,7 +26,7 @@ func NewTestArgminDefaultAxisExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000351100)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c7260)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

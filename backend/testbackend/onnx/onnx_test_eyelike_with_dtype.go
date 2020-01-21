@@ -26,7 +26,7 @@ func NewTestEyelikeWithDtype() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "EyeLike",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000132900)(name:"dtype" type:INT i:11 )
+		    (*ir.AttributeProto)(0xc0000c6460)(name:"dtype" type:INT i:11 )
 		   }
 		   ,
 		   },

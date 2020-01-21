@@ -26,9 +26,9 @@ func NewTestMaxpoolWithArgmax2dPrecomputedStrides() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000126c00)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
-		    (*ir.AttributeProto)(0xc000126d00)(name:"storage_order" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000126e00)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc0000c6460)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
+		    (*ir.AttributeProto)(0xc0000c6540)(name:"storage_order" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc0000c6620)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

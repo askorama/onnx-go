@@ -26,8 +26,8 @@ func NewTestReduceMinKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMin",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000133500)(name:"axes" type:INTS ints:1 ),
-		    (*ir.AttributeProto)(0xc000133600)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c7260)(name:"axes" type:INTS ints:1 ),
+		    (*ir.AttributeProto)(0xc0000c7340)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

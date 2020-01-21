@@ -26,8 +26,8 @@ func NewTestSplitVariableParts1d() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Split",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000118d00)(name:"axis" type:INT ),
-		    (*ir.AttributeProto)(0xc000118e00)(name:"split" type:INTS ints:2 ints:4 )
+		    (*ir.AttributeProto)(0xc0000c60e0)(name:"axis" type:INT ),
+		    (*ir.AttributeProto)(0xc0000c6460)(name:"split" type:INTS ints:2 ints:4 )
 		   }
 		   ,
 		   },

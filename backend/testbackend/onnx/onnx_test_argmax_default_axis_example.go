@@ -26,7 +26,7 @@ func NewTestArgmaxDefaultAxisExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000126800)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0000c6460)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

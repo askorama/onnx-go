@@ -26,7 +26,7 @@ func NewTestThresholdedrelu() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ThresholdedRelu",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000127000)(name:"alpha" type:FLOAT f:2 )
+		    (*ir.AttributeProto)(0xc000254e00)(name:"alpha" type:FLOAT f:2 )
 		   }
 		   ,
 		   },

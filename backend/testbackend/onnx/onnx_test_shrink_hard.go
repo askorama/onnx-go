@@ -26,7 +26,7 @@ func NewTestShrinkHard() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Shrink",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000127c00)(name:"lambd" type:FLOAT f:1.5 )
+		    (*ir.AttributeProto)(0xc0000c68c0)(name:"lambd" type:FLOAT f:1.5 )
 		   }
 		   ,
 		   },
