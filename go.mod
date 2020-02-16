@@ -21,6 +21,6 @@ require (
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b
 	golang.org/x/tools v0.0.0-20191112195655-aa38f8e97acc
 	gonum.org/v1/gonum v0.6.1
-	gorgonia.org/gorgonia v0.9.7 //indirect
+	gorgonia.org/gorgonia v0.9.8 //ct
 	gorgonia.org/tensor v0.9.4
 )
