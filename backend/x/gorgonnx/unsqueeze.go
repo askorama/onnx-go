@@ -58,5 +58,18 @@ func (a *unsqueeze) init(o onnx.Operation) error {
 	if !ok {
 		return errors.New("unsqueeze: axes in not an []int64")
 	}
+	if len(a.Axes) != 1 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Unsqueeze",
+			Message:  "Only one axe is supported",
+		}
+	}
+	if a.Axes[0] != 0 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Unsqueeze",
+			Message:  "Only one axe 0",
+		}
+
+	}
 	return nil
 }
