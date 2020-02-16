@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "lambd",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        1,
-                        F:           1.5,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "lambd",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             1.5,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_shrink_hard",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_shrink_hard",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -120,7 +123,7 @@ func NewTestShrinkHard() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Shrink",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001281c0)(name:"lambd" type:FLOAT f:1.5 )
+		    (*ir.AttributeProto)(0xc0002cae00)(name:"lambd" type:FLOAT f:1.5 )
 		   }
 		   ,
 		   },

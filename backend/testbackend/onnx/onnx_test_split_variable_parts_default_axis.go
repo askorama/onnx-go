@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "split",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        7,
-                        F:           0,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        {2, 4},
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "split",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2, 4},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_split_variable_parts_default_axis",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_split_variable_parts_default_axis",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "input",
                 Type: &ir.TypeProto{
@@ -140,7 +143,7 @@ func NewTestSplitVariablePartsDefaultAxis() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Split",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000128620)(name:"split" type:INTS ints:2 ints:4 )
+		    (*ir.AttributeProto)(0xc000330000)(name:"split" type:INTS ints:2 ints:4 )
 		   }
 		   ,
 		   },

@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "epsilon",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        1,
-                        F:           0.009999999776482582,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "epsilon",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             0.009999999776482582,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_instancenorm_epsilon",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_instancenorm_epsilon",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -184,7 +187,7 @@ func NewTestInstancenormEpsilon() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "InstanceNormalization",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000128460)(name:"epsilon" type:FLOAT f:0.01 )
+		    (*ir.AttributeProto)(0xc000217500)(name:"epsilon" type:FLOAT f:0.01 )
 		   }
 		   ,
 		   },

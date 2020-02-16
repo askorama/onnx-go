@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "axis",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        2,
-                        F:           0,
-                        I:           1,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "axis",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             1,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_gather_elements_0",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_gather_elements_0",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "data",
                 Type: &ir.TypeProto{
@@ -152,7 +155,7 @@ func NewTestGatherElements0() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "GatherElements",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001282a0)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000217400)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

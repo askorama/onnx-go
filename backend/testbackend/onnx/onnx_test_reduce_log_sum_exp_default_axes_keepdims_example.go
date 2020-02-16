@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "keepdims",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        2,
-                        F:           0,
-                        I:           1,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "keepdims",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             1,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_reduce_log_sum_exp_default_axes_keepdims_example",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_reduce_log_sum_exp_default_axes_keepdims_example",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "data",
                 Type: &ir.TypeProto{
@@ -136,7 +139,7 @@ func NewTestReduceLogSumExpDefaultAxesKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceLogSumExp",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0004741c0)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000217e00)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

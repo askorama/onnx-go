@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "alpha",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        1,
-                        F:           2,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "alpha",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             2,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_elu_example",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_elu_example",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -120,7 +123,7 @@ func NewTestEluExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Elu",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001281c0)(name:"alpha" type:FLOAT f:2 )
+		    (*ir.AttributeProto)(0xc0001e6600)(name:"alpha" type:FLOAT f:2 )
 		   }
 		   ,
 		   },

@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "dtype",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        2,
-                        F:           0,
-                        I:           11,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "dtype",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             11,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_eyelike_with_dtype",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_eyelike_with_dtype",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -128,7 +131,7 @@ func NewTestEyelikeWithDtype() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "EyeLike",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000128460)(name:"dtype" type:INT i:11 )
+		    (*ir.AttributeProto)(0xc000216f00)(name:"dtype" type:INT i:11 )
 		   }
 		   ,
 		   },

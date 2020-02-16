@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_scatter_without_axis",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_scatter_without_axis",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "data",
                 Type: &ir.TypeProto{

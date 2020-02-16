@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_matmul_2d",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_matmul_2d",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "a",
                 Type: &ir.TypeProto{

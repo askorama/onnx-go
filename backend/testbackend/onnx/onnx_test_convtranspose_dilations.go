@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "dilations",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        7,
-                        F:           0,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        {2, 2},
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "dilations",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2, 2},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_convtranspose_dilations",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_convtranspose_dilations",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "X",
                 Type: &ir.TypeProto{
@@ -176,7 +179,7 @@ func NewTestConvtransposeDilations() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConvTranspose",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001282a0)(name:"dilations" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc0001e6100)(name:"dilations" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

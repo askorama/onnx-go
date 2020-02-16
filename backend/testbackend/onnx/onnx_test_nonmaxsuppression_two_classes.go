@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_nonmaxsuppression_two_classes",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_nonmaxsuppression_two_classes",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "boxes",
                 Type: &ir.TypeProto{

@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "mode",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        3,
-                        F:           0,
-                        I:           0,
-                        S:           {0x65, 0x64, 0x67, 0x65},
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "mode",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          3,
+                        F:             0,
+                        I:             0,
+                        S:             {0x65, 0x64, 0x67, 0x65},
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_edge_pad",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_edge_pad",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -164,7 +167,7 @@ func NewTestEdgePad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Pad",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000128fc0)(name:"mode" type:STRING s:"edge" )
+		    (*ir.AttributeProto)(0xc000217500)(name:"mode" type:STRING s:"edge" )
 		   }
 		   ,
 		   },

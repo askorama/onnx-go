@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "mode",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        3,
-                        F:           0,
-                        I:           0,
-                        S:           {0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74},
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "mode",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          3,
+                        F:             0,
+                        I:             0,
+                        S:             {0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74},
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_reflect_pad",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_reflect_pad",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -164,7 +167,7 @@ func NewTestReflectPad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Pad",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001289a0)(name:"mode" type:STRING s:"reflect" )
+		    (*ir.AttributeProto)(0xc0001e6100)(name:"mode" type:STRING s:"reflect" )
 		   }
 		   ,
 		   },

@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "center_point_box",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        2,
-                        F:           0,
-                        I:           1,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "center_point_box",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             1,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_nonmaxsuppression_center_point_box_format",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_nonmaxsuppression_center_point_box_format",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "boxes",
                 Type: &ir.TypeProto{
@@ -220,7 +223,7 @@ func NewTestNonmaxsuppressionCenterPointBoxFormat() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "NonMaxSuppression",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001281c0)(name:"center_point_box" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000216c00)(name:"center_point_box" type:INT i:1 )
 		   }
 		   ,
 		   },

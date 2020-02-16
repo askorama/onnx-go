@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_range_int32_type_negative_delta",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_range_int32_type_negative_delta",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "start",
                 Type: &ir.TypeProto{

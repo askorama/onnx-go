@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_nonmaxsuppression_suppress_by_IOU_and_scores",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_nonmaxsuppression_suppress_by_IOU_and_scores",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "boxes",
                 Type: &ir.TypeProto{

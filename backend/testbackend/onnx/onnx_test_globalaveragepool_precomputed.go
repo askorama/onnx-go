@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_globalaveragepool_precomputed",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_globalaveragepool_precomputed",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{

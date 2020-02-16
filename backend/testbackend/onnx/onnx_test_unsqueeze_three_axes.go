@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "axes",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        7,
-                        F:           0,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        {2, 4, 5},
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "axes",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2, 4, 5},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_unsqueeze_three_axes",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_unsqueeze_three_axes",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -148,7 +151,7 @@ func NewTestUnsqueezeThreeAxes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unsqueeze",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001281c0)(name:"axes" type:INTS ints:2 ints:4 ints:5 )
+		    (*ir.AttributeProto)(0xc000217d00)(name:"axes" type:INTS ints:2 ints:4 ints:5 )
 		   }
 		   ,
 		   },

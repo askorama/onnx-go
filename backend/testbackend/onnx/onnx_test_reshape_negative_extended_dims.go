@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_reshape_negative_extended_dims",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_reshape_negative_extended_dims",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "data",
                 Type: &ir.TypeProto{

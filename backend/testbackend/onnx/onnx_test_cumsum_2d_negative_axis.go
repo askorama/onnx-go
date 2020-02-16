@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_cumsum_2d_negative_axis",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_cumsum_2d_negative_axis",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{

@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_nonmaxsuppression_flipped_coordinates",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_nonmaxsuppression_flipped_coordinates",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "boxes",
                 Type: &ir.TypeProto{

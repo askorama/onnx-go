@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_hardsigmoid_default",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_hardsigmoid_default",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{

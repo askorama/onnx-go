@@ -55,21 +55,24 @@ func init() {
                             DoubleData:   nil,
                             Uint64Data:   nil,
                         },
-                        G:       (*ir.GraphProto)(nil),
-                        Floats:  nil,
-                        Ints:    nil,
-                        Strings: nil,
-                        Tensors: nil,
-                        Graphs:  nil,
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_constantofshape_int_zeros",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_constantofshape_int_zeros",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
@@ -139,7 +142,7 @@ func NewTestConstantofshapeIntZeros() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConstantOfShape",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000128460)(name:"value" type:TENSOR t:<dims:1 data_type:6 int32_data:0 name:"value" > )
+		    (*ir.AttributeProto)(0xc0002fa600)(name:"value" type:TENSOR t:<dims:1 data_type:6 int32_data:0 name:"value" > )
 		   }
 		   ,
 		   },

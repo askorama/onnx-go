@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_mod_mixed_sign_int64",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_mod_mixed_sign_int64",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{

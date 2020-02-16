@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "alpha",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        1,
-                        F:           0.5,
-                        I:           0,
-                        S:           nil,
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "alpha",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             0.5,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_gemm_alpha",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_gemm_alpha",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "a",
                 Type: &ir.TypeProto{
@@ -176,7 +179,7 @@ func NewTestGemmAlpha() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gemm",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001289a0)(name:"alpha" type:FLOAT f:0.5 )
+		    (*ir.AttributeProto)(0xc000217600)(name:"alpha" type:FLOAT f:0.5 )
 		   }
 		   ,
 		   },

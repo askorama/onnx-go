@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_sum_example",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_sum_example",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "data_0",
                 Type: &ir.TypeProto{

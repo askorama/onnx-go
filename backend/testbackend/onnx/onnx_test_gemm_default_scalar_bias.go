@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_gemm_default_scalar_bias",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_gemm_default_scalar_bias",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "a",
                 Type: &ir.TypeProto{

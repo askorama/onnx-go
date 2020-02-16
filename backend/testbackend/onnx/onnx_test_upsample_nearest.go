@@ -32,29 +32,32 @@ func init() {
                 Domain:    "",
                 Attribute: {
                     &ir.AttributeProto{
-                        Name:        "mode",
-                        RefAttrName: "",
-                        DocString:   "",
-                        Type:        3,
-                        F:           0,
-                        I:           0,
-                        S:           {0x6e, 0x65, 0x61, 0x72, 0x65, 0x73, 0x74},
-                        T:           (*ir.TensorProto)(nil),
-                        G:           (*ir.GraphProto)(nil),
-                        Floats:      nil,
-                        Ints:        nil,
-                        Strings:     nil,
-                        Tensors:     nil,
-                        Graphs:      nil,
+                        Name:          "mode",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          3,
+                        F:             0,
+                        I:             0,
+                        S:             {0x6e, 0x65, 0x61, 0x72, 0x65, 0x73, 0x74},
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_upsample_nearest",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_upsample_nearest",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "X",
                 Type: &ir.TypeProto{
@@ -164,7 +167,7 @@ func NewTestUpsampleNearest() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Upsample",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000128540)(name:"mode" type:STRING s:"nearest" )
+		    (*ir.AttributeProto)(0xc000216b00)(name:"mode" type:STRING s:"nearest" )
 		   }
 		   ,
 		   },

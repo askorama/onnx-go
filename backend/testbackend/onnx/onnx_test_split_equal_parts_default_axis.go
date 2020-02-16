@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_split_equal_parts_default_axis",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_split_equal_parts_default_axis",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "input",
                 Type: &ir.TypeProto{

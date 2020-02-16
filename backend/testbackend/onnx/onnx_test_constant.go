@@ -55,22 +55,25 @@ func init() {
                             DoubleData:   nil,
                             Uint64Data:   nil,
                         },
-                        G:       (*ir.GraphProto)(nil),
-                        Floats:  nil,
-                        Ints:    nil,
-                        Strings: nil,
-                        Tensors: nil,
-                        Graphs:  nil,
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
                     },
                 },
                 DocString: "",
             },
         },
-        Name:        "test_constant",
-        Initializer: nil,
-        DocString:   "",
-        Input:       nil,
-        Output:      {
+        Name:              "test_constant",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             nil,
+        Output:            {
             &ir.ValueInfoProto{
                 Name: "values",
                 Type: &ir.TypeProto{
@@ -118,7 +121,7 @@ func NewTestConstant() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Constant",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001287e0)(name:"value" type:TENSOR t:<dims:5 dims:5 data_type:1 float_data:1.7640524 float_data:0.4001572 float_data:0.978738 float_data:2.2408931 float_data:1.867558 float_data:-0.9772779 float_data:0.95008844 float_data:-0.1513572 float_data:-0.10321885 float_data:0.41059852 float_data:0.14404356 float_data:1.4542735 float_data:0.7610377 float_data:0.121675014 float_data:0.44386324 float_data:0.33367434 float_data:1.4940791 float_data:-0.20515826 float_data:0.3130677 float_data:-0.85409576 float_data:-2.5529897 float_data:0.6536186 float_data:0.8644362 float_data:-0.742165 float_data:2.2697546 name:"const_tensor" > )
+		    (*ir.AttributeProto)(0xc0002faa00)(name:"value" type:TENSOR t:<dims:5 dims:5 data_type:1 float_data:1.7640524 float_data:0.4001572 float_data:0.978738 float_data:2.2408931 float_data:1.867558 float_data:-0.9772779 float_data:0.95008844 float_data:-0.1513572 float_data:-0.10321885 float_data:0.41059852 float_data:0.14404356 float_data:1.4542735 float_data:0.7610377 float_data:0.121675014 float_data:0.44386324 float_data:0.33367434 float_data:1.4940791 float_data:-0.20515826 float_data:0.3130677 float_data:-0.85409576 float_data:-2.5529897 float_data:0.6536186 float_data:0.8644362 float_data:-0.742165 float_data:2.2697546 name:"const_tensor" > )
 		   }
 		   ,
 		   },

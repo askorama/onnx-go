@@ -34,10 +34,11 @@ func init() {
                 DocString: "",
             },
         },
-        Name:        "test_pow_bcast_scalar",
-        Initializer: nil,
-        DocString:   "",
-        Input:       {
+        Name:              "test_pow_bcast_scalar",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
             &ir.ValueInfoProto{
                 Name: "x",
                 Type: &ir.TypeProto{
