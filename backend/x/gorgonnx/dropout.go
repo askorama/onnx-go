@@ -19,6 +19,12 @@ func newDropout() operator {
 func (a *dropout) apply(g *Graph, ns ...*Node) error {
 	n := ns[0]
 	children := getOrderedChildren(g.g, n)
+	if len(children) != 1 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Dropout",
+			Message:  "not implemented",
+		}
+	}
 	err := checkCondition(children, 1)
 	if err != nil {
 		return err
