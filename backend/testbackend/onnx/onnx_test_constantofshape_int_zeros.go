@@ -139,7 +139,7 @@ func NewTestConstantofshapeIntZeros() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConstantOfShape",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"value" type:TENSOR t:<dims:1 data_type:6 int32_data:0 name:"value" > )
+		    (*ir.AttributeProto)(0xc000128460)(name:"value" type:TENSOR t:<dims:1 data_type:6 int32_data:0 name:"value" > )
 		   }
 		   ,
 		   },

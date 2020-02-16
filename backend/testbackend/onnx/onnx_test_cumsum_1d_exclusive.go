@@ -140,7 +140,7 @@ func NewTestCumsum1dExclusive() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "CumSum",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"exclusive" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"exclusive" type:INT i:1 )
 		   }
 		   ,
 		   },

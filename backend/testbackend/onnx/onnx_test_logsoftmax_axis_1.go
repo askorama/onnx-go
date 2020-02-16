@@ -136,7 +136,7 @@ func NewTestLogsoftmaxAxis1() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "LogSoftmax",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128460)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

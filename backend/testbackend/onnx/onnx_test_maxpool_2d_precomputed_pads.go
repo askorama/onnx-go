@@ -160,8 +160,8 @@ func NewTestMaxpool2dPrecomputedPads() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"kernel_shape" type:INTS ints:5 ints:5 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"pads" type:INTS ints:2 ints:2 ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"kernel_shape" type:INTS ints:5 ints:5 ),
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"pads" type:INTS ints:2 ints:2 ints:2 ints:2 )
 		   }
 		   ,
 		   },

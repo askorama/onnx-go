@@ -176,9 +176,9 @@ func NewTestMaxpool2dPrecomputedSameUpper() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"auto_pad" type:STRING s:"SAME_UPPER" ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*ir.AttributeProto)(0xc000176620)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc000398000)(name:"auto_pad" type:STRING s:"SAME_UPPER" ),
+		    (*ir.AttributeProto)(0xc0003980e0)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*ir.AttributeProto)(0xc0003981c0)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

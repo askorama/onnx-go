@@ -176,7 +176,7 @@ func NewTestConvtransposeDilations() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConvTranspose",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"dilations" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"dilations" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

@@ -160,8 +160,8 @@ func NewTestDepthtospaceCrdModeExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "DepthToSpace",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"blocksize" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"mode" type:STRING s:"CRD" )
+		    (*ir.AttributeProto)(0xc000128460)(name:"blocksize" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc000128540)(name:"mode" type:STRING s:"CRD" )
 		   }
 		   ,
 		   },

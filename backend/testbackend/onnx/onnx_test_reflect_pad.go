@@ -164,7 +164,7 @@ func NewTestReflectPad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Pad",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176ee0)(name:"mode" type:STRING s:"reflect" )
+		    (*ir.AttributeProto)(0xc0001289a0)(name:"mode" type:STRING s:"reflect" )
 		   }
 		   ,
 		   },

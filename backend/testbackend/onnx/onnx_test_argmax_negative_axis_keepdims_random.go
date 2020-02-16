@@ -152,8 +152,8 @@ func NewTestArgmaxNegativeAxisKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000177180)(name:"axis" type:INT i:-1 ),
-		    (*ir.AttributeProto)(0xc000177260)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128700)(name:"axis" type:INT i:-1 ),
+		    (*ir.AttributeProto)(0xc0001287e0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

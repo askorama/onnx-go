@@ -164,8 +164,8 @@ func NewTestReversesequenceBatch() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReverseSequence",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc00052a7e0)(name:"batch_axis" type:INT ),
-		    (*ir.AttributeProto)(0xc00052a8c0)(name:"time_axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000537340)(name:"batch_axis" type:INT ),
+		    (*ir.AttributeProto)(0xc000537420)(name:"time_axis" type:INT i:1 )
 		   }
 		   ,
 		   },

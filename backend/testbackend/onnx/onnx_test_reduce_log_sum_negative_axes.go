@@ -136,7 +136,7 @@ func NewTestReduceLogSumNegativeAxes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceLogSum",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176d20)(name:"axes" type:INTS ints:-2 )
+		    (*ir.AttributeProto)(0xc000128e00)(name:"axes" type:INTS ints:-2 )
 		   }
 		   ,
 		   },

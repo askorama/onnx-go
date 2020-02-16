@@ -152,8 +152,8 @@ func NewTestReduceSumNegativeAxesKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceSum",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176a80)(name:"axes" type:INTS ints:-2 ),
-		    (*ir.AttributeProto)(0xc000176b60)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128620)(name:"axes" type:INTS ints:-2 ),
+		    (*ir.AttributeProto)(0xc000128700)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

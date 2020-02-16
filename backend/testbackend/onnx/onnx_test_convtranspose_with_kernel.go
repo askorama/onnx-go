@@ -224,10 +224,10 @@ func NewTestConvtransposeWithKernel() *testbackend.TestCase {
 		     Name:      "test",
 		     OpType:    "ConvTranspose",
 		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*ir.AttributeProto)(0xc0001768c0)(name:"output_padding" type:INTS ints:1 ints:1 ),
-		    (*ir.AttributeProto)(0xc0001769a0)(name:"output_shape" type:INTS ints:10 ints:8 ),
-		    (*ir.AttributeProto)(0xc000176a80)(name:"strides" type:INTS ints:3 ints:2 )
+		    (*ir.AttributeProto)(0xc000128b60)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*ir.AttributeProto)(0xc000128c40)(name:"output_padding" type:INTS ints:1 ints:1 ),
+		    (*ir.AttributeProto)(0xc000128d20)(name:"output_shape" type:INTS ints:10 ints:8 ),
+		    (*ir.AttributeProto)(0xc000128e00)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

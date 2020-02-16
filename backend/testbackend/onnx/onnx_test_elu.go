@@ -136,7 +136,7 @@ func NewTestElu() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Elu",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176c40)(name:"alpha" type:FLOAT f:2 )
+		    (*ir.AttributeProto)(0xc0001290a0)(name:"alpha" type:FLOAT f:2 )
 		   }
 		   ,
 		   },

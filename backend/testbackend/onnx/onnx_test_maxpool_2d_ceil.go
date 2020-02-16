@@ -176,9 +176,9 @@ func NewTestMaxpool2dCeil() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"ceil_mode" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*ir.AttributeProto)(0xc000176620)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc0002ce0e0)(name:"ceil_mode" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc0002ce1c0)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*ir.AttributeProto)(0xc0002ce2a0)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

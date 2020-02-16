@@ -177,7 +177,7 @@ func NewTestConstantPad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Pad",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"mode" type:STRING s:"constant" )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"mode" type:STRING s:"constant" )
 		   }
 		   ,
 		   },

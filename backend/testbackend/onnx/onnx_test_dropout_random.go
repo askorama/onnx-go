@@ -136,7 +136,7 @@ func NewTestDropoutRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Dropout",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"ratio" type:FLOAT f:0.2 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"ratio" type:FLOAT f:0.2 )
 		   }
 		   ,
 		   },

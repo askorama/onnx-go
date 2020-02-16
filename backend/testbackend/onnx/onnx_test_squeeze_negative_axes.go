@@ -140,7 +140,7 @@ func NewTestSqueezeNegativeAxes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Squeeze",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"axes" type:INTS ints:-2 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"axes" type:INTS ints:-2 )
 		   }
 		   ,
 		   },

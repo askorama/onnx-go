@@ -180,7 +180,7 @@ func NewTestUniqueNotSortedWithoutAxis() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unique",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176620)(name:"sorted" type:INT )
+		    (*ir.AttributeProto)(0xc000128460)(name:"sorted" type:INT )
 		   }
 		   ,
 		   },

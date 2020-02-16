@@ -152,7 +152,7 @@ func NewTestMaxpool3dDefault() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"kernel_shape" type:INTS ints:2 ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc000128460)(name:"kernel_shape" type:INTS ints:2 ints:2 ints:2 )
 		   }
 		   ,
 		   },

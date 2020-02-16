@@ -128,7 +128,7 @@ func NewTestCastFLOATToDOUBLE() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Cast",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001770a0)(name:"to" type:INT i:11 )
+		    (*ir.AttributeProto)(0xc000128a80)(name:"to" type:INT i:11 )
 		   }
 		   ,
 		   },

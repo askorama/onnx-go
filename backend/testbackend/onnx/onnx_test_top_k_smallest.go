@@ -204,9 +204,9 @@ func NewTestTopKSmallest() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "TopK",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"axis" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"largest" type:INT ),
-		    (*ir.AttributeProto)(0xc000176620)(name:"sorted" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128460)(name:"largest" type:INT ),
+		    (*ir.AttributeProto)(0xc000128540)(name:"sorted" type:INT i:1 )
 		   }
 		   ,
 		   },

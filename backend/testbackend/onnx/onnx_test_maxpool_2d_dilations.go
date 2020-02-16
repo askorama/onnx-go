@@ -176,9 +176,9 @@ func NewTestMaxpool2dDilations() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "MaxPool",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"dilations" type:INTS ints:2 ints:2 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
-		    (*ir.AttributeProto)(0xc000176460)(name:"strides" type:INTS ints:1 ints:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"dilations" type:INTS ints:2 ints:2 ),
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
+		    (*ir.AttributeProto)(0xc000128460)(name:"strides" type:INTS ints:1 ints:1 )
 		   }
 		   ,
 		   },

@@ -152,8 +152,8 @@ func NewTestReduceMaxNegativeAxesKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceMax",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001769a0)(name:"axes" type:INTS ints:-2 ),
-		    (*ir.AttributeProto)(0xc000176a80)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128b60)(name:"axes" type:INTS ints:-2 ),
+		    (*ir.AttributeProto)(0xc000128c40)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

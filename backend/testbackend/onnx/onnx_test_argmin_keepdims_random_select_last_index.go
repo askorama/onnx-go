@@ -168,9 +168,9 @@ func NewTestArgminKeepdimsRandomSelectLastIndex() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176b60)(name:"axis" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176c40)(name:"keepdims" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176d20)(name:"select_last_index" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128e00)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128ee0)(name:"keepdims" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128fc0)(name:"select_last_index" type:INT i:1 )
 		   }
 		   ,
 		   },

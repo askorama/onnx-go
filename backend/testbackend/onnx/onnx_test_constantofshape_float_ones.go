@@ -143,7 +143,7 @@ func NewTestConstantofshapeFloatOnes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConstantOfShape",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"value" type:TENSOR t:<dims:1 data_type:1 float_data:1 name:"value" > )
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"value" type:TENSOR t:<dims:1 data_type:1 float_data:1 name:"value" > )
 		   }
 		   ,
 		   },

@@ -220,7 +220,7 @@ func NewTestNonmaxsuppressionCenterPointBoxFormat() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "NonMaxSuppression",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"center_point_box" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"center_point_box" type:INT i:1 )
 		   }
 		   ,
 		   },

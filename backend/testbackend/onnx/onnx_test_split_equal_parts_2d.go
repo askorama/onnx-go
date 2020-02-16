@@ -152,7 +152,7 @@ func NewTestSplitEqualParts2d() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Split",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0002c40e0)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

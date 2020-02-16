@@ -192,8 +192,8 @@ func NewTestConvtransposeOutputShape() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConvTranspose",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"output_shape" type:INTS ints:10 ints:8 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"strides" type:INTS ints:3 ints:2 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"output_shape" type:INTS ints:10 ints:8 ),
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

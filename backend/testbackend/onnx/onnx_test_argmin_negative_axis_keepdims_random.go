@@ -152,8 +152,8 @@ func NewTestArgminNegativeAxisKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"axis" type:INT i:-1 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128700)(name:"axis" type:INT i:-1 ),
+		    (*ir.AttributeProto)(0xc0001287e0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

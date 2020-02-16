@@ -144,8 +144,8 @@ func NewTestArgminDefaultAxisExampleSelectLastIndex() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176ee0)(name:"keepdims" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176fc0)(name:"select_last_index" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"keepdims" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128460)(name:"select_last_index" type:INT i:1 )
 		   }
 		   ,
 		   },

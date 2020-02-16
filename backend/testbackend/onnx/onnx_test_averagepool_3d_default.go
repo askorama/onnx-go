@@ -152,7 +152,7 @@ func NewTestAveragepool3dDefault() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"kernel_shape" type:INTS ints:2 ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"kernel_shape" type:INTS ints:2 ints:2 ints:2 )
 		   }
 		   ,
 		   },

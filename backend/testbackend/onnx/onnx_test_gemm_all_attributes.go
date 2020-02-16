@@ -224,10 +224,10 @@ func NewTestGemmAllAttributes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gemm",
 		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"alpha" type:FLOAT f:0.25 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"beta" type:FLOAT f:0.35 ),
-		    (*ir.AttributeProto)(0xc000176460)(name:"transA" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"transB" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128620)(name:"alpha" type:FLOAT f:0.25 ),
+		    (*ir.AttributeProto)(0xc000128700)(name:"beta" type:FLOAT f:0.35 ),
+		    (*ir.AttributeProto)(0xc0001287e0)(name:"transA" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc0001288c0)(name:"transB" type:INT i:1 )
 		   }
 		   ,
 		   },

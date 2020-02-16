@@ -176,7 +176,7 @@ func NewTestScatterElementsWithNegativeIndices() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ScatterElements",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128540)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

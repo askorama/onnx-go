@@ -160,8 +160,8 @@ func NewTestAveragepool2dSameLower() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176b60)(name:"auto_pad" type:STRING s:"SAME_LOWER" ),
-		    (*ir.AttributeProto)(0xc000176c40)(name:"kernel_shape" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc000128b60)(name:"auto_pad" type:STRING s:"SAME_LOWER" ),
+		    (*ir.AttributeProto)(0xc000128c40)(name:"kernel_shape" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

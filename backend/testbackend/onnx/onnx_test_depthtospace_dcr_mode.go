@@ -160,8 +160,8 @@ func NewTestDepthtospaceDcrMode() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "DepthToSpace",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176620)(name:"blocksize" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc000176700)(name:"mode" type:STRING s:"DCR" )
+		    (*ir.AttributeProto)(0xc000128620)(name:"blocksize" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc000128700)(name:"mode" type:STRING s:"DCR" )
 		   }
 		   ,
 		   },

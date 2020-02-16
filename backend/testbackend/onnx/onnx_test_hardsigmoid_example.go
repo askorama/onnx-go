@@ -136,8 +136,8 @@ func NewTestHardsigmoidExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "HardSigmoid",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001ee1c0)(name:"alpha" type:FLOAT f:0.5 ),
-		    (*ir.AttributeProto)(0xc0001ee2a0)(name:"beta" type:FLOAT f:0.6 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"alpha" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"beta" type:FLOAT f:0.6 )
 		   }
 		   ,
 		   },

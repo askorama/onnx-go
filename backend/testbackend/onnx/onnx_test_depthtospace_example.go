@@ -160,8 +160,8 @@ func NewTestDepthtospaceExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "DepthToSpace",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"blocksize" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc0001768c0)(name:"mode" type:STRING s:"DCR" )
+		    (*ir.AttributeProto)(0xc0001287e0)(name:"blocksize" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc0001288c0)(name:"mode" type:STRING s:"DCR" )
 		   }
 		   ,
 		   },

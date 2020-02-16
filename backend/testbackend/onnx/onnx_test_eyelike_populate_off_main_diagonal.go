@@ -144,8 +144,8 @@ func NewTestEyelikePopulateOffMainDiagonal() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "EyeLike",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"dtype" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"k" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"dtype" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"k" type:INT i:1 )
 		   }
 		   ,
 		   },

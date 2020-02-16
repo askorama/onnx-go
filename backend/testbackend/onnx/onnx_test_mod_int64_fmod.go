@@ -140,7 +140,7 @@ func NewTestModInt64Fmod() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Mod",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0022e6000)(name:"fmod" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc001ed8380)(name:"fmod" type:INT i:1 )
 		   }
 		   ,
 		   },

@@ -152,8 +152,8 @@ func NewTestReduceSumKeepdimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceSum",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001768c0)(name:"axes" type:INTS ints:1 ),
-		    (*ir.AttributeProto)(0xc0001769a0)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128460)(name:"axes" type:INTS ints:1 ),
+		    (*ir.AttributeProto)(0xc000128540)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

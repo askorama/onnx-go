@@ -140,7 +140,7 @@ func NewTestCumsum1dReverse() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "CumSum",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"reverse" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"reverse" type:INT i:1 )
 		   }
 		   ,
 		   },

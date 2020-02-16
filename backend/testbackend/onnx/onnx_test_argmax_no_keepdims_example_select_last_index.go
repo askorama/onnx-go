@@ -156,9 +156,9 @@ func NewTestArgmaxNoKeepdimsExampleSelectLastIndex() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"axis" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"keepdims" type:INT ),
-		    (*ir.AttributeProto)(0xc0001768c0)(name:"select_last_index" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128d20)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128e00)(name:"keepdims" type:INT ),
+		    (*ir.AttributeProto)(0xc000128ee0)(name:"select_last_index" type:INT i:1 )
 		   }
 		   ,
 		   },

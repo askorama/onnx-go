@@ -164,7 +164,7 @@ func NewTestEdgePad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Pad",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176b60)(name:"mode" type:STRING s:"edge" )
+		    (*ir.AttributeProto)(0xc000128fc0)(name:"mode" type:STRING s:"edge" )
 		   }
 		   ,
 		   },

@@ -144,7 +144,7 @@ func NewTestLrnDefault() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "LRN",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"size" type:INT i:3 )
+		    (*ir.AttributeProto)(0xc000128700)(name:"size" type:INT i:3 )
 		   }
 		   ,
 		   },

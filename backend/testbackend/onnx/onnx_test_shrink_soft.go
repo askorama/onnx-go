@@ -136,8 +136,8 @@ func NewTestShrinkSoft() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Shrink",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176540)(name:"bias" type:FLOAT f:1.5 ),
-		    (*ir.AttributeProto)(0xc000176620)(name:"lambd" type:FLOAT f:1.5 )
+		    (*ir.AttributeProto)(0xc0001282a0)(name:"bias" type:FLOAT f:1.5 ),
+		    (*ir.AttributeProto)(0xc000128460)(name:"lambd" type:FLOAT f:1.5 )
 		   }
 		   ,
 		   },

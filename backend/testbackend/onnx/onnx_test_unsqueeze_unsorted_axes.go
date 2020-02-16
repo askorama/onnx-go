@@ -148,7 +148,7 @@ func NewTestUnsqueezeUnsortedAxes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unsqueeze",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"axes" type:INTS ints:5 ints:4 ints:2 )
+		    (*ir.AttributeProto)(0xc000128460)(name:"axes" type:INTS ints:5 ints:4 ints:2 )
 		   }
 		   ,
 		   },

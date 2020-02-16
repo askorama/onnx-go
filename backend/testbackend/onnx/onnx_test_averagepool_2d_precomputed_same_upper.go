@@ -176,9 +176,9 @@ func NewTestAveragepool2dPrecomputedSameUpper() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"auto_pad" type:STRING s:"SAME_UPPER" ),
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
-		    (*ir.AttributeProto)(0xc0001768c0)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc000128700)(name:"auto_pad" type:STRING s:"SAME_UPPER" ),
+		    (*ir.AttributeProto)(0xc0001287e0)(name:"kernel_shape" type:INTS ints:3 ints:3 ),
+		    (*ir.AttributeProto)(0xc0001288c0)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

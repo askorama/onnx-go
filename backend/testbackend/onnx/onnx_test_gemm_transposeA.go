@@ -176,7 +176,7 @@ func NewTestGemmTransposeA() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gemm",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"transA" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"transA" type:INT i:1 )
 		   }
 		   ,
 		   },

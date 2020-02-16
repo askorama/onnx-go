@@ -152,8 +152,8 @@ func NewTestReduceL2NegativeAxesKeepDimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceL2",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176d20)(name:"axes" type:INTS ints:-1 ),
-		    (*ir.AttributeProto)(0xc000176e00)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000474700)(name:"axes" type:INTS ints:-1 ),
+		    (*ir.AttributeProto)(0xc0004747e0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

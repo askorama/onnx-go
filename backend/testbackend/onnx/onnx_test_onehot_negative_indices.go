@@ -164,7 +164,7 @@ func NewTestOnehotNegativeIndices() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "OneHot",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

@@ -164,7 +164,7 @@ func NewTestGather1() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gather",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

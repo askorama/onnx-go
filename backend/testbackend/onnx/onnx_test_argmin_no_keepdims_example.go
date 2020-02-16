@@ -140,8 +140,8 @@ func NewTestArgminNoKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"axis" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0001767e0)(name:"keepdims" type:INT )
+		    (*ir.AttributeProto)(0xc000128b60)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128c40)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

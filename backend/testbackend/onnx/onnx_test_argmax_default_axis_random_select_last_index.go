@@ -152,8 +152,8 @@ func NewTestArgmaxDefaultAxisRandomSelectLastIndex() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"keepdims" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"select_last_index" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0005a02a0)(name:"keepdims" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc0005a0380)(name:"select_last_index" type:INT i:1 )
 		   }
 		   ,
 		   },

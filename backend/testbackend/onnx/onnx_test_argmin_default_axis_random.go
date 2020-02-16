@@ -136,7 +136,7 @@ func NewTestArgminDefaultAxisRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMin",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128540)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

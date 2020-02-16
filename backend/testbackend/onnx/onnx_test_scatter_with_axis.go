@@ -176,7 +176,7 @@ func NewTestScatterWithAxis() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Scatter",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001761c0)(name:"axis" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128620)(name:"axis" type:INT i:1 )
 		   }
 		   ,
 		   },

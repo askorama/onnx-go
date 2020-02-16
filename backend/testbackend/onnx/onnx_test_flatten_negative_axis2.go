@@ -136,7 +136,7 @@ func NewTestFlattenNegativeAxis2() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Flatten",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0001762a0)(name:"axis" type:INT i:-2 )
+		    (*ir.AttributeProto)(0xc00035a000)(name:"axis" type:INT i:-2 )
 		   }
 		   ,
 		   },

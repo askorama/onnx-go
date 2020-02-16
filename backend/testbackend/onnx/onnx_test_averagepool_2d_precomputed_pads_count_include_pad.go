@@ -176,9 +176,9 @@ func NewTestAveragepool2dPrecomputedPadsCountIncludePad() *testbackend.TestCase 
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"count_include_pad" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"kernel_shape" type:INTS ints:5 ints:5 ),
-		    (*ir.AttributeProto)(0xc000176620)(name:"pads" type:INTS ints:2 ints:2 ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc000128460)(name:"count_include_pad" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128540)(name:"kernel_shape" type:INTS ints:5 ints:5 ),
+		    (*ir.AttributeProto)(0xc000128620)(name:"pads" type:INTS ints:2 ints:2 ints:2 ints:2 )
 		   }
 		   ,
 		   },

@@ -140,7 +140,7 @@ func NewTestUnsqueezeAxis0() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unsqueeze",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc00039c000)(name:"axes" type:INTS ints:0 )
+		    (*ir.AttributeProto)(0xc000128620)(name:"axes" type:INTS ints:0 )
 		   }
 		   ,
 		   },

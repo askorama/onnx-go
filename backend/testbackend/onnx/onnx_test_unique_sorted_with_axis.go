@@ -204,8 +204,8 @@ func NewTestUniqueSortedWithAxis() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unique",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0001768c0)(name:"axis" type:INT ),
-		    (*ir.AttributeProto)(0xc0001769a0)(name:"sorted" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128620)(name:"axis" type:INT ),
+		    (*ir.AttributeProto)(0xc000128700)(name:"sorted" type:INT i:1 )
 		   }
 		   ,
 		   },

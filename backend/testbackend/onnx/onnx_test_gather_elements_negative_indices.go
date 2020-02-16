@@ -152,7 +152,7 @@ func NewTestGatherElementsNegativeIndices() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "GatherElements",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176620)(name:"axis" type:INT )
+		    (*ir.AttributeProto)(0xc000128460)(name:"axis" type:INT )
 		   }
 		   ,
 		   },

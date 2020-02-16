@@ -140,7 +140,7 @@ func NewTestSqueeze() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Squeeze",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"axes" type:INTS ints:0 )
+		    (*ir.AttributeProto)(0xc000128700)(name:"axes" type:INTS ints:0 )
 		   }
 		   ,
 		   },

@@ -136,7 +136,7 @@ func NewTestReduceSumSquareDefaultAxesKeepdimsExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceSumSquare",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176e00)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001289a0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

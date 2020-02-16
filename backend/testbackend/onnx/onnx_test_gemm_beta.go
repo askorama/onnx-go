@@ -176,7 +176,7 @@ func NewTestGemmBeta() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Gemm",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000176700)(name:"beta" type:FLOAT f:0.5 )
+		    (*ir.AttributeProto)(0xc0001281c0)(name:"beta" type:FLOAT f:0.5 )
 		   }
 		   ,
 		   },

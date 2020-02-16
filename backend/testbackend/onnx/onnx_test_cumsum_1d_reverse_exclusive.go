@@ -156,8 +156,8 @@ func NewTestCumsum1dReverseExclusive() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "CumSum",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000176460)(name:"exclusive" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc000176540)(name:"reverse" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000128460)(name:"exclusive" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000128540)(name:"reverse" type:INT i:1 )
 		   }
 		   ,
 		   },
