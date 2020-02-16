@@ -11,6 +11,172 @@ func init() {
 	testbackend.Register("LRN", "TestLrn", NewTestLrn)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "LRN",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "alpha",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        1,
+                        F:           0.00019999999494757503,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "beta",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        1,
+                        F:           0.5,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "bias",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        1,
+                        F:           2,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "size",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           3,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_lrn",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestLrn version: 3.
 func NewTestLrn() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,10 +192,10 @@ func NewTestLrn() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "LRN",
 		     Attributes: ([]*ir.AttributeProto) (len=4 cap=4) {
-		    (*ir.AttributeProto)(0xc0000c6460)(name:"alpha" type:FLOAT f:0.0002 ),
-		    (*ir.AttributeProto)(0xc0000c6540)(name:"beta" type:FLOAT f:0.5 ),
-		    (*ir.AttributeProto)(0xc0000c6620)(name:"bias" type:FLOAT f:2 ),
-		    (*ir.AttributeProto)(0xc0000c6700)(name:"size" type:INT i:3 )
+		    (*ir.AttributeProto)(0xc0001762a0)(name:"alpha" type:FLOAT f:0.0002 ),
+		    (*ir.AttributeProto)(0xc000176460)(name:"beta" type:FLOAT f:0.5 ),
+		    (*ir.AttributeProto)(0xc000176540)(name:"bias" type:FLOAT f:2 ),
+		    (*ir.AttributeProto)(0xc000176620)(name:"size" type:INT i:3 )
 		   }
 		   ,
 		   },

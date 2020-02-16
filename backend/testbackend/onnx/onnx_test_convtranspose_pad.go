@@ -11,6 +11,172 @@ func init() {
 	testbackend.Register("ConvTranspose", "TestConvtransposePad", NewTestConvtransposePad)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"X", "W"},
+                Output:    {"Y"},
+                Name:      "",
+                OpType:    "ConvTranspose",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "output_padding",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {1, 1},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "strides",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {3, 2},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_convtranspose_pad",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "X",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "W",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "Y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:10},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:8},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestConvtransposePad version: 3.
 func NewTestConvtransposePad() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +192,8 @@ func NewTestConvtransposePad() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConvTranspose",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0000c7420)(name:"output_padding" type:INTS ints:1 ints:1 ),
-		    (*ir.AttributeProto)(0xc0000c7500)(name:"strides" type:INTS ints:3 ints:2 )
+		    (*ir.AttributeProto)(0xc000176460)(name:"output_padding" type:INTS ints:1 ints:1 ),
+		    (*ir.AttributeProto)(0xc000176540)(name:"strides" type:INTS ints:3 ints:2 )
 		   }
 		   ,
 		   },

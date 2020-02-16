@@ -11,6 +11,100 @@ func init() {
 	testbackend.Register("Elu", "TestEluExample", NewTestEluExample)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Elu",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "alpha",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        1,
+                        F:           2,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_elu_example",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestEluExample version: 3.
 func NewTestEluExample() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,7 +120,7 @@ func NewTestEluExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Elu",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc00006eee0)(name:"alpha" type:FLOAT f:2 )
+		    (*ir.AttributeProto)(0xc0001761c0)(name:"alpha" type:FLOAT f:2 )
 		   }
 		   ,
 		   },

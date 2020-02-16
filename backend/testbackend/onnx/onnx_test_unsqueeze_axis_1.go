@@ -11,6 +11,120 @@ func init() {
 	testbackend.Register("Unsqueeze", "TestUnsqueezeAxis1", NewTestUnsqueezeAxis1)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   5,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:11},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Unsqueeze",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "axes",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {1},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_unsqueeze_axis_1",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestUnsqueezeAxis1 version: 5.
 func NewTestUnsqueezeAxis1() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,7 +140,7 @@ func NewTestUnsqueezeAxis1() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Unsqueeze",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc0000c7180)(name:"axes" type:INTS ints:1 )
+		    (*ir.AttributeProto)(0xc00039c0e0)(name:"axes" type:INTS ints:1 )
 		   }
 		   ,
 		   },

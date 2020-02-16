@@ -11,6 +11,132 @@ func init() {
 	testbackend.Register("ReduceL2", "TestReduceL2NegativeAxesKeepDimsRandom", NewTestReduceL2NegativeAxesKeepDimsRandom)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   6,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:11},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"data"},
+                Output:    {"reduced"},
+                Name:      "",
+                OpType:    "ReduceL2",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "axes",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {-1},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "keepdims",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           1,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_reduce_l2_negative_axes_keep_dims_random",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "data",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "reduced",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestReduceL2NegativeAxesKeepDimsRandom version: 6.
 func NewTestReduceL2NegativeAxesKeepDimsRandom() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +152,8 @@ func NewTestReduceL2NegativeAxesKeepDimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceL2",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc0000c6000)(name:"axes" type:INTS ints:-1 ),
-		    (*ir.AttributeProto)(0xc0000c60e0)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001761c0)(name:"axes" type:INTS ints:-1 ),
+		    (*ir.AttributeProto)(0xc0001762a0)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

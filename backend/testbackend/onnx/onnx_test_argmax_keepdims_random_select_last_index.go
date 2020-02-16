@@ -11,6 +11,148 @@ func init() {
 	testbackend.Register("ArgMax", "TestArgmaxKeepdimsRandomSelectLastIndex", NewTestArgmaxKeepdimsRandomSelectLastIndex)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   6,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:12},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"data"},
+                Output:    {"result"},
+                Name:      "",
+                OpType:    "ArgMax",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "axis",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           1,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "keepdims",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           1,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "select_last_index",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           1,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_argmax_keepdims_random_select_last_index",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "data",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "result",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestArgmaxKeepdimsRandomSelectLastIndex version: 6.
 func NewTestArgmaxKeepdimsRandomSelectLastIndex() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,9 +168,9 @@ func NewTestArgmaxKeepdimsRandomSelectLastIndex() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ArgMax",
 		     Attributes: ([]*ir.AttributeProto) (len=3 cap=4) {
-		    (*ir.AttributeProto)(0xc0003d01c0)(name:"axis" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0003d02a0)(name:"keepdims" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0003d0380)(name:"select_last_index" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000176a80)(name:"axis" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000176b60)(name:"keepdims" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000176c40)(name:"select_last_index" type:INT i:1 )
 		   }
 		   ,
 		   },

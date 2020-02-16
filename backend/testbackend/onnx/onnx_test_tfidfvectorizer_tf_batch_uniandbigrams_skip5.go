@@ -11,6 +11,204 @@ func init() {
 	testbackend.Register("TfIdfVectorizer", "TestTfidfvectorizerTfBatchUniandbigramsSkip5", NewTestTfidfvectorizerTfBatchUniandbigramsSkip5)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"X"},
+                Output:    {"Y"},
+                Name:      "",
+                OpType:    "TfIdfVectorizer",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "max_gram_length",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           2,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "max_skip_count",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           5,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "min_gram_length",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           1,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "mode",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        3,
+                        F:           0,
+                        I:           0,
+                        S:           {0x54, 0x46},
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "ngram_counts",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {0, 4},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "ngram_indexes",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {0, 1, 2, 3, 4, 5, 6},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "pool_int64s",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        7,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        {2, 3, 5, 4, 5, 6, 7, 8, 6, 7},
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_tfidfvectorizer_tf_batch_uniandbigrams_skip5",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "X",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 6,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:6},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "Y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:7},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestTfidfvectorizerTfBatchUniandbigramsSkip5 version: 3.
 func NewTestTfidfvectorizerTfBatchUniandbigramsSkip5() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,13 +224,13 @@ func NewTestTfidfvectorizerTfBatchUniandbigramsSkip5() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "TfIdfVectorizer",
 		     Attributes: ([]*ir.AttributeProto) (len=7 cap=8) {
-		    (*ir.AttributeProto)(0xc0000c6ee0)(name:"max_gram_length" type:INT i:2 ),
-		    (*ir.AttributeProto)(0xc0000c6fc0)(name:"max_skip_count" type:INT i:5 ),
-		    (*ir.AttributeProto)(0xc0000c70a0)(name:"min_gram_length" type:INT i:1 ),
-		    (*ir.AttributeProto)(0xc0000c7180)(name:"mode" type:STRING s:"TF" ),
-		    (*ir.AttributeProto)(0xc0000c7260)(name:"ngram_counts" type:INTS ints:0 ints:4 ),
-		    (*ir.AttributeProto)(0xc0000c7340)(name:"ngram_indexes" type:INTS ints:0 ints:1 ints:2 ints:3 ints:4 ints:5 ints:6 ),
-		    (*ir.AttributeProto)(0xc0000c7420)(name:"pool_int64s" type:INTS ints:2 ints:3 ints:5 ints:4 ints:5 ints:6 ints:7 ints:8 ints:6 ints:7 )
+		    (*ir.AttributeProto)(0xc0001761c0)(name:"max_gram_length" type:INT i:2 ),
+		    (*ir.AttributeProto)(0xc0001762a0)(name:"max_skip_count" type:INT i:5 ),
+		    (*ir.AttributeProto)(0xc000176460)(name:"min_gram_length" type:INT i:1 ),
+		    (*ir.AttributeProto)(0xc000176540)(name:"mode" type:STRING s:"TF" ),
+		    (*ir.AttributeProto)(0xc000176620)(name:"ngram_counts" type:INTS ints:0 ints:4 ),
+		    (*ir.AttributeProto)(0xc000176700)(name:"ngram_indexes" type:INTS ints:0 ints:1 ints:2 ints:3 ints:4 ints:5 ints:6 ),
+		    (*ir.AttributeProto)(0xc0001767e0)(name:"pool_int64s" type:INTS ints:2 ints:3 ints:5 ints:4 ints:5 ints:6 ints:7 ints:8 ints:6 ints:7 )
 		   }
 		   ,
 		   },

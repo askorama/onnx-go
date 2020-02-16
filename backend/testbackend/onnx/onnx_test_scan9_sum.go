@@ -11,6 +11,262 @@ func init() {
 	testbackend.Register("Scan", "TestScan9Sum", NewTestScan9Sum)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"initial", "x"},
+                Output:    {"y", "z"},
+                Name:      "",
+                OpType:    "Scan",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "body",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        5,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           &ir.GraphProto{
+                            Node: {
+                                &ir.NodeProto{
+                                    Input:     {"sum_in", "next"},
+                                    Output:    {"sum_out"},
+                                    Name:      "",
+                                    OpType:    "Add",
+                                    Domain:    "",
+                                    Attribute: nil,
+                                    DocString: "",
+                                },
+                                &ir.NodeProto{
+                                    Input:     {"sum_out"},
+                                    Output:    {"scan_out"},
+                                    Name:      "",
+                                    OpType:    "Identity",
+                                    Domain:    "",
+                                    Attribute: nil,
+                                    DocString: "",
+                                },
+                            },
+                            Name:        "scan_body",
+                            Initializer: nil,
+                            DocString:   "",
+                            Input:       {
+                                &ir.ValueInfoProto{
+                                    Name: "sum_in",
+                                    Type: &ir.TypeProto{
+                                        Value: &ir.TypeProto_TensorType{
+                                            TensorType: &ir.TypeProto_Tensor{
+                                                ElemType: 1,
+                                                Shape:    &ir.TensorShapeProto{
+                                                    Dim: {
+                                                        &!%v(DEPTH EXCEEDED),
+                                                    },
+                                                },
+                                            },
+                                        },
+                                        Denotation: "",
+                                    },
+                                    DocString: "",
+                                },
+                                &ir.ValueInfoProto{
+                                    Name: "next",
+                                    Type: &ir.TypeProto{
+                                        Value: &ir.TypeProto_TensorType{
+                                            TensorType: &ir.TypeProto_Tensor{
+                                                ElemType: 1,
+                                                Shape:    &ir.TensorShapeProto{
+                                                    Dim: {
+                                                        &!%v(DEPTH EXCEEDED),
+                                                    },
+                                                },
+                                            },
+                                        },
+                                        Denotation: "",
+                                    },
+                                    DocString: "",
+                                },
+                            },
+                            Output: {
+                                &ir.ValueInfoProto{
+                                    Name: "sum_out",
+                                    Type: &ir.TypeProto{
+                                        Value: &ir.TypeProto_TensorType{
+                                            TensorType: &ir.TypeProto_Tensor{
+                                                ElemType: 1,
+                                                Shape:    &ir.TensorShapeProto{
+                                                    Dim: {
+                                                        &!%v(DEPTH EXCEEDED),
+                                                    },
+                                                },
+                                            },
+                                        },
+                                        Denotation: "",
+                                    },
+                                    DocString: "",
+                                },
+                                &ir.ValueInfoProto{
+                                    Name: "scan_out",
+                                    Type: &ir.TypeProto{
+                                        Value: &ir.TypeProto_TensorType{
+                                            TensorType: &ir.TypeProto_Tensor{
+                                                ElemType: 1,
+                                                Shape:    &ir.TensorShapeProto{
+                                                    Dim: {
+                                                        &!%v(DEPTH EXCEEDED),
+                                                    },
+                                                },
+                                            },
+                                        },
+                                        Denotation: "",
+                                    },
+                                    DocString: "",
+                                },
+                            },
+                            ValueInfo:              nil,
+                            QuantizationAnnotation: nil,
+                        },
+                        Floats:  nil,
+                        Ints:    nil,
+                        Strings: nil,
+                        Tensors: nil,
+                        Graphs:  nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:        "num_scan_inputs",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        2,
+                        F:           0,
+                        I:           1,
+                        S:           nil,
+                        T:           (*ir.TensorProto)(nil),
+                        G:           (*ir.GraphProto)(nil),
+                        Floats:      nil,
+                        Ints:        nil,
+                        Strings:     nil,
+                        Tensors:     nil,
+                        Graphs:      nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:        "test_scan9_sum",
+        Initializer: nil,
+        DocString:   "",
+        Input:       {
+            &ir.ValueInfoProto{
+                Name: "initial",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "z",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestScan9Sum version: 3.
 func NewTestScan9Sum() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +282,8 @@ func NewTestScan9Sum() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Scan",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc00036cfc0)(name:"body" type:GRAPH g:<node:<input:"sum_in" input:"next" output:"sum_out" op_type:"Add" > node:<input:"sum_out" output:"scan_out" op_type:"Identity" > name:"scan_body" input:<name:"sum_in" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > input:<name:"next" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"sum_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"scan_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > > ),
-		    (*ir.AttributeProto)(0xc00036d0a0)(name:"num_scan_inputs" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc0001761c0)(name:"body" type:GRAPH g:<node:<input:"sum_in" input:"next" output:"sum_out" op_type:"Add" > node:<input:"sum_out" output:"scan_out" op_type:"Identity" > name:"scan_body" input:<name:"sum_in" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > input:<name:"next" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"sum_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > output:<name:"scan_out" type:<tensor_type:<elem_type:1 shape:<dim:<dim_value:2 > > > > > > ),
+		    (*ir.AttributeProto)(0xc0001762a0)(name:"num_scan_inputs" type:INT i:1 )
 		   }
 		   ,
 		   },
