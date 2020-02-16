@@ -14,6 +14,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/kr/pretty"
+
 	"github.com/davecgh/go-spew/spew"
 	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
@@ -90,6 +92,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
+	tv.Dump = fmt.Sprintf("%# v", pretty.Formatter(model))
 	tv.Description = fmt.Sprintf("version: %v. %v", model.GetIrVersion(), model.GetDocString())
 	mv.TestName = fmt.Sprintf("%#v", file.Name())
 	mv.IrVersion = fmt.Sprintf("%v", model.IrVersion)
