@@ -4,13 +4,11 @@
 package ir
 
 import (
-	bytes "bytes"
 	encoding_binary "encoding/binary"
 	fmt "fmt"
 	io "io"
 	math "math"
 
-	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 )
 
@@ -40,7 +38,7 @@ const (
 	// The version field is always serialized and we will use it to store the
 	// version that the  graph is generated from. This helps us set up version
 	// control.
-	// For the IR, we are using simple numbers starting with with 0x00000001,
+	// For the IR, we are using simple numbers starting with 0x00000001,
 	// which was the version we published on Oct 10, 2017.
 	Version_IR_VERSION_2017_10_10 Version = 1
 	// IR_VERSION 2 published on Oct 30, 2017
@@ -59,7 +57,12 @@ const (
 	// IR VERSION 5 published on March 18, 2019
 	// - Add message TensorAnnotation.
 	// - Add quantization annotation in GraphProto to map tensor with its scale and zero point quantization parameters.
-	Version_IR_VERSION Version = 5
+	Version_IR_VERSION_2019_3_18 Version = 5
+	// IR VERSION 6 published on Sep 19, 2019
+	// - Add support for sparse tensor constants stored in model.
+	//   - Add message SparseTensorProto
+	//   - Add sparse initializers
+	Version_IR_VERSION Version = 6
 )
 
 var Version_name = map[int32]string{
@@ -68,7 +71,8 @@ var Version_name = map[int32]string{
 	2: "IR_VERSION_2017_10_30",
 	3: "IR_VERSION_2017_11_3",
 	4: "IR_VERSION_2019_1_22",
-	5: "IR_VERSION",
+	5: "IR_VERSION_2019_3_18",
+	6: "IR_VERSION",
 }
 
 var Version_value = map[string]int32{
@@ -77,7 +81,8 @@ var Version_value = map[string]int32{
 	"IR_VERSION_2017_10_30": 2,
 	"IR_VERSION_2017_11_3":  3,
 	"IR_VERSION_2019_1_22":  4,
-	"IR_VERSION":            5,
+	"IR_VERSION_2019_3_18":  5,
+	"IR_VERSION":            6,
 }
 
 func (x Version) String() string {
@@ -93,17 +98,19 @@ func (Version) EnumDescriptor() ([]byte, []int) {
 type AttributeProto_AttributeType int32
 
 const (
-	AttributeProto_UNDEFINED AttributeProto_AttributeType = 0
-	AttributeProto_FLOAT     AttributeProto_AttributeType = 1
-	AttributeProto_INT       AttributeProto_AttributeType = 2
-	AttributeProto_STRING    AttributeProto_AttributeType = 3
-	AttributeProto_TENSOR    AttributeProto_AttributeType = 4
-	AttributeProto_GRAPH     AttributeProto_AttributeType = 5
-	AttributeProto_FLOATS    AttributeProto_AttributeType = 6
-	AttributeProto_INTS      AttributeProto_AttributeType = 7
-	AttributeProto_STRINGS   AttributeProto_AttributeType = 8
-	AttributeProto_TENSORS   AttributeProto_AttributeType = 9
-	AttributeProto_GRAPHS    AttributeProto_AttributeType = 10
+	AttributeProto_UNDEFINED      AttributeProto_AttributeType = 0
+	AttributeProto_FLOAT          AttributeProto_AttributeType = 1
+	AttributeProto_INT            AttributeProto_AttributeType = 2
+	AttributeProto_STRING         AttributeProto_AttributeType = 3
+	AttributeProto_TENSOR         AttributeProto_AttributeType = 4
+	AttributeProto_GRAPH          AttributeProto_AttributeType = 5
+	AttributeProto_SPARSE_TENSOR  AttributeProto_AttributeType = 11
+	AttributeProto_FLOATS         AttributeProto_AttributeType = 6
+	AttributeProto_INTS           AttributeProto_AttributeType = 7
+	AttributeProto_STRINGS        AttributeProto_AttributeType = 8
+	AttributeProto_TENSORS        AttributeProto_AttributeType = 9
+	AttributeProto_GRAPHS         AttributeProto_AttributeType = 10
+	AttributeProto_SPARSE_TENSORS AttributeProto_AttributeType = 12
 )
 
 var AttributeProto_AttributeType_name = map[int32]string{
@@ -113,25 +120,29 @@ var AttributeProto_AttributeType_name = map[int32]string{
 	3:  "STRING",
 	4:  "TENSOR",
 	5:  "GRAPH",
+	11: "SPARSE_TENSOR",
 	6:  "FLOATS",
 	7:  "INTS",
 	8:  "STRINGS",
 	9:  "TENSORS",
 	10: "GRAPHS",
+	12: "SPARSE_TENSORS",
 }
 
 var AttributeProto_AttributeType_value = map[string]int32{
-	"UNDEFINED": 0,
-	"FLOAT":     1,
-	"INT":       2,
-	"STRING":    3,
-	"TENSOR":    4,
-	"GRAPH":     5,
-	"FLOATS":    6,
-	"INTS":      7,
-	"STRINGS":   8,
-	"TENSORS":   9,
-	"GRAPHS":    10,
+	"UNDEFINED":      0,
+	"FLOAT":          1,
+	"INT":            2,
+	"STRING":         3,
+	"TENSOR":         4,
+	"GRAPH":          5,
+	"SPARSE_TENSOR":  11,
+	"FLOATS":         6,
+	"INTS":           7,
+	"STRINGS":        8,
+	"TENSORS":        9,
+	"GRAPHS":         10,
+	"SPARSE_TENSORS": 12,
 }
 
 func (x AttributeProto_AttributeType) String() string {
@@ -264,22 +275,24 @@ type AttributeProto struct {
 	DocString string `protobuf:"bytes,13,opt,name=doc_string,json=docString,proto3" json:"doc_string,omitempty"`
 	// The type field MUST be present for this version of the IR.
 	// For 0.0.1 versions of the IR, this field was not defined, and
-	// implementations needed to use has_field hueristics to determine
+	// implementations needed to use has_field heuristics to determine
 	// which value field was in use.  For IR_VERSION 0.0.2 or later, this
 	// field MUST be set and match the f|i|s|t|... field in use.  This
-	// change was made to accomodate proto3 implementations.
+	// change was made to accommodate proto3 implementations.
 	Type AttributeProto_AttributeType `protobuf:"varint,20,opt,name=type,proto3,enum=onnx.AttributeProto_AttributeType" json:"type,omitempty"`
 	// Exactly ONE of the following fields must be present for this version of the IR
-	F       float32        `protobuf:"fixed32,2,opt,name=f,proto3" json:"f,omitempty"`
-	I       int64          `protobuf:"varint,3,opt,name=i,proto3" json:"i,omitempty"`
-	S       []byte         `protobuf:"bytes,4,opt,name=s,proto3" json:"s,omitempty"`
-	T       *TensorProto   `protobuf:"bytes,5,opt,name=t,proto3" json:"t,omitempty"`
-	G       *GraphProto    `protobuf:"bytes,6,opt,name=g,proto3" json:"g,omitempty"`
-	Floats  []float32      `protobuf:"fixed32,7,rep,packed,name=floats,proto3" json:"floats,omitempty"`
-	Ints    []int64        `protobuf:"varint,8,rep,packed,name=ints,proto3" json:"ints,omitempty"`
-	Strings [][]byte       `protobuf:"bytes,9,rep,name=strings,proto3" json:"strings,omitempty"`
-	Tensors []*TensorProto `protobuf:"bytes,10,rep,name=tensors,proto3" json:"tensors,omitempty"`
-	Graphs  []*GraphProto  `protobuf:"bytes,11,rep,name=graphs,proto3" json:"graphs,omitempty"`
+	F             float32              `protobuf:"fixed32,2,opt,name=f,proto3" json:"f,omitempty"`
+	I             int64                `protobuf:"varint,3,opt,name=i,proto3" json:"i,omitempty"`
+	S             []byte               `protobuf:"bytes,4,opt,name=s,proto3" json:"s,omitempty"`
+	T             *TensorProto         `protobuf:"bytes,5,opt,name=t,proto3" json:"t,omitempty"`
+	G             *GraphProto          `protobuf:"bytes,6,opt,name=g,proto3" json:"g,omitempty"`
+	SparseTensor  *SparseTensorProto   `protobuf:"bytes,22,opt,name=sparse_tensor,json=sparseTensor,proto3" json:"sparse_tensor,omitempty"`
+	Floats        []float32            `protobuf:"fixed32,7,rep,packed,name=floats,proto3" json:"floats,omitempty"`
+	Ints          []int64              `protobuf:"varint,8,rep,packed,name=ints,proto3" json:"ints,omitempty"`
+	Strings       [][]byte             `protobuf:"bytes,9,rep,name=strings,proto3" json:"strings,omitempty"`
+	Tensors       []*TensorProto       `protobuf:"bytes,10,rep,name=tensors,proto3" json:"tensors,omitempty"`
+	Graphs        []*GraphProto        `protobuf:"bytes,11,rep,name=graphs,proto3" json:"graphs,omitempty"`
+	SparseTensors []*SparseTensorProto `protobuf:"bytes,23,rep,name=sparse_tensors,json=sparseTensors,proto3" json:"sparse_tensors,omitempty"`
 }
 
 func (m *AttributeProto) Reset()         { *m = AttributeProto{} }
@@ -378,6 +391,13 @@ func (m *AttributeProto) GetG() *GraphProto {
 	return nil
 }
 
+func (m *AttributeProto) GetSparseTensor() *SparseTensorProto {
+	if m != nil {
+		return m.SparseTensor
+	}
+	return nil
+}
+
 func (m *AttributeProto) GetFloats() []float32 {
 	if m != nil {
 		return m.Floats
@@ -413,12 +433,20 @@ func (m *AttributeProto) GetGraphs() []*GraphProto {
 	return nil
 }
 
+func (m *AttributeProto) GetSparseTensors() []*SparseTensorProto {
+	if m != nil {
+		return m.SparseTensors
+	}
+	return nil
+}
+
 // Defines information on value, including the name, the type, and
 // the shape of the value.
 type ValueInfoProto struct {
 	// This field MUST be present in this version of the IR.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// This field MUST be present in this version of the IR.
+	// This field MUST be present in this version of the IR for
+	// inputs and outputs of the top-level graph.
 	Type *TypeProto `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	// A human-readable documentation for this value. Markdown is allowed.
 	DocString string `protobuf:"bytes,3,opt,name=doc_string,json=docString,proto3" json:"doc_string,omitempty"`
@@ -848,6 +876,8 @@ type GraphProto struct {
 	// Each TensorProto entry must have a distinct name (within the list) that
 	// MAY also appear in the input list.
 	Initializer []*TensorProto `protobuf:"bytes,5,rep,name=initializer,proto3" json:"initializer,omitempty"`
+	// Initializers (see above) stored in sparse format.
+	SparseInitializer []*SparseTensorProto `protobuf:"bytes,15,rep,name=sparse_initializer,json=sparseInitializer,proto3" json:"sparse_initializer,omitempty"`
 	// A human-readable documentation for this graph. Markdown is allowed.
 	DocString string `protobuf:"bytes,10,opt,name=doc_string,json=docString,proto3" json:"doc_string,omitempty"`
 	// The inputs and outputs of the graph.
@@ -917,6 +947,13 @@ func (m *GraphProto) GetInitializer() []*TensorProto {
 	return nil
 }
 
+func (m *GraphProto) GetSparseInitializer() []*SparseTensorProto {
+	if m != nil {
+		return m.SparseInitializer
+	}
+	return nil
+}
+
 func (m *GraphProto) GetDocString() string {
 	if m != nil {
 		return m.DocString
@@ -965,7 +1002,7 @@ type TensorProto struct {
 	// For float and complex64 values
 	// Complex64 tensors are encoded as a single array of floats,
 	// with the real components appearing in odd numbered positions,
-	// and the corresponding imaginary component apparing in the
+	// and the corresponding imaginary component appearing in the
 	// subsequent even numbered position. (e.g., [1.0 + 2.0i, 3.0 + 4.0i]
 	// is encoded as [1.0, 2.0 ,3.0 ,4.0]
 	// When this field is present, the data_type field MUST be FLOAT or COMPLEX64.
@@ -1020,7 +1057,7 @@ type TensorProto struct {
 	// For double
 	// Complex128 tensors are encoded as a single array of doubles,
 	// with the real components appearing in odd numbered positions,
-	// and the corresponding imaginary component apparing in the
+	// and the corresponding imaginary component appearing in the
 	// subsequent even numbered position. (e.g., [1.0 + 2.0i, 3.0 + 4.0i]
 	// is encoded as [1.0, 2.0 ,3.0 ,4.0]
 	// When this field is present, the data_type field MUST be DOUBLE or COMPLEX128
@@ -1217,6 +1254,80 @@ func (m *TensorProto_Segment) GetEnd() int64 {
 	return 0
 }
 
+// A serialized sparse-tensor value
+type SparseTensorProto struct {
+	// The sequence of non-default values are encoded as a tensor of shape [NNZ].
+	// The default-value is zero for numeric tensors, and empty-string for string tensors.
+	Values *TensorProto `protobuf:"bytes,1,opt,name=values,proto3" json:"values,omitempty"`
+	// The indices of the non-default values, which may be stored in one of two formats.
+	// (a) Indices can be a tensor of shape [NNZ, rank] with the [i,j]-th value
+	// corresponding to the j-th index of the i-th value (in the values tensor).
+	// (b) Indices can be a tensor of shape [NNZ], in which case the i-th value
+	// must be the linearized-index of the i-th value (in the values tensor).
+	// The linearized-index can be converted into an index tuple (k_1,...,k_rank)
+	// using the shape provided below.
+	// The indices must appear in ascending order without duplication.
+	// In the first format, the ordering is lexicographic-ordering:
+	// e.g., index-value [1,4] must appear before [2,1]
+	Indices *TensorProto `protobuf:"bytes,2,opt,name=indices,proto3" json:"indices,omitempty"`
+	// The shape of the underlying dense-tensor: [dim_1, dim_2, ... dim_rank]
+	Dims []int64 `protobuf:"varint,3,rep,packed,name=dims,proto3" json:"dims,omitempty"`
+}
+
+func (m *SparseTensorProto) Reset()         { *m = SparseTensorProto{} }
+func (m *SparseTensorProto) String() string { return proto.CompactTextString(m) }
+func (*SparseTensorProto) ProtoMessage()    {}
+func (*SparseTensorProto) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d0206993eefcdc9e, []int{8}
+}
+func (m *SparseTensorProto) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SparseTensorProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SparseTensorProto.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SparseTensorProto) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SparseTensorProto.Merge(m, src)
+}
+func (m *SparseTensorProto) XXX_Size() int {
+	return m.Size()
+}
+func (m *SparseTensorProto) XXX_DiscardUnknown() {
+	xxx_messageInfo_SparseTensorProto.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SparseTensorProto proto.InternalMessageInfo
+
+func (m *SparseTensorProto) GetValues() *TensorProto {
+	if m != nil {
+		return m.Values
+	}
+	return nil
+}
+
+func (m *SparseTensorProto) GetIndices() *TensorProto {
+	if m != nil {
+		return m.Indices
+	}
+	return nil
+}
+
+func (m *SparseTensorProto) GetDims() []int64 {
+	if m != nil {
+		return m.Dims
+	}
+	return nil
+}
+
 // Defines a tensor shape. A dimension can be either an integer value
 // or a symbolic variable. A symbolic variable represents an unknown
 // dimension.
@@ -1228,7 +1339,7 @@ func (m *TensorShapeProto) Reset()         { *m = TensorShapeProto{} }
 func (m *TensorShapeProto) String() string { return proto.CompactTextString(m) }
 func (*TensorShapeProto) ProtoMessage()    {}
 func (*TensorShapeProto) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d0206993eefcdc9e, []int{8}
+	return fileDescriptor_d0206993eefcdc9e, []int{9}
 }
 func (m *TensorShapeProto) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1281,7 +1392,7 @@ func (m *TensorShapeProto_Dimension) Reset()         { *m = TensorShapeProto_Dim
 func (m *TensorShapeProto_Dimension) String() string { return proto.CompactTextString(m) }
 func (*TensorShapeProto_Dimension) ProtoMessage()    {}
 func (*TensorShapeProto_Dimension) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d0206993eefcdc9e, []int{8, 0}
+	return fileDescriptor_d0206993eefcdc9e, []int{9, 0}
 }
 func (m *TensorShapeProto_Dimension) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1312,7 +1423,6 @@ var xxx_messageInfo_TensorShapeProto_Dimension proto.InternalMessageInfo
 
 type isTensorShapeProto_Dimension_Value interface {
 	isTensorShapeProto_Dimension_Value()
-	Equal(interface{}) bool
 	MarshalTo([]byte) (int, error)
 	Size() int
 }
@@ -1426,6 +1536,8 @@ func _TensorShapeProto_Dimension_OneofSizer(msg proto.Message) (n int) {
 type TypeProto struct {
 	// Types that are valid to be assigned to Value:
 	//	*TypeProto_TensorType
+	//	*TypeProto_SequenceType
+	//	*TypeProto_MapType
 	Value isTypeProto_Value `protobuf_oneof:"value"`
 	// An optional denotation can be used to denote the whole
 	// type with a standard semantic description as to what is
@@ -1438,7 +1550,7 @@ func (m *TypeProto) Reset()         { *m = TypeProto{} }
 func (m *TypeProto) String() string { return proto.CompactTextString(m) }
 func (*TypeProto) ProtoMessage()    {}
 func (*TypeProto) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d0206993eefcdc9e, []int{9}
+	return fileDescriptor_d0206993eefcdc9e, []int{10}
 }
 func (m *TypeProto) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1469,7 +1581,6 @@ var xxx_messageInfo_TypeProto proto.InternalMessageInfo
 
 type isTypeProto_Value interface {
 	isTypeProto_Value()
-	Equal(interface{}) bool
 	MarshalTo([]byte) (int, error)
 	Size() int
 }
@@ -1477,8 +1588,16 @@ type isTypeProto_Value interface {
 type TypeProto_TensorType struct {
 	TensorType *TypeProto_Tensor `protobuf:"bytes,1,opt,name=tensor_type,json=tensorType,proto3,oneof"`
 }
+type TypeProto_SequenceType struct {
+	SequenceType *TypeProto_Sequence `protobuf:"bytes,4,opt,name=sequence_type,json=sequenceType,proto3,oneof"`
+}
+type TypeProto_MapType struct {
+	MapType *TypeProto_Map `protobuf:"bytes,5,opt,name=map_type,json=mapType,proto3,oneof"`
+}
 
-func (*TypeProto_TensorType) isTypeProto_Value() {}
+func (*TypeProto_TensorType) isTypeProto_Value()   {}
+func (*TypeProto_SequenceType) isTypeProto_Value() {}
+func (*TypeProto_MapType) isTypeProto_Value()      {}
 
 func (m *TypeProto) GetValue() isTypeProto_Value {
 	if m != nil {
@@ -1494,6 +1613,20 @@ func (m *TypeProto) GetTensorType() *TypeProto_Tensor {
 	return nil
 }
 
+func (m *TypeProto) GetSequenceType() *TypeProto_Sequence {
+	if x, ok := m.GetValue().(*TypeProto_SequenceType); ok {
+		return x.SequenceType
+	}
+	return nil
+}
+
+func (m *TypeProto) GetMapType() *TypeProto_Map {
+	if x, ok := m.GetValue().(*TypeProto_MapType); ok {
+		return x.MapType
+	}
+	return nil
+}
+
 func (m *TypeProto) GetDenotation() string {
 	if m != nil {
 		return m.Denotation
@@ -1505,6 +1638,8 @@ func (m *TypeProto) GetDenotation() string {
 func (*TypeProto) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
 	return _TypeProto_OneofMarshaler, _TypeProto_OneofUnmarshaler, _TypeProto_OneofSizer, []interface{}{
 		(*TypeProto_TensorType)(nil),
+		(*TypeProto_SequenceType)(nil),
+		(*TypeProto_MapType)(nil),
 	}
 }
 
@@ -1515,6 +1650,16 @@ func _TypeProto_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
 	case *TypeProto_TensorType:
 		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.TensorType); err != nil {
+			return err
+		}
+	case *TypeProto_SequenceType:
+		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SequenceType); err != nil {
+			return err
+		}
+	case *TypeProto_MapType:
+		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.MapType); err != nil {
 			return err
 		}
 	case nil:
@@ -1535,6 +1680,22 @@ func _TypeProto_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buff
 		err := b.DecodeMessage(msg)
 		m.Value = &TypeProto_TensorType{msg}
 		return true, err
+	case 4: // value.sequence_type
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(TypeProto_Sequence)
+		err := b.DecodeMessage(msg)
+		m.Value = &TypeProto_SequenceType{msg}
+		return true, err
+	case 5: // value.map_type
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(TypeProto_Map)
+		err := b.DecodeMessage(msg)
+		m.Value = &TypeProto_MapType{msg}
+		return true, err
 	default:
 		return false, nil
 	}
@@ -1546,6 +1707,16 @@ func _TypeProto_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Value.(type) {
 	case *TypeProto_TensorType:
 		s := proto.Size(x.TensorType)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *TypeProto_SequenceType:
+		s := proto.Size(x.SequenceType)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *TypeProto_MapType:
+		s := proto.Size(x.MapType)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
@@ -1568,7 +1739,7 @@ func (m *TypeProto_Tensor) Reset()         { *m = TypeProto_Tensor{} }
 func (m *TypeProto_Tensor) String() string { return proto.CompactTextString(m) }
 func (*TypeProto_Tensor) ProtoMessage()    {}
 func (*TypeProto_Tensor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d0206993eefcdc9e, []int{9, 0}
+	return fileDescriptor_d0206993eefcdc9e, []int{10, 0}
 }
 func (m *TypeProto_Tensor) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1611,6 +1782,110 @@ func (m *TypeProto_Tensor) GetShape() *TensorShapeProto {
 	return nil
 }
 
+// repeated T
+type TypeProto_Sequence struct {
+	// The type and optional shape of each element of the sequence.
+	// This field MUST be present for this version of the IR.
+	ElemType *TypeProto `protobuf:"bytes,1,opt,name=elem_type,json=elemType,proto3" json:"elem_type,omitempty"`
+}
+
+func (m *TypeProto_Sequence) Reset()         { *m = TypeProto_Sequence{} }
+func (m *TypeProto_Sequence) String() string { return proto.CompactTextString(m) }
+func (*TypeProto_Sequence) ProtoMessage()    {}
+func (*TypeProto_Sequence) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d0206993eefcdc9e, []int{10, 1}
+}
+func (m *TypeProto_Sequence) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TypeProto_Sequence) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TypeProto_Sequence.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TypeProto_Sequence) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TypeProto_Sequence.Merge(m, src)
+}
+func (m *TypeProto_Sequence) XXX_Size() int {
+	return m.Size()
+}
+func (m *TypeProto_Sequence) XXX_DiscardUnknown() {
+	xxx_messageInfo_TypeProto_Sequence.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TypeProto_Sequence proto.InternalMessageInfo
+
+func (m *TypeProto_Sequence) GetElemType() *TypeProto {
+	if m != nil {
+		return m.ElemType
+	}
+	return nil
+}
+
+// map<K,V>
+type TypeProto_Map struct {
+	// This field MUST have a valid TensorProto.DataType value
+	// This field MUST be present for this version of the IR.
+	// This field MUST refer to an integral type ([U]INT{8|16|32|64}) or STRING
+	KeyType int32 `protobuf:"varint,1,opt,name=key_type,json=keyType,proto3" json:"key_type,omitempty"`
+	// This field MUST be present for this version of the IR.
+	ValueType *TypeProto `protobuf:"bytes,2,opt,name=value_type,json=valueType,proto3" json:"value_type,omitempty"`
+}
+
+func (m *TypeProto_Map) Reset()         { *m = TypeProto_Map{} }
+func (m *TypeProto_Map) String() string { return proto.CompactTextString(m) }
+func (*TypeProto_Map) ProtoMessage()    {}
+func (*TypeProto_Map) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d0206993eefcdc9e, []int{10, 2}
+}
+func (m *TypeProto_Map) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TypeProto_Map) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TypeProto_Map.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TypeProto_Map) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TypeProto_Map.Merge(m, src)
+}
+func (m *TypeProto_Map) XXX_Size() int {
+	return m.Size()
+}
+func (m *TypeProto_Map) XXX_DiscardUnknown() {
+	xxx_messageInfo_TypeProto_Map.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TypeProto_Map proto.InternalMessageInfo
+
+func (m *TypeProto_Map) GetKeyType() int32 {
+	if m != nil {
+		return m.KeyType
+	}
+	return 0
+}
+
+func (m *TypeProto_Map) GetValueType() *TypeProto {
+	if m != nil {
+		return m.ValueType
+	}
+	return nil
+}
+
 // Operator Sets
 //
 // OperatorSets are uniquely identified by a (domain, opset_version) pair.
@@ -1629,7 +1904,7 @@ func (m *OperatorSetIdProto) Reset()         { *m = OperatorSetIdProto{} }
 func (m *OperatorSetIdProto) String() string { return proto.CompactTextString(m) }
 func (*OperatorSetIdProto) ProtoMessage()    {}
 func (*OperatorSetIdProto) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d0206993eefcdc9e, []int{10}
+	return fileDescriptor_d0206993eefcdc9e, []int{11}
 }
 func (m *OperatorSetIdProto) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1686,837 +1961,132 @@ func init() {
 	proto.RegisterType((*GraphProto)(nil), "onnx.GraphProto")
 	proto.RegisterType((*TensorProto)(nil), "onnx.TensorProto")
 	proto.RegisterType((*TensorProto_Segment)(nil), "onnx.TensorProto.Segment")
+	proto.RegisterType((*SparseTensorProto)(nil), "onnx.SparseTensorProto")
 	proto.RegisterType((*TensorShapeProto)(nil), "onnx.TensorShapeProto")
 	proto.RegisterType((*TensorShapeProto_Dimension)(nil), "onnx.TensorShapeProto.Dimension")
 	proto.RegisterType((*TypeProto)(nil), "onnx.TypeProto")
 	proto.RegisterType((*TypeProto_Tensor)(nil), "onnx.TypeProto.Tensor")
+	proto.RegisterType((*TypeProto_Sequence)(nil), "onnx.TypeProto.Sequence")
+	proto.RegisterType((*TypeProto_Map)(nil), "onnx.TypeProto.Map")
 	proto.RegisterType((*OperatorSetIdProto)(nil), "onnx.OperatorSetIdProto")
 }
 
 func init() { proto.RegisterFile("onnx.proto3", fileDescriptor_d0206993eefcdc9e) }
 
 var fileDescriptor_d0206993eefcdc9e = []byte{
-	// 1587 bytes of a gzipped FileDescriptorProto
+	// 1754 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x57, 0x4f, 0x6f, 0xdb, 0xc8,
-	0x15, 0xd7, 0x88, 0xfa, 0xc7, 0x47, 0x49, 0x99, 0x0e, 0xbc, 0x5e, 0xda, 0xdd, 0x28, 0xaa, 0x0c,
-	0x14, 0xda, 0xed, 0xd6, 0x6b, 0x49, 0x86, 0x9a, 0x45, 0x2f, 0x95, 0x63, 0x39, 0x11, 0xe0, 0x95,
-	0x0c, 0x4a, 0x0e, 0xf6, 0x52, 0x10, 0xb4, 0x49, 0xc9, 0x44, 0x25, 0x52, 0x25, 0x47, 0xd9, 0x38,
-	0xb7, 0x7e, 0x83, 0xb6, 0x97, 0x7e, 0x85, 0x7e, 0x84, 0xa2, 0xbd, 0xf4, 0xd0, 0x43, 0x8f, 0xe9,
-	0x2d, 0xe8, 0xa9, 0x75, 0xbe, 0x44, 0x7b, 0x2b, 0xe6, 0x0d, 0x49, 0x51, 0xb2, 0x93, 0xee, 0x45,
-	0x98, 0xf7, 0xde, 0xef, 0x3d, 0xbe, 0x79, 0x7f, 0x47, 0xa0, 0xf9, 0x9e, 0xf7, 0xfa, 0x70, 0x19,
-	0xf8, 0xdc, 0xef, 0xb0, 0x9c, 0x20, 0xf6, 0x7f, 0x3a, 0x73, 0xf9, 0xcd, 0xea, 0xea, 0xf0, 0xda,
-	0x5f, 0x7c, 0x35, 0xf3, 0x67, 0xfe, 0x57, 0x28, 0xbd, 0x5a, 0x4d, 0x91, 0x42, 0x02, 0x4f, 0x52,
-	0xab, 0xf1, 0x97, 0x1c, 0x54, 0x7b, 0x9c, 0x07, 0xee, 0xd5, 0x8a, 0x3b, 0x17, 0x82, 0xc5, 0x18,
-	0xe4, 0x3c, 0x6b, 0xe1, 0xe8, 0xa4, 0x4e, 0x9a, 0xaa, 0x81, 0x67, 0xd6, 0x80, 0x4a, 0xe0, 0x4c,
-	0x4d, 0x8b, 0xf3, 0xc0, 0x44, 0xe1, 0x27, 0x28, 0xd4, 0x02, 0x67, 0x2a, 0xb4, 0x87, 0x02, 0xf3,
-	0x18, 0xc0, 0xf6, 0xaf, 0xcd, 0x90, 0x07, 0xae, 0x37, 0xd3, 0x2b, 0x08, 0x50, 0x6d, 0xff, 0x7a,
-	0x8c, 0x0c, 0xd6, 0x85, 0x1c, 0xbf, 0x5d, 0x3a, 0xfa, 0x4e, 0x9d, 0x34, 0xab, 0xed, 0xc6, 0x21,
-	0xba, 0xbe, 0xf9, 0xe9, 0x35, 0x39, 0xb9, 0x5d, 0x3a, 0x06, 0xe2, 0x59, 0x19, 0xc8, 0x54, 0xcf,
-	0xd6, 0x49, 0x33, 0x6b, 0x90, 0xa9, 0xa0, 0x5c, 0x5d, 0xa9, 0x93, 0xa6, 0x62, 0x10, 0x57, 0x50,
-	0xa1, 0x9e, 0xab, 0x93, 0x66, 0xd9, 0x20, 0x21, 0x7b, 0x02, 0x84, 0xeb, 0xf9, 0x3a, 0x69, 0x6a,
-	0xed, 0x1f, 0x48, 0xf3, 0x13, 0xc7, 0x0b, 0xfd, 0x00, 0x6d, 0x1b, 0x84, 0xb3, 0x1a, 0x90, 0x99,
-	0x5e, 0x40, 0x00, 0x95, 0x80, 0xe7, 0x81, 0xb5, 0xbc, 0x89, 0xe4, 0x33, 0xb6, 0x0b, 0x85, 0xe9,
-	0xdc, 0xb7, 0x78, 0xa8, 0x17, 0xeb, 0x4a, 0x33, 0x6b, 0x44, 0x94, 0x88, 0x88, 0xeb, 0xf1, 0x50,
-	0x2f, 0xd5, 0x95, 0xa6, 0x62, 0xe0, 0x99, 0xe9, 0x50, 0x94, 0x37, 0x0d, 0x75, 0xb5, 0xae, 0x34,
-	0xcb, 0x46, 0x4c, 0xb2, 0x9f, 0x40, 0x91, 0xe3, 0x77, 0x43, 0x1d, 0xea, 0xca, 0xc3, 0xce, 0xc4,
-	0x08, 0xd6, 0x84, 0xc2, 0x4c, 0xf8, 0x10, 0xea, 0x1a, 0x62, 0xef, 0xfb, 0x15, 0xc9, 0x1b, 0xbf,
-	0x23, 0x50, 0xd9, 0x88, 0x0f, 0xab, 0x80, 0x7a, 0x39, 0x3c, 0xed, 0x9f, 0x0d, 0x86, 0xfd, 0x53,
-	0x9a, 0x61, 0x2a, 0xe4, 0xcf, 0xce, 0x47, 0xbd, 0x09, 0x25, 0xac, 0x08, 0xca, 0x60, 0x38, 0xa1,
-	0x59, 0x06, 0x50, 0x18, 0x4f, 0x8c, 0xc1, 0xf0, 0x39, 0x55, 0xc4, 0x79, 0xd2, 0x1f, 0x8e, 0x47,
-	0x06, 0xcd, 0x09, 0xec, 0x73, 0xa3, 0x77, 0xf1, 0x82, 0xe6, 0x05, 0x1b, 0xd5, 0xc6, 0xb4, 0xc0,
-	0x4a, 0x90, 0x1b, 0x0c, 0x27, 0x63, 0x5a, 0x64, 0x1a, 0x14, 0xa5, 0xe2, 0x98, 0x96, 0x04, 0x21,
-	0x35, 0xc7, 0x54, 0x15, 0x78, 0x54, 0x1d, 0x53, 0x68, 0xdc, 0x40, 0xf5, 0xa5, 0x35, 0x5f, 0x39,
-	0x03, 0x6f, 0xea, 0x7f, 0xb8, 0x78, 0x0e, 0xa2, 0xcc, 0x67, 0x31, 0xf2, 0x8f, 0xa2, 0x68, 0xdc,
-	0x2e, 0x65, 0xd2, 0xa3, 0x34, 0x6f, 0x56, 0x8f, 0xb2, 0x55, 0x3d, 0x8d, 0x7f, 0x10, 0x50, 0x87,
-	0xbe, 0x1d, 0x95, 0xe8, 0x0e, 0xe4, 0x5d, 0x6f, 0xb9, 0xe2, 0x3a, 0xa9, 0x2b, 0x4d, 0xd5, 0x90,
-	0x84, 0x48, 0x9f, 0xbf, 0xe2, 0x82, 0x9d, 0x45, 0x76, 0x44, 0x25, 0x3e, 0x29, 0x29, 0x9f, 0x3e,
-	0x85, 0xa2, 0xbf, 0x34, 0xd1, 0xad, 0x1c, 0xb2, 0x0b, 0xfe, 0x12, 0x83, 0xba, 0x0b, 0x05, 0xdb,
-	0x5f, 0x58, 0xae, 0xa7, 0x17, 0x25, 0x5f, 0x52, 0xac, 0x0d, 0xaa, 0x15, 0x47, 0x5f, 0xcf, 0x63,
-	0xae, 0x76, 0x1e, 0xaa, 0x61, 0x63, 0x0d, 0xdb, 0xba, 0x53, 0x61, 0xfb, 0x4e, 0xbf, 0x51, 0x00,
-	0xbe, 0xf1, 0x6d, 0x67, 0x2e, 0x2f, 0xf5, 0x18, 0xc0, 0x0d, 0xcc, 0x57, 0x4e, 0x10, 0xba, 0xbe,
-	0x87, 0x01, 0x54, 0x0c, 0xd5, 0x0d, 0x5e, 0x4a, 0x06, 0xfb, 0x39, 0x94, 0xfd, 0x65, 0xe8, 0x70,
-	0xd3, 0x5d, 0x2c, 0xfd, 0x80, 0x63, 0x31, 0x6a, 0x6d, 0x5d, 0xfa, 0x30, 0x5a, 0x3a, 0x81, 0xc5,
-	0xfd, 0x60, 0xec, 0xf0, 0x81, 0x2d, 0xfd, 0xd0, 0x10, 0x3d, 0x40, 0x30, 0x3b, 0x80, 0xca, 0x32,
-	0xf0, 0xed, 0xd5, 0xb5, 0x13, 0xf5, 0x6f, 0x16, 0x9d, 0x29, 0xc7, 0x4c, 0x6c, 0xe0, 0xcf, 0x81,
-	0x26, 0xa0, 0xd8, 0x0d, 0x19, 0xb3, 0x47, 0x31, 0x3f, 0x76, 0x66, 0x1d, 0xa5, 0xdc, 0x46, 0x94,
-	0x0e, 0xa0, 0xb2, 0x10, 0x37, 0x4a, 0xf4, 0xf3, 0x78, 0x8d, 0x32, 0x32, 0x63, 0xe5, 0x8f, 0x87,
-	0x85, 0xfd, 0x18, 0xf2, 0x58, 0xf2, 0x98, 0x80, 0x87, 0x3a, 0x42, 0x8a, 0xd9, 0x33, 0xa8, 0x2e,
-	0x1c, 0x6e, 0xd9, 0x16, 0xb7, 0xcc, 0x65, 0xe0, 0x2f, 0x43, 0xbd, 0x8a, 0x21, 0xf9, 0x4c, 0x2a,
-	0x48, 0x6b, 0xf2, 0xb7, 0xef, 0xf1, 0xe0, 0x56, 0x2a, 0x57, 0x62, 0x9d, 0x0b, 0xa1, 0xd2, 0xf8,
-	0x05, 0xec, 0x3e, 0x0c, 0x64, 0x14, 0x94, 0x5f, 0x39, 0xb7, 0x51, 0x21, 0x8b, 0xa3, 0xa8, 0xba,
-	0x57, 0xa2, 0xda, 0xa3, 0xe0, 0x49, 0xa2, 0xf1, 0x7b, 0x02, 0x54, 0xb6, 0x76, 0xcf, 0xf3, 0x7c,
-	0x6e, 0x71, 0x71, 0xc5, 0x27, 0xa0, 0xc9, 0x0e, 0x37, 0x53, 0xdd, 0x00, 0x92, 0x85, 0xb1, 0xfe,
-	0x25, 0x7c, 0xf6, 0xeb, 0x95, 0xe5, 0x71, 0x73, 0x69, 0x05, 0xd6, 0xc2, 0xe1, 0x4e, 0x60, 0xa6,
-	0x14, 0x42, 0xac, 0xe0, 0xff, 0x77, 0x95, 0x3d, 0xb4, 0x70, 0x11, 0x1b, 0x98, 0x24, 0xd6, 0xc3,
-	0xc6, 0x7f, 0xb3, 0x00, 0xeb, 0x88, 0x89, 0x0e, 0xf4, 0x7c, 0xdb, 0xc1, 0x76, 0x49, 0x3a, 0x30,
-	0x69, 0x27, 0x03, 0x85, 0x49, 0x9b, 0x64, 0x53, 0x6d, 0xd2, 0x01, 0xcd, 0xf5, 0x5c, 0xee, 0x5a,
-	0x73, 0xf7, 0x8d, 0x13, 0x44, 0x75, 0xff, 0xc0, 0x3c, 0x4b, 0xa3, 0xb6, 0xf2, 0x0b, 0xdb, 0xf9,
-	0xfd, 0x22, 0x6e, 0x5e, 0x2d, 0xdd, 0x45, 0x9b, 0x73, 0x24, 0x6e, 0xe9, 0x2f, 0x93, 0x96, 0x2e,
-	0x7f, 0x04, 0x1c, 0x37, 0x7a, 0x07, 0x00, 0x73, 0x62, 0xba, 0xde, 0xd4, 0xd7, 0x2b, 0x1f, 0xd1,
-	0x50, 0x5f, 0xc5, 0x34, 0x1b, 0xc1, 0xa7, 0x18, 0x47, 0xf7, 0x0d, 0xa6, 0xce, 0xb4, 0x92, 0x2c,
-	0x46, 0xf5, 0xb4, 0x9b, 0xbe, 0xee, 0x3a, 0xc7, 0xc6, 0x6e, 0x5a, 0x6d, 0xcd, 0x6f, 0xbc, 0x2b,
-	0x80, 0x96, 0x8a, 0x8d, 0x88, 0xab, 0xed, 0x2e, 0x42, 0x0c, 0xbe, 0x62, 0xe0, 0x99, 0xfd, 0x10,
-	0x54, 0xac, 0xdb, 0x64, 0x2e, 0xe6, 0x8d, 0x92, 0x60, 0xe0, 0x08, 0xea, 0x40, 0x31, 0x74, 0x66,
-	0x0b, 0xc7, 0xe3, 0xd8, 0x7e, 0x5a, 0x7b, 0xef, 0x5e, 0xc0, 0x0f, 0xc7, 0x12, 0x60, 0xc4, 0x48,
-	0xf6, 0x23, 0x00, 0xdc, 0x56, 0xa6, 0x30, 0xa3, 0xe7, 0xc4, 0xfe, 0x3a, 0xc9, 0x52, 0x62, 0xa8,
-	0xc8, 0x3d, 0xb5, 0xb8, 0x25, 0x20, 0xae, 0xc7, 0x3b, 0x6d, 0x09, 0x11, 0xb9, 0xcc, 0x4b, 0x08,
-	0x72, 0x11, 0xf2, 0x04, 0x34, 0x99, 0x36, 0x89, 0x29, 0xe0, 0x66, 0x03, 0xc9, 0x4a, 0xd9, 0xe8,
-	0x1e, 0x4b, 0xb9, 0x58, 0x93, 0x4a, 0x62, 0xa3, 0x7b, 0x8c, 0x90, 0xb8, 0x8e, 0x4a, 0xa9, 0x3a,
-	0xda, 0x2c, 0x89, 0xf2, 0x76, 0x49, 0xec, 0x41, 0x29, 0xb0, 0xbe, 0x93, 0x36, 0x55, 0x5c, 0xe7,
-	0xc5, 0xc0, 0xfa, 0x0e, 0xad, 0xf5, 0xa0, 0xe2, 0xbc, 0xe6, 0x4e, 0xe0, 0x59, 0x73, 0x29, 0xaf,
-	0x7c, 0x8f, 0xce, 0x28, 0xc7, 0x2a, 0x68, 0xe2, 0x19, 0x54, 0x30, 0xd8, 0x73, 0xff, 0x3a, 0xce,
-	0xab, 0x78, 0x82, 0xd4, 0xee, 0x47, 0x55, 0xc0, 0xcf, 0x23, 0x94, 0x51, 0xb6, 0x53, 0x14, 0x3b,
-	0x00, 0xcd, 0xf6, 0x57, 0x57, 0x73, 0x47, 0x7a, 0x21, 0x36, 0x3b, 0xc1, 0x9b, 0x83, 0x64, 0xe3,
-	0x97, 0x0e, 0x40, 0x5b, 0xa5, 0xc2, 0x23, 0x0a, 0x3c, 0x27, 0x41, 0xab, 0x24, 0x3e, 0xfb, 0x2d,
-	0x28, 0x46, 0xd9, 0x13, 0x13, 0xe5, 0xca, 0x99, 0xb9, 0xf1, 0xb4, 0x97, 0x84, 0x98, 0x3c, 0x8e,
-	0x67, 0x63, 0x59, 0x28, 0x86, 0x38, 0x36, 0xfe, 0x49, 0xa0, 0x74, 0x1a, 0x97, 0xc7, 0x87, 0xd7,
-	0xbe, 0x0a, 0xf9, 0xcb, 0xc1, 0x70, 0xf2, 0x94, 0x66, 0xa3, 0x4d, 0xfe, 0x54, 0xae, 0x7d, 0xc1,
-	0x6c, 0x75, 0xe5, 0xda, 0x97, 0xc7, 0x7c, 0x74, 0xec, 0xb4, 0x69, 0x21, 0x3a, 0x76, 0x8f, 0x69,
-	0x31, 0xf5, 0x5e, 0x28, 0x09, 0x13, 0x27, 0xa3, 0xd1, 0x39, 0x55, 0xc5, 0xfe, 0xc7, 0x4f, 0xb4,
-	0xba, 0x14, 0x04, 0xe4, 0x74, 0x74, 0x79, 0x72, 0xde, 0xa7, 0x5a, 0x6c, 0xbb, 0xd3, 0xa6, 0xe5,
-	0xf8, 0xdc, 0x3d, 0xa6, 0x15, 0xe1, 0xe2, 0xb3, 0xd1, 0x37, 0x17, 0xe7, 0xfd, 0x6f, 0xbb, 0xc7,
-	0xb4, 0xca, 0xaa, 0x00, 0x11, 0xd9, 0x6a, 0x3f, 0xa5, 0x8f, 0x58, 0x19, 0x4a, 0x27, 0xb1, 0x41,
-	0xda, 0xf8, 0x1c, 0xca, 0xe9, 0xb8, 0x8b, 0xaf, 0x9d, 0xf6, 0xcf, 0x7a, 0x97, 0xe7, 0x13, 0x9a,
-	0x11, 0xd0, 0xfe, 0xb7, 0x93, 0xbe, 0x31, 0xec, 0x9d, 0x53, 0xd2, 0xf8, 0x73, 0x32, 0x6b, 0xc7,
-	0x37, 0x56, 0xf4, 0x7e, 0x60, 0x6d, 0x50, 0x6c, 0x77, 0x11, 0xcd, 0xb6, 0x7a, 0x3a, 0xa9, 0x6b,
-	0xd0, 0xe1, 0xa9, 0xbb, 0x70, 0x3c, 0xb1, 0x7d, 0x0c, 0x01, 0xde, 0x0f, 0x40, 0x4d, 0x38, 0xec,
-	0x31, 0xa8, 0xb6, 0xbb, 0x30, 0xe5, 0x6c, 0xc7, 0x4c, 0xbc, 0xc8, 0x18, 0x25, 0xdb, 0x5d, 0xe0,
-	0xd0, 0x88, 0xc5, 0x38, 0xa8, 0xe5, 0x70, 0x8c, 0xc4, 0x38, 0x79, 0x59, 0x0d, 0xc0, 0x76, 0x92,
-	0x91, 0x21, 0xf7, 0x65, 0x8a, 0x73, 0x52, 0x8c, 0xb6, 0x46, 0xe3, 0x6f, 0x04, 0xd4, 0xe4, 0xd5,
-	0xc3, 0xbe, 0x4e, 0x36, 0x04, 0xce, 0x00, 0x82, 0x8d, 0xbe, 0xbb, 0xf5, 0x36, 0x8a, 0xee, 0xf1,
-	0x22, 0x13, 0xef, 0x0e, 0x2c, 0x80, 0xcd, 0x2f, 0x16, 0xb6, 0xbf, 0xb8, 0x3f, 0x86, 0x82, 0xd4,
-	0x13, 0x63, 0xc6, 0x99, 0x3b, 0x8b, 0xf5, 0x27, 0xf2, 0x46, 0x49, 0x30, 0xd0, 0xcc, 0x97, 0x90,
-	0x0f, 0x45, 0x80, 0xa2, 0x77, 0xd9, 0xee, 0xc3, 0x91, 0x33, 0x24, 0x68, 0x7d, 0x8d, 0x33, 0x60,
-	0xf7, 0x5f, 0x1b, 0xa9, 0x07, 0x01, 0xd9, 0x78, 0x10, 0xe8, 0x50, 0x8c, 0x9f, 0x02, 0xb2, 0x9e,
-	0x63, 0xf2, 0x8b, 0x3f, 0x10, 0x28, 0xc6, 0x2f, 0x02, 0x06, 0x55, 0x73, 0x3c, 0xe9, 0x19, 0x13,
-	0xf3, 0x65, 0xdf, 0x18, 0x0f, 0x46, 0x43, 0x9a, 0x61, 0x7b, 0xf0, 0xc9, 0xc0, 0x88, 0x69, 0xb3,
-	0x7d, 0xd4, 0xfa, 0x99, 0xd9, 0x3a, 0x32, 0x5b, 0x47, 0x94, 0x7c, 0x40, 0xd4, 0x39, 0xa2, 0x59,
-	0xa6, 0xc3, 0xce, 0x3d, 0x51, 0xcb, 0xec, 0x50, 0xe5, 0xbe, 0xe4, 0x6b, 0xb3, 0x65, 0xb6, 0xdb,
-	0x34, 0x27, 0xca, 0x73, 0x2d, 0xa1, 0xf9, 0x93, 0xe6, 0x7f, 0xfe, 0x5d, 0x23, 0x7f, 0xbc, 0xab,
-	0x91, 0x3f, 0xdd, 0xd5, 0xc8, 0x5f, 0xef, 0x6a, 0xe4, 0xef, 0x77, 0x35, 0xf2, 0xf6, 0xae, 0x46,
-	0xfe, 0x75, 0x57, 0x23, 0xbf, 0x7d, 0x5f, 0xcb, 0xbc, 0x7d, 0x5f, 0xcb, 0xbc, 0x7b, 0x5f, 0xcb,
-	0x5c, 0x15, 0xe4, 0x5f, 0xaf, 0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0x70, 0xd1, 0xb5, 0xc8, 0x88,
-	0x0d, 0x00, 0x00,
+	0x15, 0x17, 0x45, 0x49, 0x14, 0x9f, 0xfe, 0x64, 0x32, 0xcd, 0x3a, 0x8c, 0x77, 0xe3, 0xa8, 0x32,
+	0x50, 0x28, 0xdb, 0xc0, 0xb0, 0x24, 0xc3, 0xf5, 0xa2, 0x45, 0x5b, 0x39, 0x96, 0x63, 0x01, 0x8e,
+	0x64, 0x0c, 0xe5, 0x60, 0x2f, 0x05, 0xc1, 0x98, 0x63, 0x87, 0x88, 0x45, 0x72, 0x49, 0x2a, 0xbb,
+	0xde, 0x4b, 0xd1, 0x6f, 0x50, 0xf4, 0x9b, 0xf4, 0x56, 0xf4, 0x56, 0xf4, 0xd2, 0xe3, 0xf6, 0xb6,
+	0xe8, 0x69, 0x91, 0x7c, 0x91, 0x62, 0xde, 0x90, 0x14, 0x25, 0xcb, 0x6e, 0x2f, 0xc2, 0xbc, 0xf7,
+	0x7e, 0xf3, 0x38, 0xef, 0xff, 0x13, 0xd4, 0x7c, 0xcf, 0xfb, 0x6e, 0x27, 0x08, 0xfd, 0xd8, 0xef,
+	0xd3, 0x92, 0x20, 0xda, 0x3f, 0x95, 0xa1, 0x39, 0x88, 0xe3, 0xd0, 0x7d, 0x3b, 0x8f, 0xf9, 0x99,
+	0x90, 0x50, 0x0a, 0x25, 0xcf, 0x9e, 0x71, 0x43, 0x69, 0x29, 0x1d, 0x9d, 0xe1, 0x99, 0xb6, 0xa1,
+	0x11, 0xf2, 0x4b, 0xcb, 0x8e, 0xe3, 0xd0, 0x42, 0xe1, 0x67, 0x28, 0xac, 0x85, 0xfc, 0x52, 0xdc,
+	0x1e, 0x0b, 0xcc, 0x53, 0x00, 0xc7, 0xbf, 0xb0, 0xa2, 0x38, 0x74, 0xbd, 0x2b, 0xa3, 0x81, 0x00,
+	0xdd, 0xf1, 0x2f, 0x4c, 0x64, 0xd0, 0x7d, 0x28, 0xc5, 0x37, 0x01, 0x37, 0x1e, 0xb5, 0x94, 0x4e,
+	0xb3, 0xd7, 0xde, 0xc1, 0xb7, 0x2c, 0x7f, 0x7a, 0x41, 0x4e, 0x6f, 0x02, 0xce, 0x10, 0x4f, 0xeb,
+	0xa0, 0x5c, 0x1a, 0xc5, 0x96, 0xd2, 0x29, 0x32, 0xe5, 0x52, 0x50, 0xae, 0xa1, 0xb6, 0x94, 0x8e,
+	0xca, 0x14, 0x57, 0x50, 0x91, 0x51, 0x6a, 0x29, 0x9d, 0x3a, 0x53, 0x22, 0xfa, 0x0c, 0x94, 0xd8,
+	0x28, 0xb7, 0x94, 0x4e, 0xad, 0xf7, 0x50, 0xaa, 0x9f, 0x72, 0x2f, 0xf2, 0x43, 0xd4, 0xcd, 0x94,
+	0x98, 0x6e, 0x81, 0x72, 0x65, 0x54, 0x10, 0x40, 0x24, 0xe0, 0x55, 0x68, 0x07, 0xef, 0x12, 0xf9,
+	0x15, 0xfd, 0x0d, 0x34, 0xa2, 0xc0, 0x0e, 0x23, 0x6e, 0xc5, 0x78, 0xd1, 0xd8, 0x40, 0xec, 0x63,
+	0x89, 0x35, 0x51, 0x94, 0x57, 0x59, 0x8f, 0x72, 0x2c, 0xba, 0x01, 0x95, 0xcb, 0x6b, 0xdf, 0x8e,
+	0x23, 0x43, 0x6b, 0xa9, 0x9d, 0x22, 0x4b, 0x28, 0xe1, 0x4f, 0xd7, 0x8b, 0x23, 0xa3, 0xda, 0x52,
+	0x3b, 0x2a, 0xc3, 0x33, 0x35, 0x40, 0x93, 0x7e, 0x8a, 0x0c, 0xbd, 0xa5, 0x76, 0xea, 0x2c, 0x25,
+	0xe9, 0x2f, 0x41, 0x93, 0x1f, 0x8f, 0x0c, 0x68, 0xa9, 0xeb, 0x4d, 0x49, 0x11, 0xb4, 0x03, 0x95,
+	0x2b, 0x61, 0x41, 0x64, 0xd4, 0x10, 0x7b, 0xdb, 0xaa, 0x44, 0x4e, 0x7f, 0x0b, 0xcd, 0x25, 0xd3,
+	0x22, 0xe3, 0x31, 0xde, 0xb8, 0xd3, 0xb6, 0x46, 0xde, 0xb6, 0xa8, 0xfd, 0x37, 0x05, 0x1a, 0x4b,
+	0xd1, 0xa1, 0x0d, 0xd0, 0xcf, 0xc7, 0x47, 0xc3, 0xe3, 0xd1, 0x78, 0x78, 0x44, 0x0a, 0x54, 0x87,
+	0xf2, 0xf1, 0xe9, 0x64, 0x30, 0x25, 0x0a, 0xd5, 0x40, 0x1d, 0x8d, 0xa7, 0xa4, 0x48, 0x01, 0x2a,
+	0xe6, 0x94, 0x8d, 0xc6, 0xaf, 0x88, 0x2a, 0xce, 0xd3, 0xe1, 0xd8, 0x9c, 0x30, 0x52, 0x12, 0xd8,
+	0x57, 0x6c, 0x70, 0x76, 0x42, 0xca, 0xf4, 0x21, 0x34, 0xcc, 0xb3, 0x01, 0x33, 0x87, 0x56, 0x22,
+	0xad, 0x09, 0x24, 0x6a, 0x32, 0x49, 0x85, 0x56, 0xa1, 0x34, 0x1a, 0x4f, 0x4d, 0xa2, 0xd1, 0x1a,
+	0x68, 0x52, 0x97, 0x49, 0xaa, 0x82, 0x90, 0x70, 0x93, 0xe8, 0x02, 0x8f, 0xda, 0x4c, 0x02, 0x94,
+	0x42, 0x73, 0x49, 0x9d, 0x49, 0xea, 0xed, 0x77, 0xd0, 0x7c, 0x63, 0x5f, 0xcf, 0xf9, 0xc8, 0xbb,
+	0xf4, 0xef, 0xce, 0xf0, 0xed, 0x24, 0x3d, 0x8b, 0x18, 0xf2, 0x07, 0x89, 0xd3, 0x6f, 0x02, 0x99,
+	0x99, 0x49, 0x2e, 0x2e, 0xa7, 0xb8, 0xba, 0x92, 0xe2, 0xed, 0x7f, 0x2b, 0xa0, 0x8f, 0x7d, 0x27,
+	0xa9, 0xa3, 0x47, 0x50, 0x76, 0xbd, 0x60, 0x1e, 0x1b, 0x4a, 0x4b, 0xed, 0xe8, 0x4c, 0x12, 0x22,
+	0x4b, 0xfc, 0x79, 0x2c, 0xd8, 0x45, 0x64, 0x27, 0x54, 0xf6, 0x26, 0x35, 0xf7, 0xa6, 0xc7, 0xa0,
+	0xf9, 0x81, 0x85, 0xcf, 0x2a, 0x21, 0xbb, 0xe2, 0x07, 0xe8, 0xfb, 0x0d, 0xa8, 0x38, 0xfe, 0xcc,
+	0x76, 0x3d, 0x43, 0x93, 0x7c, 0x49, 0xd1, 0x1e, 0xe8, 0x76, 0x1a, 0x24, 0xa3, 0x8c, 0x01, 0x7e,
+	0xb4, 0xae, 0xd0, 0xd8, 0x02, 0xb6, 0x62, 0x53, 0x65, 0xd5, 0xa6, 0x3f, 0xa9, 0x00, 0xaf, 0x7d,
+	0x87, 0x5f, 0x4b, 0xa3, 0x9e, 0x02, 0xb8, 0xa1, 0xf5, 0x81, 0x87, 0x91, 0xeb, 0x7b, 0xe8, 0x40,
+	0x95, 0xe9, 0x6e, 0xf8, 0x46, 0x32, 0xe8, 0xaf, 0xa1, 0xee, 0x07, 0x11, 0x8f, 0x2d, 0x77, 0x16,
+	0xf8, 0x61, 0x8c, 0x39, 0x5f, 0xeb, 0x19, 0xf2, 0x0d, 0x93, 0x80, 0x87, 0x76, 0xec, 0x87, 0x26,
+	0x8f, 0x47, 0x8e, 0x7c, 0x47, 0x0d, 0xd1, 0x23, 0x04, 0xd3, 0x6d, 0x68, 0x04, 0xa1, 0xef, 0xcc,
+	0x2f, 0x78, 0xd2, 0x64, 0x8a, 0xf8, 0x98, 0x7a, 0xca, 0xc4, 0x2e, 0xf3, 0x1c, 0x48, 0x06, 0x4a,
+	0x9f, 0x21, 0x7d, 0xf6, 0x20, 0xe5, 0xa7, 0x8f, 0x59, 0x78, 0xa9, 0xb4, 0xe4, 0xa5, 0x6d, 0x68,
+	0xcc, 0x84, 0x45, 0xd9, 0xfd, 0x32, 0x9a, 0x51, 0x47, 0x66, 0x7a, 0xf9, 0x7e, 0xb7, 0xd0, 0x5f,
+	0x40, 0x19, 0x2b, 0x0b, 0x03, 0xb0, 0xae, 0xf0, 0xa4, 0x98, 0xbe, 0x84, 0xe6, 0x8c, 0xc7, 0xb6,
+	0x63, 0xc7, 0xb6, 0x15, 0x84, 0x7e, 0x10, 0x19, 0x4d, 0x74, 0xc9, 0x17, 0x49, 0xdd, 0xa1, 0x36,
+	0xf9, 0x3b, 0xf4, 0xe2, 0xf0, 0x26, 0x29, 0xbe, 0xf4, 0xce, 0x99, 0xb8, 0xd2, 0xfe, 0x3d, 0x6c,
+	0xac, 0x07, 0x52, 0x02, 0xea, 0x7b, 0x7e, 0x93, 0x24, 0xb2, 0x38, 0x8a, 0xac, 0xfb, 0x20, 0xb2,
+	0x3d, 0x71, 0x9e, 0x24, 0xda, 0x7f, 0x51, 0x80, 0xc8, 0x52, 0x1e, 0x78, 0x9e, 0x1f, 0xdb, 0xb1,
+	0x30, 0xf1, 0x19, 0xd4, 0x64, 0x33, 0xb0, 0x72, 0xd5, 0x00, 0x92, 0x85, 0xbe, 0xfe, 0x03, 0x7c,
+	0xf1, 0xcd, 0xdc, 0xf6, 0x62, 0x2b, 0xb0, 0x43, 0x7b, 0xc6, 0x63, 0x1e, 0x5a, 0xb9, 0x0b, 0x11,
+	0x66, 0xf0, 0xff, 0x32, 0xe5, 0x09, 0x6a, 0x38, 0x4b, 0x15, 0x4c, 0x33, 0xed, 0x51, 0xfb, 0x1f,
+	0x2a, 0xc0, 0xc2, 0x63, 0xa2, 0x02, 0x3d, 0xdf, 0xe1, 0x58, 0x2e, 0x59, 0x05, 0x66, 0xe5, 0xc4,
+	0x50, 0x98, 0x95, 0x49, 0x31, 0x57, 0x26, 0x7d, 0xa8, 0xb9, 0x9e, 0x1b, 0xbb, 0xf6, 0xb5, 0xfb,
+	0x3d, 0x0f, 0x93, 0xbc, 0x5f, 0xd3, 0x36, 0xf3, 0x28, 0x7a, 0x0c, 0x34, 0x69, 0x88, 0xf9, 0xbb,
+	0x0f, 0xee, 0x6f, 0x8a, 0x0f, 0xe5, 0x95, 0x51, 0x4e, 0xcf, 0x72, 0x9e, 0xc0, 0x6a, 0x9e, 0x7c,
+	0x99, 0x36, 0x81, 0x5a, 0xbe, 0x1a, 0x97, 0xfb, 0x51, 0xda, 0x1a, 0x5e, 0x64, 0xad, 0xa1, 0x7e,
+	0x0f, 0x38, 0x6d, 0x18, 0x7d, 0x00, 0x8c, 0xad, 0xe5, 0x7a, 0x97, 0xbe, 0xd1, 0xb8, 0xe7, 0x86,
+	0xfe, 0x21, 0xa5, 0xe9, 0x04, 0x1e, 0x63, 0x3c, 0xdc, 0xef, 0x31, 0x05, 0x2c, 0x3b, 0xcb, 0x86,
+	0x24, 0x2f, 0x37, 0xf2, 0x6e, 0x5b, 0xe4, 0x0a, 0xdb, 0xc8, 0x5f, 0x5b, 0xf0, 0xdb, 0x3f, 0x56,
+	0xa0, 0x96, 0xf3, 0x90, 0x88, 0x8f, 0xe3, 0xce, 0x22, 0x0c, 0xa2, 0xca, 0xf0, 0x4c, 0x3f, 0x07,
+	0x1d, 0xf3, 0x3f, 0xeb, 0xaf, 0x65, 0x56, 0x15, 0x0c, 0x6c, 0x65, 0x7d, 0xd0, 0x22, 0x7e, 0x35,
+	0xe3, 0x5e, 0x8c, 0x65, 0x5c, 0xeb, 0x3d, 0xb9, 0x15, 0xb8, 0x1d, 0x53, 0x02, 0x58, 0x8a, 0xa4,
+	0x3f, 0x07, 0xc0, 0xe1, 0x6a, 0x09, 0x35, 0x46, 0x49, 0x8c, 0xdb, 0xc3, 0x22, 0x51, 0x98, 0x8e,
+	0xdc, 0x23, 0x3b, 0xb6, 0x05, 0xc4, 0xf5, 0xe2, 0x7e, 0x4f, 0x42, 0x44, 0x4e, 0x94, 0x25, 0x04,
+	0xb9, 0x08, 0x79, 0x06, 0x35, 0x19, 0x36, 0x89, 0xa9, 0xe0, 0x20, 0x06, 0xc9, 0xca, 0xe9, 0xd8,
+	0xdf, 0x93, 0x72, 0x31, 0xd5, 0xd5, 0x4c, 0xc7, 0xfe, 0x1e, 0x42, 0xd2, 0x7c, 0xac, 0xe6, 0xf2,
+	0x71, 0x39, 0x25, 0xea, 0xab, 0x29, 0xf1, 0x04, 0xaa, 0xa1, 0xfd, 0xad, 0xd4, 0xa9, 0xe3, 0xee,
+	0xa2, 0x85, 0xf6, 0xb7, 0xa8, 0x6d, 0x00, 0x0d, 0xfe, 0x5d, 0xcc, 0x43, 0xcf, 0xbe, 0x96, 0xf2,
+	0xc6, 0xff, 0x51, 0x61, 0xf5, 0xf4, 0x0a, 0xaa, 0x78, 0x09, 0x0d, 0x74, 0xf6, 0xb5, 0x7f, 0x91,
+	0xc6, 0x55, 0xec, 0x5b, 0x5b, 0xb7, 0xbd, 0x2a, 0xe0, 0xa7, 0x09, 0x8a, 0xd5, 0x9d, 0x1c, 0x45,
+	0xb7, 0xa1, 0xe6, 0xf8, 0xf3, 0xb7, 0xd7, 0x5c, 0xbe, 0x42, 0x2c, 0x22, 0x0a, 0x5a, 0x0e, 0x92,
+	0x8d, 0x5f, 0xda, 0x86, 0xda, 0x3c, 0xe7, 0x1e, 0x91, 0xe0, 0x25, 0x09, 0x9a, 0x67, 0xfe, 0xd9,
+	0xec, 0x82, 0x96, 0x44, 0x4f, 0x74, 0xa6, 0xb7, 0xfc, 0xca, 0x4d, 0xa7, 0x86, 0x24, 0x44, 0x07,
+	0xe3, 0x9e, 0x83, 0x69, 0xa1, 0x32, 0x71, 0x6c, 0xff, 0x47, 0x81, 0xea, 0x51, 0x9a, 0x1e, 0x77,
+	0x6f, 0x19, 0x3a, 0x94, 0xcf, 0x47, 0xe3, 0xe9, 0x01, 0x29, 0x26, 0x5b, 0xc2, 0x81, 0xdc, 0x32,
+	0x04, 0xb3, 0xbb, 0x2f, 0xb7, 0x0c, 0x79, 0x2c, 0x27, 0xc7, 0x7e, 0x8f, 0x54, 0x92, 0xe3, 0xfe,
+	0x1e, 0xd1, 0x72, 0xeb, 0x49, 0x55, 0xa8, 0x38, 0x9c, 0x4c, 0x4e, 0x89, 0x2e, 0x76, 0x0b, 0xfc,
+	0x44, 0x77, 0x9f, 0x80, 0x80, 0x1c, 0x4d, 0xce, 0x0f, 0x4f, 0x87, 0x72, 0x2f, 0x39, 0x97, 0x5a,
+	0xea, 0xe9, 0x79, 0x7f, 0x8f, 0x34, 0xc4, 0x13, 0x5f, 0x4e, 0x5e, 0x9f, 0x9d, 0x0e, 0xbf, 0xde,
+	0xdf, 0x23, 0x4d, 0xda, 0x04, 0x48, 0xc8, 0x6e, 0xef, 0x80, 0x3c, 0xa0, 0x75, 0xa8, 0x1e, 0xa6,
+	0x0a, 0x49, 0xfb, 0x39, 0xd4, 0xf3, 0x7e, 0x17, 0x5f, 0x3b, 0x1a, 0x1e, 0x0f, 0xce, 0x4f, 0xa7,
+	0xa4, 0x20, 0xa0, 0xc3, 0xaf, 0xa7, 0x43, 0x36, 0x1e, 0x9c, 0x12, 0xa5, 0xfd, 0x47, 0x78, 0x78,
+	0xab, 0x03, 0xd1, 0xe7, 0x50, 0xc1, 0x6a, 0x8e, 0xd0, 0x8b, 0x6b, 0xdb, 0x5c, 0x02, 0x10, 0x9b,
+	0xa4, 0xeb, 0x39, 0xee, 0x05, 0x36, 0xea, 0x3b, 0xb0, 0x29, 0x22, 0xab, 0x5b, 0x75, 0x51, 0xb7,
+	0xed, 0xbf, 0x67, 0x43, 0xc3, 0x7c, 0x67, 0x27, 0x8b, 0x10, 0xed, 0x81, 0xea, 0xb8, 0xb3, 0xa4,
+	0x49, 0xb7, 0xf2, 0x1a, 0x17, 0xa0, 0x9d, 0x23, 0x77, 0xc6, 0x3d, 0x31, 0x46, 0x99, 0x00, 0x6f,
+	0x86, 0xa0, 0x67, 0x1c, 0xfa, 0x14, 0x74, 0xc7, 0x9d, 0x59, 0x72, 0x48, 0x61, 0x2a, 0x9c, 0x14,
+	0x58, 0xd5, 0x71, 0x67, 0xd8, 0xb5, 0x52, 0x31, 0x4e, 0x1c, 0xd9, 0xe5, 0x13, 0x31, 0x8e, 0x10,
+	0xba, 0x05, 0xe0, 0xf0, 0xac, 0x67, 0xc9, 0xc1, 0x9f, 0xe3, 0x1c, 0x6a, 0xc9, 0xf8, 0x6b, 0xff,
+	0x53, 0x05, 0x3d, 0x5b, 0xdf, 0xe8, 0x57, 0xd9, 0xa8, 0xc3, 0x26, 0x24, 0x7d, 0xb7, 0xb1, 0xb2,
+	0xe4, 0x25, 0x76, 0x9c, 0x14, 0xd2, 0x21, 0x88, 0x19, 0xf8, 0x3b, 0x68, 0x44, 0xfc, 0x9b, 0x39,
+	0xf7, 0x2e, 0xf8, 0x62, 0x15, 0xcb, 0x76, 0x9a, 0xc5, 0x65, 0x33, 0x01, 0x9d, 0x14, 0x58, 0x3d,
+	0xbd, 0x80, 0x0a, 0x76, 0xa1, 0x3a, 0xb3, 0x93, 0x35, 0x4e, 0xfe, 0x3b, 0xf9, 0xd9, 0xea, 0xdd,
+	0xd7, 0x76, 0x70, 0x52, 0x60, 0xda, 0xcc, 0x96, 0xeb, 0xdd, 0xb2, 0x91, 0x95, 0x55, 0x23, 0x37,
+	0x4d, 0xa8, 0x24, 0xff, 0x39, 0x3e, 0x07, 0x9d, 0x5f, 0xf3, 0xd9, 0xc2, 0xaa, 0x32, 0xab, 0x0a,
+	0x06, 0xaa, 0x79, 0x01, 0xe5, 0x48, 0xc4, 0x24, 0x09, 0xff, 0xc6, 0xfa, 0x60, 0x31, 0x09, 0xda,
+	0x3c, 0x80, 0x6a, 0x6a, 0x02, 0x7d, 0xb1, 0xaa, 0x76, 0xcd, 0x46, 0x9c, 0x7d, 0x67, 0xf3, 0x0c,
+	0xd4, 0xd7, 0x76, 0x20, 0xfa, 0xda, 0x7b, 0x7e, 0x93, 0x7f, 0x8a, 0xf6, 0x9e, 0xdf, 0xe0, 0x4b,
+	0x76, 0xd2, 0x59, 0x75, 0xdf, 0x8a, 0x2d, 0xc7, 0x94, 0xa0, 0x17, 0x51, 0x3c, 0x06, 0x7a, 0x7b,
+	0x6b, 0xcc, 0x2d, 0x76, 0xca, 0xd2, 0x62, 0x67, 0x80, 0x96, 0xae, 0x74, 0xb2, 0x9f, 0xa4, 0xe4,
+	0x97, 0x7f, 0x55, 0x40, 0x4b, 0x37, 0x3b, 0x0a, 0x4d, 0xcb, 0x9c, 0x0e, 0xd8, 0xd4, 0x7a, 0x33,
+	0x64, 0xe6, 0x68, 0x32, 0x26, 0x05, 0xfa, 0x04, 0x3e, 0x1b, 0xb1, 0x94, 0xb6, 0x7a, 0xbb, 0xdd,
+	0x5f, 0x59, 0xdd, 0x5d, 0xab, 0xbb, 0x4b, 0x94, 0x3b, 0x44, 0xfd, 0x5d, 0x52, 0xa4, 0x06, 0x3c,
+	0xba, 0x25, 0xea, 0x5a, 0x7d, 0xa2, 0xde, 0x96, 0x7c, 0x65, 0x75, 0xad, 0x5e, 0x8f, 0x94, 0xd6,
+	0x49, 0xfa, 0x56, 0xf7, 0x80, 0x94, 0x45, 0xe3, 0x58, 0x48, 0x48, 0xe5, 0xd0, 0xf8, 0xd7, 0xc7,
+	0x2d, 0xe5, 0x87, 0x8f, 0x5b, 0xca, 0x4f, 0x1f, 0xb7, 0x94, 0x3f, 0x7f, 0xda, 0x2a, 0xfc, 0xf0,
+	0x69, 0xab, 0xf0, 0xe3, 0xa7, 0xad, 0xc2, 0xdb, 0x8a, 0xfc, 0x0b, 0xff, 0xdf, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0x43, 0xb6, 0x15, 0x62, 0xd0, 0x0f, 0x00, 0x00,
 }
 
-func (this *AttributeProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*AttributeProto)
-	if !ok {
-		that2, ok := that.(AttributeProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.RefAttrName != that1.RefAttrName {
-		return false
-	}
-	if this.DocString != that1.DocString {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if this.F != that1.F {
-		return false
-	}
-	if this.I != that1.I {
-		return false
-	}
-	if !bytes.Equal(this.S, that1.S) {
-		return false
-	}
-	if !this.T.Equal(that1.T) {
-		return false
-	}
-	if !this.G.Equal(that1.G) {
-		return false
-	}
-	if len(this.Floats) != len(that1.Floats) {
-		return false
-	}
-	for i := range this.Floats {
-		if this.Floats[i] != that1.Floats[i] {
-			return false
-		}
-	}
-	if len(this.Ints) != len(that1.Ints) {
-		return false
-	}
-	for i := range this.Ints {
-		if this.Ints[i] != that1.Ints[i] {
-			return false
-		}
-	}
-	if len(this.Strings) != len(that1.Strings) {
-		return false
-	}
-	for i := range this.Strings {
-		if !bytes.Equal(this.Strings[i], that1.Strings[i]) {
-			return false
-		}
-	}
-	if len(this.Tensors) != len(that1.Tensors) {
-		return false
-	}
-	for i := range this.Tensors {
-		if !this.Tensors[i].Equal(that1.Tensors[i]) {
-			return false
-		}
-	}
-	if len(this.Graphs) != len(that1.Graphs) {
-		return false
-	}
-	for i := range this.Graphs {
-		if !this.Graphs[i].Equal(that1.Graphs[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *ValueInfoProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*ValueInfoProto)
-	if !ok {
-		that2, ok := that.(ValueInfoProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if !this.Type.Equal(that1.Type) {
-		return false
-	}
-	if this.DocString != that1.DocString {
-		return false
-	}
-	return true
-}
-func (this *NodeProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*NodeProto)
-	if !ok {
-		that2, ok := that.(NodeProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Input) != len(that1.Input) {
-		return false
-	}
-	for i := range this.Input {
-		if this.Input[i] != that1.Input[i] {
-			return false
-		}
-	}
-	if len(this.Output) != len(that1.Output) {
-		return false
-	}
-	for i := range this.Output {
-		if this.Output[i] != that1.Output[i] {
-			return false
-		}
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.OpType != that1.OpType {
-		return false
-	}
-	if this.Domain != that1.Domain {
-		return false
-	}
-	if len(this.Attribute) != len(that1.Attribute) {
-		return false
-	}
-	for i := range this.Attribute {
-		if !this.Attribute[i].Equal(that1.Attribute[i]) {
-			return false
-		}
-	}
-	if this.DocString != that1.DocString {
-		return false
-	}
-	return true
-}
-func (this *ModelProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*ModelProto)
-	if !ok {
-		that2, ok := that.(ModelProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.IrVersion != that1.IrVersion {
-		return false
-	}
-	if len(this.OpsetImport) != len(that1.OpsetImport) {
-		return false
-	}
-	for i := range this.OpsetImport {
-		if !this.OpsetImport[i].Equal(that1.OpsetImport[i]) {
-			return false
-		}
-	}
-	if this.ProducerName != that1.ProducerName {
-		return false
-	}
-	if this.ProducerVersion != that1.ProducerVersion {
-		return false
-	}
-	if this.Domain != that1.Domain {
-		return false
-	}
-	if this.ModelVersion != that1.ModelVersion {
-		return false
-	}
-	if this.DocString != that1.DocString {
-		return false
-	}
-	if !this.Graph.Equal(that1.Graph) {
-		return false
-	}
-	if len(this.MetadataProps) != len(that1.MetadataProps) {
-		return false
-	}
-	for i := range this.MetadataProps {
-		if !this.MetadataProps[i].Equal(that1.MetadataProps[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *StringStringEntryProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*StringStringEntryProto)
-	if !ok {
-		that2, ok := that.(StringStringEntryProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Key != that1.Key {
-		return false
-	}
-	if this.Value != that1.Value {
-		return false
-	}
-	return true
-}
-func (this *TensorAnnotation) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorAnnotation)
-	if !ok {
-		that2, ok := that.(TensorAnnotation)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.TensorName != that1.TensorName {
-		return false
-	}
-	if len(this.QuantParameterTensorNames) != len(that1.QuantParameterTensorNames) {
-		return false
-	}
-	for i := range this.QuantParameterTensorNames {
-		if !this.QuantParameterTensorNames[i].Equal(that1.QuantParameterTensorNames[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *GraphProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*GraphProto)
-	if !ok {
-		that2, ok := that.(GraphProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Node) != len(that1.Node) {
-		return false
-	}
-	for i := range this.Node {
-		if !this.Node[i].Equal(that1.Node[i]) {
-			return false
-		}
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if len(this.Initializer) != len(that1.Initializer) {
-		return false
-	}
-	for i := range this.Initializer {
-		if !this.Initializer[i].Equal(that1.Initializer[i]) {
-			return false
-		}
-	}
-	if this.DocString != that1.DocString {
-		return false
-	}
-	if len(this.Input) != len(that1.Input) {
-		return false
-	}
-	for i := range this.Input {
-		if !this.Input[i].Equal(that1.Input[i]) {
-			return false
-		}
-	}
-	if len(this.Output) != len(that1.Output) {
-		return false
-	}
-	for i := range this.Output {
-		if !this.Output[i].Equal(that1.Output[i]) {
-			return false
-		}
-	}
-	if len(this.ValueInfo) != len(that1.ValueInfo) {
-		return false
-	}
-	for i := range this.ValueInfo {
-		if !this.ValueInfo[i].Equal(that1.ValueInfo[i]) {
-			return false
-		}
-	}
-	if len(this.QuantizationAnnotation) != len(that1.QuantizationAnnotation) {
-		return false
-	}
-	for i := range this.QuantizationAnnotation {
-		if !this.QuantizationAnnotation[i].Equal(that1.QuantizationAnnotation[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *TensorProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorProto)
-	if !ok {
-		that2, ok := that.(TensorProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Dims) != len(that1.Dims) {
-		return false
-	}
-	for i := range this.Dims {
-		if this.Dims[i] != that1.Dims[i] {
-			return false
-		}
-	}
-	if this.DataType != that1.DataType {
-		return false
-	}
-	if !this.Segment.Equal(that1.Segment) {
-		return false
-	}
-	if len(this.FloatData) != len(that1.FloatData) {
-		return false
-	}
-	for i := range this.FloatData {
-		if this.FloatData[i] != that1.FloatData[i] {
-			return false
-		}
-	}
-	if len(this.Int32Data) != len(that1.Int32Data) {
-		return false
-	}
-	for i := range this.Int32Data {
-		if this.Int32Data[i] != that1.Int32Data[i] {
-			return false
-		}
-	}
-	if len(this.StringData) != len(that1.StringData) {
-		return false
-	}
-	for i := range this.StringData {
-		if !bytes.Equal(this.StringData[i], that1.StringData[i]) {
-			return false
-		}
-	}
-	if len(this.Int64Data) != len(that1.Int64Data) {
-		return false
-	}
-	for i := range this.Int64Data {
-		if this.Int64Data[i] != that1.Int64Data[i] {
-			return false
-		}
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.DocString != that1.DocString {
-		return false
-	}
-	if !bytes.Equal(this.RawData, that1.RawData) {
-		return false
-	}
-	if len(this.ExternalData) != len(that1.ExternalData) {
-		return false
-	}
-	for i := range this.ExternalData {
-		if !this.ExternalData[i].Equal(that1.ExternalData[i]) {
-			return false
-		}
-	}
-	if this.DataLocation != that1.DataLocation {
-		return false
-	}
-	if len(this.DoubleData) != len(that1.DoubleData) {
-		return false
-	}
-	for i := range this.DoubleData {
-		if this.DoubleData[i] != that1.DoubleData[i] {
-			return false
-		}
-	}
-	if len(this.Uint64Data) != len(that1.Uint64Data) {
-		return false
-	}
-	for i := range this.Uint64Data {
-		if this.Uint64Data[i] != that1.Uint64Data[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *TensorProto_Segment) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorProto_Segment)
-	if !ok {
-		that2, ok := that.(TensorProto_Segment)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Begin != that1.Begin {
-		return false
-	}
-	if this.End != that1.End {
-		return false
-	}
-	return true
-}
-func (this *TensorShapeProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorShapeProto)
-	if !ok {
-		that2, ok := that.(TensorShapeProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if len(this.Dim) != len(that1.Dim) {
-		return false
-	}
-	for i := range this.Dim {
-		if !this.Dim[i].Equal(that1.Dim[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *TensorShapeProto_Dimension) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorShapeProto_Dimension)
-	if !ok {
-		that2, ok := that.(TensorShapeProto_Dimension)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if that1.Value == nil {
-		if this.Value != nil {
-			return false
-		}
-	} else if this.Value == nil {
-		return false
-	} else if !this.Value.Equal(that1.Value) {
-		return false
-	}
-	if this.Denotation != that1.Denotation {
-		return false
-	}
-	return true
-}
-func (this *TensorShapeProto_Dimension_DimValue) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorShapeProto_Dimension_DimValue)
-	if !ok {
-		that2, ok := that.(TensorShapeProto_Dimension_DimValue)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.DimValue != that1.DimValue {
-		return false
-	}
-	return true
-}
-func (this *TensorShapeProto_Dimension_DimParam) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TensorShapeProto_Dimension_DimParam)
-	if !ok {
-		that2, ok := that.(TensorShapeProto_Dimension_DimParam)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.DimParam != that1.DimParam {
-		return false
-	}
-	return true
-}
-func (this *TypeProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TypeProto)
-	if !ok {
-		that2, ok := that.(TypeProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if that1.Value == nil {
-		if this.Value != nil {
-			return false
-		}
-	} else if this.Value == nil {
-		return false
-	} else if !this.Value.Equal(that1.Value) {
-		return false
-	}
-	if this.Denotation != that1.Denotation {
-		return false
-	}
-	return true
-}
-func (this *TypeProto_TensorType) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TypeProto_TensorType)
-	if !ok {
-		that2, ok := that.(TypeProto_TensorType)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.TensorType.Equal(that1.TensorType) {
-		return false
-	}
-	return true
-}
-func (this *TypeProto_Tensor) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*TypeProto_Tensor)
-	if !ok {
-		that2, ok := that.(TypeProto_Tensor)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.ElemType != that1.ElemType {
-		return false
-	}
-	if !this.Shape.Equal(that1.Shape) {
-		return false
-	}
-	return true
-}
-func (this *OperatorSetIdProto) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*OperatorSetIdProto)
-	if !ok {
-		that2, ok := that.(OperatorSetIdProto)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Domain != that1.Domain {
-		return false
-	}
-	if this.Version != that1.Version {
-		return false
-	}
-	return true
-}
 func (m *AttributeProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -2656,6 +2226,32 @@ func (m *AttributeProto) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintOnnx3(dAtA, i, uint64(len(m.RefAttrName)))
 		i += copy(dAtA[i:], m.RefAttrName)
 	}
+	if m.SparseTensor != nil {
+		dAtA[i] = 0xb2
+		i++
+		dAtA[i] = 0x1
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.SparseTensor.Size()))
+		n6, err := m.SparseTensor.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n6
+	}
+	if len(m.SparseTensors) > 0 {
+		for _, msg := range m.SparseTensors {
+			dAtA[i] = 0xba
+			i++
+			dAtA[i] = 0x1
+			i++
+			i = encodeVarintOnnx3(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
 	return i, nil
 }
 
@@ -2684,11 +2280,11 @@ func (m *ValueInfoProto) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(m.Type.Size()))
-		n6, err := m.Type.MarshalTo(dAtA[i:])
+		n7, err := m.Type.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n7
 	}
 	if len(m.DocString) > 0 {
 		dAtA[i] = 0x1a
@@ -2836,11 +2432,11 @@ func (m *ModelProto) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x3a
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(m.Graph.Size()))
-		n7, err := m.Graph.MarshalTo(dAtA[i:])
+		n8, err := m.Graph.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n8
 	}
 	if len(m.OpsetImport) > 0 {
 		for _, msg := range m.OpsetImport {
@@ -3034,6 +2630,18 @@ func (m *GraphProto) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if len(m.SparseInitializer) > 0 {
+		for _, msg := range m.SparseInitializer {
+			dAtA[i] = 0x7a
+			i++
+			i = encodeVarintOnnx3(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
 	return i, nil
 }
 
@@ -3053,22 +2661,22 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if len(m.Dims) > 0 {
-		dAtA9 := make([]byte, len(m.Dims)*10)
-		var j8 int
+		dAtA10 := make([]byte, len(m.Dims)*10)
+		var j9 int
 		for _, num1 := range m.Dims {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA10[j9] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j8++
+				j9++
 			}
-			dAtA9[j8] = uint8(num)
-			j8++
+			dAtA10[j9] = uint8(num)
+			j9++
 		}
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintOnnx3(dAtA, i, uint64(j8))
-		i += copy(dAtA[i:], dAtA9[:j8])
+		i = encodeVarintOnnx3(dAtA, i, uint64(j9))
+		i += copy(dAtA[i:], dAtA10[:j9])
 	}
 	if m.DataType != 0 {
 		dAtA[i] = 0x10
@@ -3079,39 +2687,39 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(m.Segment.Size()))
-		n10, err := m.Segment.MarshalTo(dAtA[i:])
+		n11, err := m.Segment.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n11
 	}
 	if len(m.FloatData) > 0 {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(len(m.FloatData)*4))
 		for _, num := range m.FloatData {
-			f11 := math.Float32bits(float32(num))
-			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f11))
+			f12 := math.Float32bits(float32(num))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f12))
 			i += 4
 		}
 	}
 	if len(m.Int32Data) > 0 {
-		dAtA13 := make([]byte, len(m.Int32Data)*10)
-		var j12 int
+		dAtA14 := make([]byte, len(m.Int32Data)*10)
+		var j13 int
 		for _, num1 := range m.Int32Data {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA13[j12] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA14[j13] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j12++
+				j13++
 			}
-			dAtA13[j12] = uint8(num)
-			j12++
+			dAtA14[j13] = uint8(num)
+			j13++
 		}
 		dAtA[i] = 0x2a
 		i++
-		i = encodeVarintOnnx3(dAtA, i, uint64(j12))
-		i += copy(dAtA[i:], dAtA13[:j12])
+		i = encodeVarintOnnx3(dAtA, i, uint64(j13))
+		i += copy(dAtA[i:], dAtA14[:j13])
 	}
 	if len(m.StringData) > 0 {
 		for _, b := range m.StringData {
@@ -3122,22 +2730,22 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.Int64Data) > 0 {
-		dAtA15 := make([]byte, len(m.Int64Data)*10)
-		var j14 int
+		dAtA16 := make([]byte, len(m.Int64Data)*10)
+		var j15 int
 		for _, num1 := range m.Int64Data {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA16[j15] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j14++
+				j15++
 			}
-			dAtA15[j14] = uint8(num)
-			j14++
+			dAtA16[j15] = uint8(num)
+			j15++
 		}
 		dAtA[i] = 0x3a
 		i++
-		i = encodeVarintOnnx3(dAtA, i, uint64(j14))
-		i += copy(dAtA[i:], dAtA15[:j14])
+		i = encodeVarintOnnx3(dAtA, i, uint64(j15))
+		i += copy(dAtA[i:], dAtA16[:j15])
 	}
 	if len(m.Name) > 0 {
 		dAtA[i] = 0x42
@@ -3156,27 +2764,27 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(len(m.DoubleData)*8))
 		for _, num := range m.DoubleData {
-			f16 := math.Float64bits(float64(num))
-			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f16))
+			f17 := math.Float64bits(float64(num))
+			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f17))
 			i += 8
 		}
 	}
 	if len(m.Uint64Data) > 0 {
-		dAtA18 := make([]byte, len(m.Uint64Data)*10)
-		var j17 int
+		dAtA19 := make([]byte, len(m.Uint64Data)*10)
+		var j18 int
 		for _, num := range m.Uint64Data {
 			for num >= 1<<7 {
-				dAtA18[j17] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA19[j18] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j17++
+				j18++
 			}
-			dAtA18[j17] = uint8(num)
-			j17++
+			dAtA19[j18] = uint8(num)
+			j18++
 		}
 		dAtA[i] = 0x5a
 		i++
-		i = encodeVarintOnnx3(dAtA, i, uint64(j17))
-		i += copy(dAtA[i:], dAtA18[:j17])
+		i = encodeVarintOnnx3(dAtA, i, uint64(j18))
+		i += copy(dAtA[i:], dAtA19[:j18])
 	}
 	if len(m.DocString) > 0 {
 		dAtA[i] = 0x62
@@ -3232,6 +2840,62 @@ func (m *TensorProto_Segment) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *SparseTensorProto) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SparseTensorProto) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Values != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.Values.Size()))
+		n20, err := m.Values.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n20
+	}
+	if m.Indices != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.Indices.Size()))
+		n21, err := m.Indices.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n21
+	}
+	if len(m.Dims) > 0 {
+		dAtA23 := make([]byte, len(m.Dims)*10)
+		var j22 int
+		for _, num1 := range m.Dims {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA23[j22] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j22++
+			}
+			dAtA23[j22] = uint8(num)
+			j22++
+		}
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(j22))
+		i += copy(dAtA[i:], dAtA23[:j22])
+	}
+	return i, nil
+}
+
 func (m *TensorShapeProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -3278,11 +2942,11 @@ func (m *TensorShapeProto_Dimension) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if m.Value != nil {
-		nn19, err := m.Value.MarshalTo(dAtA[i:])
+		nn24, err := m.Value.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += nn19
+		i += nn24
 	}
 	if len(m.Denotation) > 0 {
 		dAtA[i] = 0x1a
@@ -3324,11 +2988,11 @@ func (m *TypeProto) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if m.Value != nil {
-		nn20, err := m.Value.MarshalTo(dAtA[i:])
+		nn25, err := m.Value.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += nn20
+		i += nn25
 	}
 	if len(m.Denotation) > 0 {
 		dAtA[i] = 0x32
@@ -3345,11 +3009,39 @@ func (m *TypeProto_TensorType) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(m.TensorType.Size()))
-		n21, err := m.TensorType.MarshalTo(dAtA[i:])
+		n26, err := m.TensorType.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n21
+		i += n26
+	}
+	return i, nil
+}
+func (m *TypeProto_SequenceType) MarshalTo(dAtA []byte) (int, error) {
+	i := 0
+	if m.SequenceType != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.SequenceType.Size()))
+		n27, err := m.SequenceType.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n27
+	}
+	return i, nil
+}
+func (m *TypeProto_MapType) MarshalTo(dAtA []byte) (int, error) {
+	i := 0
+	if m.MapType != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.MapType.Size()))
+		n28, err := m.MapType.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n28
 	}
 	return i, nil
 }
@@ -3377,11 +3069,72 @@ func (m *TypeProto_Tensor) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintOnnx3(dAtA, i, uint64(m.Shape.Size()))
-		n22, err := m.Shape.MarshalTo(dAtA[i:])
+		n29, err := m.Shape.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n22
+		i += n29
+	}
+	return i, nil
+}
+
+func (m *TypeProto_Sequence) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TypeProto_Sequence) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.ElemType != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.ElemType.Size()))
+		n30, err := m.ElemType.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n30
+	}
+	return i, nil
+}
+
+func (m *TypeProto_Map) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TypeProto_Map) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.KeyType != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.KeyType))
+	}
+	if m.ValueType != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintOnnx3(dAtA, i, uint64(m.ValueType.Size()))
+		n31, err := m.ValueType.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n31
 	}
 	return i, nil
 }
@@ -3423,482 +3176,6 @@ func encodeVarintOnnx3(dAtA []byte, offset int, v uint64) int {
 	}
 	dAtA[offset] = uint8(v)
 	return offset + 1
-}
-func NewPopulatedAttributeProto(r randyOnnx3, easy bool) *AttributeProto {
-	this := &AttributeProto{}
-	this.Name = string(randStringOnnx3(r))
-	this.F = float32(r.Float32())
-	if r.Intn(2) == 0 {
-		this.F *= -1
-	}
-	this.I = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.I *= -1
-	}
-	v1 := r.Intn(100)
-	this.S = make([]byte, v1)
-	for i := 0; i < v1; i++ {
-		this.S[i] = byte(r.Intn(256))
-	}
-	if r.Intn(10) != 0 {
-		this.T = NewPopulatedTensorProto(r, easy)
-	}
-	if r.Intn(10) == 0 {
-		this.G = NewPopulatedGraphProto(r, easy)
-	}
-	v2 := r.Intn(10)
-	this.Floats = make([]float32, v2)
-	for i := 0; i < v2; i++ {
-		this.Floats[i] = float32(r.Float32())
-		if r.Intn(2) == 0 {
-			this.Floats[i] *= -1
-		}
-	}
-	v3 := r.Intn(10)
-	this.Ints = make([]int64, v3)
-	for i := 0; i < v3; i++ {
-		this.Ints[i] = int64(r.Int63())
-		if r.Intn(2) == 0 {
-			this.Ints[i] *= -1
-		}
-	}
-	v4 := r.Intn(10)
-	this.Strings = make([][]byte, v4)
-	for i := 0; i < v4; i++ {
-		v5 := r.Intn(100)
-		this.Strings[i] = make([]byte, v5)
-		for j := 0; j < v5; j++ {
-			this.Strings[i][j] = byte(r.Intn(256))
-		}
-	}
-	if r.Intn(10) != 0 {
-		v6 := r.Intn(5)
-		this.Tensors = make([]*TensorProto, v6)
-		for i := 0; i < v6; i++ {
-			this.Tensors[i] = NewPopulatedTensorProto(r, easy)
-		}
-	}
-	if r.Intn(10) == 0 {
-		v7 := r.Intn(5)
-		this.Graphs = make([]*GraphProto, v7)
-		for i := 0; i < v7; i++ {
-			this.Graphs[i] = NewPopulatedGraphProto(r, easy)
-		}
-	}
-	this.DocString = string(randStringOnnx3(r))
-	this.Type = AttributeProto_AttributeType([]int32{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}[r.Intn(11)])
-	this.RefAttrName = string(randStringOnnx3(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedValueInfoProto(r randyOnnx3, easy bool) *ValueInfoProto {
-	this := &ValueInfoProto{}
-	this.Name = string(randStringOnnx3(r))
-	if r.Intn(10) != 0 {
-		this.Type = NewPopulatedTypeProto(r, easy)
-	}
-	this.DocString = string(randStringOnnx3(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedNodeProto(r randyOnnx3, easy bool) *NodeProto {
-	this := &NodeProto{}
-	v8 := r.Intn(10)
-	this.Input = make([]string, v8)
-	for i := 0; i < v8; i++ {
-		this.Input[i] = string(randStringOnnx3(r))
-	}
-	v9 := r.Intn(10)
-	this.Output = make([]string, v9)
-	for i := 0; i < v9; i++ {
-		this.Output[i] = string(randStringOnnx3(r))
-	}
-	this.Name = string(randStringOnnx3(r))
-	this.OpType = string(randStringOnnx3(r))
-	if r.Intn(10) == 0 {
-		v10 := r.Intn(5)
-		this.Attribute = make([]*AttributeProto, v10)
-		for i := 0; i < v10; i++ {
-			this.Attribute[i] = NewPopulatedAttributeProto(r, easy)
-		}
-	}
-	this.DocString = string(randStringOnnx3(r))
-	this.Domain = string(randStringOnnx3(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedModelProto(r randyOnnx3, easy bool) *ModelProto {
-	this := &ModelProto{}
-	this.IrVersion = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.IrVersion *= -1
-	}
-	this.ProducerName = string(randStringOnnx3(r))
-	this.ProducerVersion = string(randStringOnnx3(r))
-	this.Domain = string(randStringOnnx3(r))
-	this.ModelVersion = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.ModelVersion *= -1
-	}
-	this.DocString = string(randStringOnnx3(r))
-	if r.Intn(10) == 0 {
-		this.Graph = NewPopulatedGraphProto(r, easy)
-	}
-	if r.Intn(10) != 0 {
-		v11 := r.Intn(5)
-		this.OpsetImport = make([]*OperatorSetIdProto, v11)
-		for i := 0; i < v11; i++ {
-			this.OpsetImport[i] = NewPopulatedOperatorSetIdProto(r, easy)
-		}
-	}
-	if r.Intn(10) != 0 {
-		v12 := r.Intn(5)
-		this.MetadataProps = make([]*StringStringEntryProto, v12)
-		for i := 0; i < v12; i++ {
-			this.MetadataProps[i] = NewPopulatedStringStringEntryProto(r, easy)
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedStringStringEntryProto(r randyOnnx3, easy bool) *StringStringEntryProto {
-	this := &StringStringEntryProto{}
-	this.Key = string(randStringOnnx3(r))
-	this.Value = string(randStringOnnx3(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTensorAnnotation(r randyOnnx3, easy bool) *TensorAnnotation {
-	this := &TensorAnnotation{}
-	this.TensorName = string(randStringOnnx3(r))
-	if r.Intn(10) != 0 {
-		v13 := r.Intn(5)
-		this.QuantParameterTensorNames = make([]*StringStringEntryProto, v13)
-		for i := 0; i < v13; i++ {
-			this.QuantParameterTensorNames[i] = NewPopulatedStringStringEntryProto(r, easy)
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedGraphProto(r randyOnnx3, easy bool) *GraphProto {
-	this := &GraphProto{}
-	if r.Intn(10) == 0 {
-		v14 := r.Intn(5)
-		this.Node = make([]*NodeProto, v14)
-		for i := 0; i < v14; i++ {
-			this.Node[i] = NewPopulatedNodeProto(r, easy)
-		}
-	}
-	this.Name = string(randStringOnnx3(r))
-	if r.Intn(10) != 0 {
-		v15 := r.Intn(5)
-		this.Initializer = make([]*TensorProto, v15)
-		for i := 0; i < v15; i++ {
-			this.Initializer[i] = NewPopulatedTensorProto(r, easy)
-		}
-	}
-	this.DocString = string(randStringOnnx3(r))
-	if r.Intn(10) != 0 {
-		v16 := r.Intn(5)
-		this.Input = make([]*ValueInfoProto, v16)
-		for i := 0; i < v16; i++ {
-			this.Input[i] = NewPopulatedValueInfoProto(r, easy)
-		}
-	}
-	if r.Intn(10) != 0 {
-		v17 := r.Intn(5)
-		this.Output = make([]*ValueInfoProto, v17)
-		for i := 0; i < v17; i++ {
-			this.Output[i] = NewPopulatedValueInfoProto(r, easy)
-		}
-	}
-	if r.Intn(10) != 0 {
-		v18 := r.Intn(5)
-		this.ValueInfo = make([]*ValueInfoProto, v18)
-		for i := 0; i < v18; i++ {
-			this.ValueInfo[i] = NewPopulatedValueInfoProto(r, easy)
-		}
-	}
-	if r.Intn(10) != 0 {
-		v19 := r.Intn(5)
-		this.QuantizationAnnotation = make([]*TensorAnnotation, v19)
-		for i := 0; i < v19; i++ {
-			this.QuantizationAnnotation[i] = NewPopulatedTensorAnnotation(r, easy)
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTensorProto(r randyOnnx3, easy bool) *TensorProto {
-	this := &TensorProto{}
-	v20 := r.Intn(10)
-	this.Dims = make([]int64, v20)
-	for i := 0; i < v20; i++ {
-		this.Dims[i] = int64(r.Int63())
-		if r.Intn(2) == 0 {
-			this.Dims[i] *= -1
-		}
-	}
-	this.DataType = int32(r.Int31())
-	if r.Intn(2) == 0 {
-		this.DataType *= -1
-	}
-	if r.Intn(10) != 0 {
-		this.Segment = NewPopulatedTensorProto_Segment(r, easy)
-	}
-	v21 := r.Intn(10)
-	this.FloatData = make([]float32, v21)
-	for i := 0; i < v21; i++ {
-		this.FloatData[i] = float32(r.Float32())
-		if r.Intn(2) == 0 {
-			this.FloatData[i] *= -1
-		}
-	}
-	v22 := r.Intn(10)
-	this.Int32Data = make([]int32, v22)
-	for i := 0; i < v22; i++ {
-		this.Int32Data[i] = int32(r.Int31())
-		if r.Intn(2) == 0 {
-			this.Int32Data[i] *= -1
-		}
-	}
-	v23 := r.Intn(10)
-	this.StringData = make([][]byte, v23)
-	for i := 0; i < v23; i++ {
-		v24 := r.Intn(100)
-		this.StringData[i] = make([]byte, v24)
-		for j := 0; j < v24; j++ {
-			this.StringData[i][j] = byte(r.Intn(256))
-		}
-	}
-	v25 := r.Intn(10)
-	this.Int64Data = make([]int64, v25)
-	for i := 0; i < v25; i++ {
-		this.Int64Data[i] = int64(r.Int63())
-		if r.Intn(2) == 0 {
-			this.Int64Data[i] *= -1
-		}
-	}
-	this.Name = string(randStringOnnx3(r))
-	v26 := r.Intn(100)
-	this.RawData = make([]byte, v26)
-	for i := 0; i < v26; i++ {
-		this.RawData[i] = byte(r.Intn(256))
-	}
-	v27 := r.Intn(10)
-	this.DoubleData = make([]float64, v27)
-	for i := 0; i < v27; i++ {
-		this.DoubleData[i] = float64(r.Float64())
-		if r.Intn(2) == 0 {
-			this.DoubleData[i] *= -1
-		}
-	}
-	v28 := r.Intn(10)
-	this.Uint64Data = make([]uint64, v28)
-	for i := 0; i < v28; i++ {
-		this.Uint64Data[i] = uint64(uint64(r.Uint32()))
-	}
-	this.DocString = string(randStringOnnx3(r))
-	if r.Intn(10) != 0 {
-		v29 := r.Intn(5)
-		this.ExternalData = make([]*StringStringEntryProto, v29)
-		for i := 0; i < v29; i++ {
-			this.ExternalData[i] = NewPopulatedStringStringEntryProto(r, easy)
-		}
-	}
-	this.DataLocation = TensorProto_DataLocation([]int32{0, 1}[r.Intn(2)])
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTensorProto_Segment(r randyOnnx3, easy bool) *TensorProto_Segment {
-	this := &TensorProto_Segment{}
-	this.Begin = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Begin *= -1
-	}
-	this.End = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.End *= -1
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTensorShapeProto(r randyOnnx3, easy bool) *TensorShapeProto {
-	this := &TensorShapeProto{}
-	if r.Intn(10) != 0 {
-		v30 := r.Intn(5)
-		this.Dim = make([]*TensorShapeProto_Dimension, v30)
-		for i := 0; i < v30; i++ {
-			this.Dim[i] = NewPopulatedTensorShapeProto_Dimension(r, easy)
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTensorShapeProto_Dimension(r randyOnnx3, easy bool) *TensorShapeProto_Dimension {
-	this := &TensorShapeProto_Dimension{}
-	oneofNumber_Value := []int32{1, 2}[r.Intn(2)]
-	switch oneofNumber_Value {
-	case 1:
-		this.Value = NewPopulatedTensorShapeProto_Dimension_DimValue(r, easy)
-	case 2:
-		this.Value = NewPopulatedTensorShapeProto_Dimension_DimParam(r, easy)
-	}
-	this.Denotation = string(randStringOnnx3(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTensorShapeProto_Dimension_DimValue(r randyOnnx3, easy bool) *TensorShapeProto_Dimension_DimValue {
-	this := &TensorShapeProto_Dimension_DimValue{}
-	this.DimValue = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.DimValue *= -1
-	}
-	return this
-}
-func NewPopulatedTensorShapeProto_Dimension_DimParam(r randyOnnx3, easy bool) *TensorShapeProto_Dimension_DimParam {
-	this := &TensorShapeProto_Dimension_DimParam{}
-	this.DimParam = string(randStringOnnx3(r))
-	return this
-}
-func NewPopulatedTypeProto(r randyOnnx3, easy bool) *TypeProto {
-	this := &TypeProto{}
-	oneofNumber_Value := []int32{1}[r.Intn(1)]
-	switch oneofNumber_Value {
-	case 1:
-		this.Value = NewPopulatedTypeProto_TensorType(r, easy)
-	}
-	this.Denotation = string(randStringOnnx3(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedTypeProto_TensorType(r randyOnnx3, easy bool) *TypeProto_TensorType {
-	this := &TypeProto_TensorType{}
-	this.TensorType = NewPopulatedTypeProto_Tensor(r, easy)
-	return this
-}
-func NewPopulatedTypeProto_Tensor(r randyOnnx3, easy bool) *TypeProto_Tensor {
-	this := &TypeProto_Tensor{}
-	this.ElemType = int32(r.Int31())
-	if r.Intn(2) == 0 {
-		this.ElemType *= -1
-	}
-	if r.Intn(10) != 0 {
-		this.Shape = NewPopulatedTensorShapeProto(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedOperatorSetIdProto(r randyOnnx3, easy bool) *OperatorSetIdProto {
-	this := &OperatorSetIdProto{}
-	this.Domain = string(randStringOnnx3(r))
-	this.Version = int64(r.Int63())
-	if r.Intn(2) == 0 {
-		this.Version *= -1
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-type randyOnnx3 interface {
-	Float32() float32
-	Float64() float64
-	Int63() int64
-	Int31() int32
-	Uint32() uint32
-	Intn(n int) int
-}
-
-func randUTF8RuneOnnx3(r randyOnnx3) rune {
-	ru := r.Intn(62)
-	if ru < 10 {
-		return rune(ru + 48)
-	} else if ru < 36 {
-		return rune(ru + 55)
-	}
-	return rune(ru + 61)
-}
-func randStringOnnx3(r randyOnnx3) string {
-	v31 := r.Intn(100)
-	tmps := make([]rune, v31)
-	for i := 0; i < v31; i++ {
-		tmps[i] = randUTF8RuneOnnx3(r)
-	}
-	return string(tmps)
-}
-func randUnrecognizedOnnx3(r randyOnnx3, maxFieldNumber int) (dAtA []byte) {
-	l := r.Intn(5)
-	for i := 0; i < l; i++ {
-		wire := r.Intn(4)
-		if wire == 3 {
-			wire = 5
-		}
-		fieldNumber := maxFieldNumber + r.Intn(100)
-		dAtA = randFieldOnnx3(dAtA, r, fieldNumber, wire)
-	}
-	return dAtA
-}
-func randFieldOnnx3(dAtA []byte, r randyOnnx3, fieldNumber int, wire int) []byte {
-	key := uint32(fieldNumber)<<3 | uint32(wire)
-	switch wire {
-	case 0:
-		dAtA = encodeVarintPopulateOnnx3(dAtA, uint64(key))
-		v32 := r.Int63()
-		if r.Intn(2) == 0 {
-			v32 *= -1
-		}
-		dAtA = encodeVarintPopulateOnnx3(dAtA, uint64(v32))
-	case 1:
-		dAtA = encodeVarintPopulateOnnx3(dAtA, uint64(key))
-		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
-	case 2:
-		dAtA = encodeVarintPopulateOnnx3(dAtA, uint64(key))
-		ll := r.Intn(100)
-		dAtA = encodeVarintPopulateOnnx3(dAtA, uint64(ll))
-		for j := 0; j < ll; j++ {
-			dAtA = append(dAtA, byte(r.Intn(256)))
-		}
-	default:
-		dAtA = encodeVarintPopulateOnnx3(dAtA, uint64(key))
-		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
-	}
-	return dAtA
-}
-func encodeVarintPopulateOnnx3(dAtA []byte, v uint64) []byte {
-	for v >= 1<<7 {
-		dAtA = append(dAtA, uint8(uint64(v)&0x7f|0x80))
-		v >>= 7
-	}
-	dAtA = append(dAtA, uint8(v))
-	return dAtA
 }
 func (m *AttributeProto) Size() (n int) {
 	if m == nil {
@@ -3966,6 +3243,16 @@ func (m *AttributeProto) Size() (n int) {
 	l = len(m.RefAttrName)
 	if l > 0 {
 		n += 2 + l + sovOnnx3(uint64(l))
+	}
+	if m.SparseTensor != nil {
+		l = m.SparseTensor.Size()
+		n += 2 + l + sovOnnx3(uint64(l))
+	}
+	if len(m.SparseTensors) > 0 {
+		for _, e := range m.SparseTensors {
+			l = e.Size()
+			n += 2 + l + sovOnnx3(uint64(l))
+		}
 	}
 	return n
 }
@@ -4167,6 +3454,12 @@ func (m *GraphProto) Size() (n int) {
 			n += 1 + l + sovOnnx3(uint64(l))
 		}
 	}
+	if len(m.SparseInitializer) > 0 {
+		for _, e := range m.SparseInitializer {
+			l = e.Size()
+			n += 1 + l + sovOnnx3(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -4262,6 +3555,30 @@ func (m *TensorProto_Segment) Size() (n int) {
 	return n
 }
 
+func (m *SparseTensorProto) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Values != nil {
+		l = m.Values.Size()
+		n += 1 + l + sovOnnx3(uint64(l))
+	}
+	if m.Indices != nil {
+		l = m.Indices.Size()
+		n += 1 + l + sovOnnx3(uint64(l))
+	}
+	if len(m.Dims) > 0 {
+		l = 0
+		for _, e := range m.Dims {
+			l += sovOnnx3(uint64(e))
+		}
+		n += 1 + sovOnnx3(uint64(l)) + l
+	}
+	return n
+}
+
 func (m *TensorShapeProto) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4340,6 +3657,30 @@ func (m *TypeProto_TensorType) Size() (n int) {
 	}
 	return n
 }
+func (m *TypeProto_SequenceType) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.SequenceType != nil {
+		l = m.SequenceType.Size()
+		n += 1 + l + sovOnnx3(uint64(l))
+	}
+	return n
+}
+func (m *TypeProto_MapType) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.MapType != nil {
+		l = m.MapType.Size()
+		n += 1 + l + sovOnnx3(uint64(l))
+	}
+	return n
+}
 func (m *TypeProto_Tensor) Size() (n int) {
 	if m == nil {
 		return 0
@@ -4351,6 +3692,35 @@ func (m *TypeProto_Tensor) Size() (n int) {
 	}
 	if m.Shape != nil {
 		l = m.Shape.Size()
+		n += 1 + l + sovOnnx3(uint64(l))
+	}
+	return n
+}
+
+func (m *TypeProto_Sequence) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.ElemType != nil {
+		l = m.ElemType.Size()
+		n += 1 + l + sovOnnx3(uint64(l))
+	}
+	return n
+}
+
+func (m *TypeProto_Map) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.KeyType != 0 {
+		n += 1 + sovOnnx3(uint64(m.KeyType))
+	}
+	if m.ValueType != nil {
+		l = m.ValueType.Size()
 		n += 1 + l + sovOnnx3(uint64(l))
 	}
 	return n
@@ -4861,6 +4231,70 @@ func (m *AttributeProto) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.RefAttrName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 22:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SparseTensor", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.SparseTensor == nil {
+				m.SparseTensor = &SparseTensorProto{}
+			}
+			if err := m.SparseTensor.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 23:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SparseTensors", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SparseTensors = append(m.SparseTensors, &SparseTensorProto{})
+			if err := m.SparseTensors[len(m.SparseTensors)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -6069,6 +5503,37 @@ func (m *GraphProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SparseInitializer", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SparseInitializer = append(m.SparseInitializer, &SparseTensorProto{})
+			if err := m.SparseInitializer[len(m.SparseInitializer)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipOnnx3(dAtA[iNdEx:])
@@ -6842,6 +6307,195 @@ func (m *TensorProto_Segment) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *SparseTensorProto) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOnnx3
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SparseTensorProto: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SparseTensorProto: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Values", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Values == nil {
+				m.Values = &TensorProto{}
+			}
+			if err := m.Values.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Indices", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Indices == nil {
+				m.Indices = &TensorProto{}
+			}
+			if err := m.Indices.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOnnx3
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Dims = append(m.Dims, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOnnx3
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOnnx3
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Dims) == 0 {
+					m.Dims = make([]int64, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOnnx3
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Dims = append(m.Dims, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dims", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOnnx3(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *TensorShapeProto) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -7112,6 +6766,70 @@ func (m *TypeProto) Unmarshal(dAtA []byte) error {
 			}
 			m.Value = &TypeProto_TensorType{v}
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SequenceType", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &TypeProto_Sequence{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Value = &TypeProto_SequenceType{v}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MapType", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &TypeProto_Map{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Value = &TypeProto_MapType{v}
+			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Denotation", wireType)
@@ -7240,6 +6958,191 @@ func (m *TypeProto_Tensor) Unmarshal(dAtA []byte) error {
 				m.Shape = &TensorShapeProto{}
 			}
 			if err := m.Shape.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOnnx3(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TypeProto_Sequence) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOnnx3
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Sequence: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Sequence: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ElemType", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ElemType == nil {
+				m.ElemType = &TypeProto{}
+			}
+			if err := m.ElemType.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipOnnx3(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TypeProto_Map) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowOnnx3
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Map: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Map: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KeyType", wireType)
+			}
+			m.KeyType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KeyType |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValueType", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOnnx3
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOnnx3
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ValueType == nil {
+				m.ValueType = &TypeProto{}
+			}
+			if err := m.ValueType.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
