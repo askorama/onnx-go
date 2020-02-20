@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	testbackend.Register("Reshape", "TestReshapeNegativeExtendedDims", NewTestReshapeNegativeExtendedDims)
+	//testbackend.Register("Reshape", "TestReshapeNegativeExtendedDims", NewTestReshapeNegativeExtendedDims)
 }
 
 /*

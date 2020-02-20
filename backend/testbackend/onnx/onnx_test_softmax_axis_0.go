@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	testbackend.Register("Softmax", "TestSoftmaxAxis0", NewTestSoftmaxAxis0)
+	//testbackend.Register("Softmax", "TestSoftmaxAxis0", NewTestSoftmaxAxis0)
 }
 
 /*
