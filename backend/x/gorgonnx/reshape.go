@@ -86,7 +86,6 @@ func (a *reshape) apply(g *Graph, ns ...*Node) error {
 			}
 		}
 	}
-
 	n.gorgoniaNode, err = gorgonia.Reshape(children[0].gorgoniaNode, a.toShape)
 
 	return err

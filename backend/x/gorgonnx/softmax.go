@@ -41,7 +41,8 @@ func (s *stableSoftmax) apply(g *Graph, ns ...*Node) error {
 		if exp.IsScalar() {
 			axis = 0
 		}
-		if sum, err = gorgonia.Sum(exp, axis); err == nil {
+		sum, err = gorgonia.Sum(exp, axis)
+		if err == nil {
 			if sum.IsScalar() {
 				tmp, err := gorgonia.HadamardDiv(exp, sum)
 				if err != nil {
