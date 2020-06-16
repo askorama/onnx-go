@@ -11,6 +11,145 @@ func init() {
 	testbackend.Register("AveragePool", "TestAveragepool2dPrecomputedStrides", NewTestAveragepool2dPrecomputedStrides)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "AveragePool",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "kernel_shape",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2, 2},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:          "strides",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2, 2},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_averagepool_2d_precomputed_strides",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestAveragepool2dPrecomputedStrides version: 3.
 func NewTestAveragepool2dPrecomputedStrides() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +165,8 @@ func NewTestAveragepool2dPrecomputedStrides() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "AveragePool",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000133000)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
-		    (*ir.AttributeProto)(0xc000133100)(name:"strides" type:INTS ints:2 ints:2 )
+		    (*ir.AttributeProto)(0xc000217300)(name:"kernel_shape" type:INTS ints:2 ints:2 ),
+		    (*ir.AttributeProto)(0xc000217400)(name:"strides" type:INTS ints:2 ints:2 )
 		   }
 		   ,
 		   },

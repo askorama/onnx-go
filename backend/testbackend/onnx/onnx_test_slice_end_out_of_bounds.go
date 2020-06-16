@@ -11,6 +11,180 @@ func init() {
 	testbackend.Register("Slice", "TestSliceEndOutOfBounds", NewTestSliceEndOutOfBounds)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   4,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:10},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x", "starts", "ends", "axes", "steps"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Slice",
+                Domain:    "",
+                Attribute: nil,
+                DocString: "",
+            },
+        },
+        Name:              "test_slice_end_out_of_bounds",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:20},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:10},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "starts",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "ends",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "axes",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "steps",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:20},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:9},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestSliceEndOutOfBounds version: 4.
 func NewTestSliceEndOutOfBounds() *testbackend.TestCase {
 	return &testbackend.TestCase{

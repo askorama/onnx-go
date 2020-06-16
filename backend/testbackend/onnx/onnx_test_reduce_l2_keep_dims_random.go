@@ -11,6 +11,137 @@ func init() {
 	testbackend.Register("ReduceL2", "TestReduceL2KeepDimsRandom", NewTestReduceL2KeepDimsRandom)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"data"},
+                Output:    {"reduced"},
+                Name:      "",
+                OpType:    "ReduceL2",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "axes",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:          "keepdims",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             1,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_reduce_l2_keep_dims_random",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "data",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "reduced",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestReduceL2KeepDimsRandom version: 3.
 func NewTestReduceL2KeepDimsRandom() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +157,8 @@ func NewTestReduceL2KeepDimsRandom() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceL2",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000132500)(name:"axes" type:INTS ints:2 ),
-		    (*ir.AttributeProto)(0xc000132600)(name:"keepdims" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000217000)(name:"axes" type:INTS ints:2 ),
+		    (*ir.AttributeProto)(0xc000217100)(name:"keepdims" type:INT i:1 )
 		   }
 		   ,
 		   },

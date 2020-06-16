@@ -11,6 +11,119 @@ func init() {
 	testbackend.Register("Transpose", "TestTransposeAllPermutations1", NewTestTransposeAllPermutations1)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"data"},
+                Output:    {"transposed"},
+                Name:      "",
+                OpType:    "Transpose",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "perm",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {0, 2, 1},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_transpose_all_permutations_1",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "data",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "transposed",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestTransposeAllPermutations1 version: 3.
 func NewTestTransposeAllPermutations1() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,7 +139,7 @@ func NewTestTransposeAllPermutations1() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Transpose",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000126000)(name:"perm" type:INTS ints:0 ints:2 ints:1 )
+		    (*ir.AttributeProto)(0xc0002d4800)(name:"perm" type:INTS ints:0 ints:2 ints:1 )
 		   }
 		   ,
 		   },

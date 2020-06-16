@@ -41,7 +41,8 @@ func (s *stableSoftmax) apply(g *Graph, ns ...*Node) error {
 		if exp.IsScalar() {
 			axis = 0
 		}
-		if sum, err = gorgonia.Sum(exp, axis); err == nil {
+		sum, err = gorgonia.Sum(exp, axis)
+		if err == nil {
 			if sum.IsScalar() {
 				tmp, err := gorgonia.HadamardDiv(exp, sum)
 				if err != nil {
@@ -67,13 +68,13 @@ func (s *stableSoftmax) apply(g *Graph, ns ...*Node) error {
 }
 
 // coerceInto2D does a reshape of the node following this rule:
-// For an arbitrary n-dimensional tensor input \in [a_0, a_1, ..., a_{k-1}, a_k, ..., a_{n-1}]
+// For an arbitrary n-dimensional tensor input ∈ [a₀, a₁, ..., aₖ₋₁, a_k, ..., aₙ₋₁]
 // and k is the axis provided, then input will be coerced into a 2-dimensional tensor
-// with dimensions [a_0 * ... * a_{k-1}, a_k * ... * a_{n-1}].
+// with dimensions [a₀ * ... * aₖ₋₁, a_k * ... * aₙ₋₁].
 // For the default case where axis=1,
-// this means the input tensor will be coerced into a 2D tensor of dimensions [a_0, a_1 * ... * a_{n-1}],
-// where a_0 is often the batch size.
-// In this situation, we must have a_0 = N and a_1 * ... * a_{n-1} = D.
+// this means the input tensor will be coerced into a 2D tensor of dimensions [a₀, a₁ * ... * aₙ₋₁],
+// where a₀ is often the batch size.
+// In this situation, we must have a₀ = N and a₁ * ... * aₙ₋₁ = D.
 // Each of these dimensions must be matched correctly, or else the operator will throw errors.
 func coerceInto2D(n *gorgonia.Node, k int) (*gorgonia.Node, error) {
 	if len(n.Shape()) == 2 {
@@ -131,6 +132,12 @@ func (s *stableSoftmax) init(o onnx.Operation) error {
 	if axis, ok := axis.(int64); ok {
 		s.axis = int(axis)
 		err = nil
+	}
+	if s.axis < 0 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Softmax",
+			Message:  "Negative axis not supported",
+		}
 	}
 	return err
 }

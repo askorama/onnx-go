@@ -11,23 +11,163 @@ func init() {
 	testbackend.Register("Pad", "TestReflectPad", NewTestReflectPad)
 }
 
-// NewTestReflectPad version: 3.
+/*
+&ir.ModelProto{
+    IrVersion:   6,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:11},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x", "pads"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Pad",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "mode",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          3,
+                        F:             0,
+                        I:             0,
+                        S:             {0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74},
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_reflect_pad",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 6,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "pads",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:8},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 6,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:6},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:7},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
+// NewTestReflectPad version: 6.
 func NewTestReflectPad() *testbackend.TestCase {
 	return &testbackend.TestCase{
 		OpType: "Pad",
 		Title:  "TestReflectPad",
-		ModelB: []byte{0x8, 0x3, 0x12, 0xc, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x3a, 0x88, 0x1, 0xa, 0x3a, 0xa, 0x1, 0x78, 0x12, 0x1, 0x79, 0x22, 0x3, 0x50, 0x61, 0x64, 0x2a, 0x12, 0xa, 0x4, 0x6d, 0x6f, 0x64, 0x65, 0x22, 0x7, 0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74, 0xa0, 0x1, 0x3, 0x2a, 0x19, 0xa, 0x4, 0x70, 0x61, 0x64, 0x73, 0x40, 0x0, 0x40, 0x0, 0x40, 0x1, 0x40, 0x1, 0x40, 0x0, 0x40, 0x0, 0x40, 0x1, 0x40, 0x1, 0xa0, 0x1, 0x7, 0x12, 0x10, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74, 0x5f, 0x70, 0x61, 0x64, 0x5a, 0x1b, 0xa, 0x1, 0x78, 0x12, 0x16, 0xa, 0x14, 0x8, 0x1, 0x12, 0x10, 0xa, 0x2, 0x8, 0x1, 0xa, 0x2, 0x8, 0x3, 0xa, 0x2, 0x8, 0x4, 0xa, 0x2, 0x8, 0x5, 0x62, 0x1b, 0xa, 0x1, 0x79, 0x12, 0x16, 0xa, 0x14, 0x8, 0x1, 0x12, 0x10, 0xa, 0x2, 0x8, 0x1, 0xa, 0x2, 0x8, 0x3, 0xa, 0x2, 0x8, 0x6, 0xa, 0x2, 0x8, 0x7, 0x42, 0x2, 0x10, 0x9},
+		ModelB: []byte{0x8, 0x6, 0x12, 0xc, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x3a, 0x87, 0x1, 0xa, 0x25, 0xa, 0x1, 0x78, 0xa, 0x4, 0x70, 0x61, 0x64, 0x73, 0x12, 0x1, 0x79, 0x22, 0x3, 0x50, 0x61, 0x64, 0x2a, 0x12, 0xa, 0x4, 0x6d, 0x6f, 0x64, 0x65, 0x22, 0x7, 0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74, 0xa0, 0x1, 0x3, 0x12, 0x10, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x72, 0x65, 0x66, 0x6c, 0x65, 0x63, 0x74, 0x5f, 0x70, 0x61, 0x64, 0x5a, 0x1b, 0xa, 0x1, 0x78, 0x12, 0x16, 0xa, 0x14, 0x8, 0x6, 0x12, 0x10, 0xa, 0x2, 0x8, 0x1, 0xa, 0x2, 0x8, 0x3, 0xa, 0x2, 0x8, 0x4, 0xa, 0x2, 0x8, 0x5, 0x5a, 0x12, 0xa, 0x4, 0x70, 0x61, 0x64, 0x73, 0x12, 0xa, 0xa, 0x8, 0x8, 0x7, 0x12, 0x4, 0xa, 0x2, 0x8, 0x8, 0x62, 0x1b, 0xa, 0x1, 0x79, 0x12, 0x16, 0xa, 0x14, 0x8, 0x6, 0x12, 0x10, 0xa, 0x2, 0x8, 0x1, 0xa, 0x2, 0x8, 0x3, 0xa, 0x2, 0x8, 0x6, 0xa, 0x2, 0x8, 0x7, 0x42, 0x2, 0x10, 0xb},
 
 		/*
 
 		   &ir.NodeProto{
-		     Input:     []string{"x"},
+		     Input:     []string{"x", "pads"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Pad",
-		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000132d00)(name:"mode" type:STRING s:"reflect" ),
-		    (*ir.AttributeProto)(0xc000132e00)(name:"pads" type:INTS ints:0 ints:0 ints:1 ints:1 ints:0 ints:0 ints:1 ints:1 )
+		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
+		    (*ir.AttributeProto)(0xc0001e6100)(name:"mode" type:STRING s:"reflect" )
 		   }
 		   ,
 		   },
@@ -39,14 +179,19 @@ func NewTestReflectPad() *testbackend.TestCase {
 
 			tensor.New(
 				tensor.WithShape(1, 3, 4, 5),
-				tensor.WithBacking([]float32{-0.67246044, -0.35955316, -0.8131463, -1.7262826, 0.17742614, -0.40178093, -1.6301984, 0.46278226, -0.9072984, 0.051945396, 0.7290906, 0.12898292, 1.1394007, -1.2348258, 0.40234163, -0.6848101, -0.87079716, -0.5788497, -0.31155252, 0.05616534, -1.1651498, 0.9008265, 0.46566245, -1.5362437, 1.4882522, 1.8958892, 1.1787796, -0.17992483, -1.0707526, 1.0544517, -0.40317693, 1.222445, 0.20827498, 0.97663903, 0.3563664, 0.7065732, 0.01050002, 1.7858706, 0.12691209, 0.40198937, 1.8831507, -1.347759, -1.270485, 0.9693967, -1.1731234, 1.9436212, -0.41361898, -0.7474548, 1.922942, 1.4805148, 1.867559, 0.90604466, -0.86122566, 1.9100649, -0.26800337, 0.8024564, 0.947252, -0.15501009, 0.61407936, 0.9222067}),
+				tensor.WithBacking([]int32{0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, -1, 0, 0, -1, 1, 1, 1, 0, -1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, -1, -1, 0, -1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0}),
+			),
+
+			tensor.New(
+				tensor.WithShape(8),
+				tensor.WithBacking([]int64{0, 0, 1, 1, 0, 0, 1, 1}),
 			),
 		},
 		ExpectedOutput: []tensor.Tensor{
 
 			tensor.New(
 				tensor.WithShape(1, 3, 6, 7),
-				tensor.WithBacking([]float32{-1.6301984, -0.40178093, -1.6301984, 0.46278226, -0.9072984, 0.051945396, -0.9072984, -0.35955316, -0.67246044, -0.35955316, -0.8131463, -1.7262826, 0.17742614, -1.7262826, -1.6301984, -0.40178093, -1.6301984, 0.46278226, -0.9072984, 0.051945396, -0.9072984, 0.12898292, 0.7290906, 0.12898292, 1.1394007, -1.2348258, 0.40234163, -1.2348258, -0.87079716, -0.6848101, -0.87079716, -0.5788497, -0.31155252, 0.05616534, -0.31155252, 0.12898292, 0.7290906, 0.12898292, 1.1394007, -1.2348258, 0.40234163, -1.2348258, 1.1787796, 1.8958892, 1.1787796, -0.17992483, -1.0707526, 1.0544517, -1.0707526, 0.9008265, -1.1651498, 0.9008265, 0.46566245, -1.5362437, 1.4882522, -1.5362437, 1.1787796, 1.8958892, 1.1787796, -0.17992483, -1.0707526, 1.0544517, -1.0707526, 1.222445, -0.40317693, 1.222445, 0.20827498, 0.97663903, 0.3563664, 0.97663903, 0.01050002, 0.7065732, 0.01050002, 1.7858706, 0.12691209, 0.40198937, 0.12691209, 1.222445, -0.40317693, 1.222445, 0.20827498, 0.97663903, 0.3563664, 0.97663903, -0.41361898, 1.9436212, -0.41361898, -0.7474548, 1.922942, 1.4805148, 1.922942, -1.347759, 1.8831507, -1.347759, -1.270485, 0.9693967, -1.1731234, 0.9693967, -0.41361898, 1.9436212, -0.41361898, -0.7474548, 1.922942, 1.4805148, 1.922942, 0.90604466, 1.867559, 0.90604466, -0.86122566, 1.9100649, -0.26800337, 1.9100649, 0.947252, 0.8024564, 0.947252, -0.15501009, 0.61407936, 0.9222067, 0.61407936, 0.90604466, 1.867559, 0.90604466, -0.86122566, 1.9100649, -0.26800337, 1.9100649}),
+				tensor.WithBacking([]int32{-1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, -1, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, -1, 1, 1, 1, 0, -1, 1, -1, 0, -1, 0, 0, -1, 1, -1, 1, 1, 1, 0, -1, 1, -1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, -1, 1, -1, -1, 0, -1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1}),
 			),
 		},
 	}

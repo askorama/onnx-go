@@ -11,6 +11,121 @@ func init() {
 	testbackend.Register("Selu", "TestSeluExample", NewTestSeluExample)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Selu",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "alpha",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             2,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:          "gamma",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             3,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_selu_example",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestSeluExample version: 3.
 func NewTestSeluExample() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +141,8 @@ func NewTestSeluExample() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Selu",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000118e00)(name:"alpha" type:FLOAT f:2 ),
-		    (*ir.AttributeProto)(0xc000118f00)(name:"gamma" type:FLOAT f:3 )
+		    (*ir.AttributeProto)(0xc0002ca700)(name:"alpha" type:FLOAT f:2 ),
+		    (*ir.AttributeProto)(0xc0002ca800)(name:"gamma" type:FLOAT f:3 )
 		   }
 		   ,
 		   },

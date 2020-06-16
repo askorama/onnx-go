@@ -100,5 +100,12 @@ func (a *squeeze) init(o onnx.Operation) error {
 	if !ok {
 		return errors.New("squeeze: axes in not an []int64")
 	}
+	if a.Axes[0] < 0 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Squeeze",
+			Message:  "Negative axis not supported",
+		}
+
+	}
 	return nil
 }

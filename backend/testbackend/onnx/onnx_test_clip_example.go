@@ -11,24 +11,125 @@ func init() {
 	testbackend.Register("Clip", "TestClipExample", NewTestClipExample)
 }
 
-// NewTestClipExample version: 3.
+/*
+&ir.ModelProto{
+    IrVersion:   5,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:11},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x", "min", "max"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Clip",
+                Domain:    "",
+                Attribute: nil,
+                DocString: "",
+            },
+        },
+        Name:              "test_clip_example",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "min",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{},
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "max",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{},
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
+// NewTestClipExample version: 5.
 func NewTestClipExample() *testbackend.TestCase {
 	return &testbackend.TestCase{
 		OpType: "Clip",
 		Title:  "TestClipExample",
-		ModelB: []byte{0x8, 0x3, 0x12, 0xc, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x3a, 0x61, 0xa, 0x2a, 0xa, 0x1, 0x78, 0x12, 0x1, 0x79, 0x22, 0x4, 0x43, 0x6c, 0x69, 0x70, 0x2a, 0xd, 0xa, 0x3, 0x6d, 0x61, 0x78, 0x15, 0x0, 0x0, 0x80, 0x3f, 0xa0, 0x1, 0x1, 0x2a, 0xd, 0xa, 0x3, 0x6d, 0x69, 0x6e, 0x15, 0x0, 0x0, 0x80, 0xbf, 0xa0, 0x1, 0x1, 0x12, 0x11, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x63, 0x6c, 0x69, 0x70, 0x5f, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x5a, 0xf, 0xa, 0x1, 0x78, 0x12, 0xa, 0xa, 0x8, 0x8, 0x1, 0x12, 0x4, 0xa, 0x2, 0x8, 0x3, 0x62, 0xf, 0xa, 0x1, 0x79, 0x12, 0xa, 0xa, 0x8, 0x8, 0x1, 0x12, 0x4, 0xa, 0x2, 0x8, 0x3, 0x42, 0x2, 0x10, 0x9},
+		ModelB: []byte{0x8, 0x5, 0x12, 0xc, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x3a, 0x6b, 0xa, 0x16, 0xa, 0x1, 0x78, 0xa, 0x3, 0x6d, 0x69, 0x6e, 0xa, 0x3, 0x6d, 0x61, 0x78, 0x12, 0x1, 0x79, 0x22, 0x4, 0x43, 0x6c, 0x69, 0x70, 0x12, 0x11, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x63, 0x6c, 0x69, 0x70, 0x5f, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x5a, 0xf, 0xa, 0x1, 0x78, 0x12, 0xa, 0xa, 0x8, 0x8, 0x1, 0x12, 0x4, 0xa, 0x2, 0x8, 0x3, 0x5a, 0xd, 0xa, 0x3, 0x6d, 0x69, 0x6e, 0x12, 0x6, 0xa, 0x4, 0x8, 0x1, 0x12, 0x0, 0x5a, 0xd, 0xa, 0x3, 0x6d, 0x61, 0x78, 0x12, 0x6, 0xa, 0x4, 0x8, 0x1, 0x12, 0x0, 0x62, 0xf, 0xa, 0x1, 0x79, 0x12, 0xa, 0xa, 0x8, 0x8, 0x1, 0x12, 0x4, 0xa, 0x2, 0x8, 0x3, 0x42, 0x2, 0x10, 0xb},
 
 		/*
 
 		   &ir.NodeProto{
-		     Input:     []string{"x"},
+		     Input:     []string{"x", "min", "max"},
 		     Output:    []string{"y"},
 		     Name:      "",
 		     OpType:    "Clip",
-		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000118600)(name:"max" type:FLOAT f:1 ),
-		    (*ir.AttributeProto)(0xc000118700)(name:"min" type:FLOAT f:-1 )
-		   }
+		     Attributes: ([]*ir.AttributeProto) <nil>
 		   ,
 		   },
 
@@ -40,6 +141,16 @@ func NewTestClipExample() *testbackend.TestCase {
 			tensor.New(
 				tensor.WithShape(3),
 				tensor.WithBacking([]float32{-2, 0, 2}),
+			),
+
+			tensor.New(
+				tensor.WithShape(1),
+				tensor.WithBacking([]float32{-1}),
+			),
+
+			tensor.New(
+				tensor.WithShape(1),
+				tensor.WithBacking([]float32{1}),
 			),
 		},
 		ExpectedOutput: []tensor.Tensor{

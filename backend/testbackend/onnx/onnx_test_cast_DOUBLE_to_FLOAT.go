@@ -11,6 +11,111 @@ func init() {
 	testbackend.Register("Cast", "TestCastDOUBLEToFLOAT", NewTestCastDOUBLEToFLOAT)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   4,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:10},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"input"},
+                Output:    {"output"},
+                Name:      "",
+                OpType:    "Cast",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "to",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             1,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_cast_DOUBLE_to_FLOAT",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "input",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 11,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "output",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestCastDOUBLEToFLOAT version: 4.
 func NewTestCastDOUBLEToFLOAT() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,7 +131,7 @@ func NewTestCastDOUBLEToFLOAT() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Cast",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000132400)(name:"to" type:INT i:1 )
+		    (*ir.AttributeProto)(0xc000216e00)(name:"to" type:INT i:1 )
 		   }
 		   ,
 		   },

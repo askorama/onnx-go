@@ -6,6 +6,7 @@ var testTemplate = template.Must(template.New("testCase").Parse(testTmpl))
 var testTestTemplate = template.Must(template.New("testTestCase").Parse(testTestTmpl))
 
 type testValue struct {
+	Dump           string
 	OpType         string
 	TestName       string
 	Description    string
@@ -101,6 +102,9 @@ func init() {
 testbackend.Register("{{ .OpType }}","{{ .TestName }}",New{{ .TestName }})
 }
 
+/*
+{{ .Dump }}
+*/
 
 // New{{ .TestName }} {{ .Description }}
 func New{{ .TestName }}() *testbackend.TestCase{

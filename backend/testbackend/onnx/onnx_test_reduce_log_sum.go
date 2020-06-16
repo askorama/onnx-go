@@ -11,6 +11,129 @@ func init() {
 	testbackend.Register("ReduceLogSum", "TestReduceLogSum", NewTestReduceLogSum)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   3,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:6},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"data"},
+                Output:    {"reduced"},
+                Name:      "",
+                OpType:    "ReduceLogSum",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "axes",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          7,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          {2, 1},
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:          "keepdims",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          2,
+                        F:             0,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_reduce_log_sum",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "data",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "reduced",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestReduceLogSum version: 3.
 func NewTestReduceLogSum() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +149,8 @@ func NewTestReduceLogSum() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ReduceLogSum",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000132700)(name:"axes" type:INTS ints:2 ints:1 ),
-		    (*ir.AttributeProto)(0xc000132800)(name:"keepdims" type:INT )
+		    (*ir.AttributeProto)(0xc0002dc000)(name:"axes" type:INTS ints:2 ints:1 ),
+		    (*ir.AttributeProto)(0xc0002dc100)(name:"keepdims" type:INT )
 		   }
 		   ,
 		   },

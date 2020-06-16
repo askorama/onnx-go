@@ -8,15 +8,121 @@ import (
 )
 
 func init() {
-	//	testbackend.Register("Reshape", "TestReshapeOneDim", NewTestReshapeOneDim)
+	testbackend.Register("Reshape", "TestReshapeOneDim", NewTestReshapeOneDim)
 }
 
-// NewTestReshapeOneDim version: 3.
+/*
+&ir.ModelProto{
+    IrVersion:   6,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:11},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"data", "shape"},
+                Output:    {"reshaped"},
+                Name:      "",
+                OpType:    "Reshape",
+                Domain:    "",
+                Attribute: nil,
+                DocString: "",
+            },
+        },
+        Name:              "test_reshape_one_dim",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "data",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+            &ir.ValueInfoProto{
+                Name: "shape",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:1},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "reshaped",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:24},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
+// NewTestReshapeOneDim version: 6.
 func NewTestReshapeOneDim() *testbackend.TestCase {
 	return &testbackend.TestCase{
 		OpType: "Reshape",
 		Title:  "TestReshapeOneDim",
-		ModelB: []byte{0x8, 0x3, 0x12, 0xc, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x3a, 0x81, 0x1, 0xa, 0x20, 0xa, 0x4, 0x64, 0x61, 0x74, 0x61, 0xa, 0x5, 0x73, 0x68, 0x61, 0x70, 0x65, 0x12, 0x8, 0x72, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x64, 0x22, 0x7, 0x52, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x12, 0x14, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x72, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x5f, 0x6f, 0x6e, 0x65, 0x5f, 0x64, 0x69, 0x6d, 0x5a, 0x1a, 0xa, 0x4, 0x64, 0x61, 0x74, 0x61, 0x12, 0x12, 0xa, 0x10, 0x8, 0x1, 0x12, 0xc, 0xa, 0x2, 0x8, 0x2, 0xa, 0x2, 0x8, 0x3, 0xa, 0x2, 0x8, 0x4, 0x5a, 0x13, 0xa, 0x5, 0x73, 0x68, 0x61, 0x70, 0x65, 0x12, 0xa, 0xa, 0x8, 0x8, 0x7, 0x12, 0x4, 0xa, 0x2, 0x8, 0x1, 0x62, 0x16, 0xa, 0x8, 0x72, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x64, 0x12, 0xa, 0xa, 0x8, 0x8, 0x1, 0x12, 0x4, 0xa, 0x2, 0x8, 0x18, 0x42, 0x2, 0x10, 0x9},
+		ModelB: []byte{0x8, 0x6, 0x12, 0xc, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2d, 0x74, 0x65, 0x73, 0x74, 0x3a, 0x81, 0x1, 0xa, 0x20, 0xa, 0x4, 0x64, 0x61, 0x74, 0x61, 0xa, 0x5, 0x73, 0x68, 0x61, 0x70, 0x65, 0x12, 0x8, 0x72, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x64, 0x22, 0x7, 0x52, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x12, 0x14, 0x74, 0x65, 0x73, 0x74, 0x5f, 0x72, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x5f, 0x6f, 0x6e, 0x65, 0x5f, 0x64, 0x69, 0x6d, 0x5a, 0x1a, 0xa, 0x4, 0x64, 0x61, 0x74, 0x61, 0x12, 0x12, 0xa, 0x10, 0x8, 0x1, 0x12, 0xc, 0xa, 0x2, 0x8, 0x2, 0xa, 0x2, 0x8, 0x3, 0xa, 0x2, 0x8, 0x4, 0x5a, 0x13, 0xa, 0x5, 0x73, 0x68, 0x61, 0x70, 0x65, 0x12, 0xa, 0xa, 0x8, 0x8, 0x7, 0x12, 0x4, 0xa, 0x2, 0x8, 0x1, 0x62, 0x16, 0xa, 0x8, 0x72, 0x65, 0x73, 0x68, 0x61, 0x70, 0x65, 0x64, 0x12, 0xa, 0xa, 0x8, 0x8, 0x1, 0x12, 0x4, 0xa, 0x2, 0x8, 0x18, 0x42, 0x2, 0x10, 0xb},
 
 		/*
 
@@ -41,7 +147,7 @@ func NewTestReshapeOneDim() *testbackend.TestCase {
 
 			tensor.New(
 				tensor.WithShape(1),
-				tensor.WithBacking([]int{24}),
+				tensor.WithBacking([]float32{24}),
 			),
 		},
 		ExpectedOutput: []tensor.Tensor{

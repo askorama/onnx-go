@@ -11,6 +11,121 @@ func init() {
 	testbackend.Register("Shrink", "TestShrinkSoft", NewTestShrinkSoft)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   4,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:10},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "Shrink",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:          "bias",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             1.5,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                    &ir.AttributeProto{
+                        Name:          "lambd",
+                        RefAttrName:   "",
+                        DocString:     "",
+                        Type:          1,
+                        F:             1.5,
+                        I:             0,
+                        S:             nil,
+                        T:             (*ir.TensorProto)(nil),
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_shrink_soft",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:5},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestShrinkSoft version: 4.
 func NewTestShrinkSoft() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,8 +141,8 @@ func NewTestShrinkSoft() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "Shrink",
 		     Attributes: ([]*ir.AttributeProto) (len=2 cap=2) {
-		    (*ir.AttributeProto)(0xc000132300)(name:"bias" type:FLOAT f:1.5 ),
-		    (*ir.AttributeProto)(0xc000132400)(name:"lambd" type:FLOAT f:1.5 )
+		    (*ir.AttributeProto)(0xc000216b00)(name:"bias" type:FLOAT f:1.5 ),
+		    (*ir.AttributeProto)(0xc000216c00)(name:"lambd" type:FLOAT f:1.5 )
 		   }
 		   ,
 		   },

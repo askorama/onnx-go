@@ -11,6 +11,126 @@ func init() {
 	testbackend.Register("ConstantOfShape", "TestConstantofshapeFloatOnes", NewTestConstantofshapeFloatOnes)
 }
 
+/*
+&ir.ModelProto{
+    IrVersion:   4,
+    OpsetImport: {
+        &ir.OperatorSetIdProto{Domain:"", Version:9},
+    },
+    ProducerName:    "backend-test",
+    ProducerVersion: "",
+    Domain:          "",
+    ModelVersion:    0,
+    DocString:       "",
+    Graph:           &ir.GraphProto{
+        Node: {
+            &ir.NodeProto{
+                Input:     {"x"},
+                Output:    {"y"},
+                Name:      "",
+                OpType:    "ConstantOfShape",
+                Domain:    "",
+                Attribute: {
+                    &ir.AttributeProto{
+                        Name:        "value",
+                        RefAttrName: "",
+                        DocString:   "",
+                        Type:        4,
+                        F:           0,
+                        I:           0,
+                        S:           nil,
+                        T:           &ir.TensorProto{
+                            Dims:         {1},
+                            DataType:     1,
+                            Segment:      (*ir.TensorProto_Segment)(nil),
+                            FloatData:    {1},
+                            Int32Data:    nil,
+                            StringData:   nil,
+                            Int64Data:    nil,
+                            Name:         "value",
+                            DocString:    "",
+                            RawData:      nil,
+                            ExternalData: nil,
+                            DataLocation: 0,
+                            DoubleData:   nil,
+                            Uint64Data:   nil,
+                        },
+                        G:             (*ir.GraphProto)(nil),
+                        SparseTensor:  (*ir.SparseTensorProto)(nil),
+                        Floats:        nil,
+                        Ints:          nil,
+                        Strings:       nil,
+                        Tensors:       nil,
+                        Graphs:        nil,
+                        SparseTensors: nil,
+                    },
+                },
+                DocString: "",
+            },
+        },
+        Name:              "test_constantofshape_float_ones",
+        Initializer:       nil,
+        SparseInitializer: nil,
+        DocString:         "",
+        Input:             {
+            &ir.ValueInfoProto{
+                Name: "x",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 7,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        Output: {
+            &ir.ValueInfoProto{
+                Name: "y",
+                Type: &ir.TypeProto{
+                    Value: &ir.TypeProto_TensorType{
+                        TensorType: &ir.TypeProto_Tensor{
+                            ElemType: 1,
+                            Shape:    &ir.TensorShapeProto{
+                                Dim: {
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:4},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:3},
+                                        Denotation: "",
+                                    },
+                                    &ir.TensorShapeProto_Dimension{
+                                        Value:      &ir.TensorShapeProto_Dimension_DimValue{DimValue:2},
+                                        Denotation: "",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    Denotation: "",
+                },
+                DocString: "",
+            },
+        },
+        ValueInfo:              nil,
+        QuantizationAnnotation: nil,
+    },
+    MetadataProps: nil,
+}
+*/
+
 // NewTestConstantofshapeFloatOnes version: 4.
 func NewTestConstantofshapeFloatOnes() *testbackend.TestCase {
 	return &testbackend.TestCase{
@@ -26,7 +146,7 @@ func NewTestConstantofshapeFloatOnes() *testbackend.TestCase {
 		     Name:      "",
 		     OpType:    "ConstantOfShape",
 		     Attributes: ([]*ir.AttributeProto) (len=1 cap=1) {
-		    (*ir.AttributeProto)(0xc000132400)(name:"value" type:TENSOR t:<dims:1 data_type:1 float_data:1 name:"value" > )
+		    (*ir.AttributeProto)(0xc0002fa200)(name:"value" type:TENSOR t:<dims:1 data_type:1 float_data:1 name:"value" > )
 		   }
 		   ,
 		   },

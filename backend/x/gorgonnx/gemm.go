@@ -268,6 +268,12 @@ func (o *gemm) String() string {
 func (o *gemm) apply(g *Graph, ns ...*Node) error {
 	n := ns[0]
 	children := getOrderedChildren(g.g, n)
+	if len(children) == 2 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Gemm",
+			Message:  "Operator does not support default biais",
+		}
+	}
 	err := checkCondition(children, 3)
 	if err != nil {
 		return err

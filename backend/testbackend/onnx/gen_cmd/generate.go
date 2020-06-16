@@ -14,6 +14,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/kr/pretty"
+
 	"github.com/davecgh/go-spew/spew"
 	"github.com/owulveryck/onnx-go/internal/onnx/ir"
 )
@@ -90,6 +92,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
+	tv.Dump = fmt.Sprintf("%# v", pretty.Formatter(model))
 	tv.Description = fmt.Sprintf("version: %v. %v", model.GetIrVersion(), model.GetDocString())
 	mv.TestName = fmt.Sprintf("%#v", file.Name())
 	mv.IrVersion = fmt.Sprintf("%v", model.IrVersion)
@@ -207,7 +210,7 @@ func processModelGraphNodeInput(filename string, node *ir.NodeProto, tv *testVal
 	tv.Input = make([]iO, len(node.GetInput()))
 	for i := range node.GetInput() {
 		// Open the tensorproto sample file
-		filepath := fmt.Sprintf("%v%v/test_data_set_0/input_%v.ir", *testdir, filename, i)
+		filepath := fmt.Sprintf("%v%v/test_data_set_0/input_%v.pb", *testdir, filename, i)
 		b, err := ioutil.ReadFile(filepath)
 		if err != nil {
 			return err
@@ -243,7 +246,7 @@ func processModelGraphNodeOutput(filename string, node *ir.NodeProto, tv *testVa
 	tv.ExpectedOutput = make([]iO, len(node.GetOutput()))
 	for i := range node.Output {
 		// Open the tensorproto sample file
-		filepath := fmt.Sprintf("%v%v/test_data_set_0/output_%v.ir", *testdir, filename, i)
+		filepath := fmt.Sprintf("%v%v/test_data_set_0/output_%v.pb", *testdir, filename, i)
 		b, err := ioutil.ReadFile(filepath)
 		if err != nil {
 			return err

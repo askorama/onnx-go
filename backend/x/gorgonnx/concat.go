@@ -41,5 +41,11 @@ func (a *concat) init(o onnx.Operation) error {
 		a.axis = int(axis)
 		err = nil
 	}
+	if a.axis < 0 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Concat",
+			Message:  "Negative axis not supported",
+		}
+	}
 	return err
 }

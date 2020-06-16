@@ -51,5 +51,11 @@ func (f *flatten) init(o onnx.Operation) error {
 			return errors.New("axis is not an int64")
 		}
 	}
+	if f.axis < 0 {
+		return &onnx.ErrNotImplemented{
+			Operator: "Softmax",
+			Message:  "Negative axis not supported",
+		}
+	}
 	return nil
 }
