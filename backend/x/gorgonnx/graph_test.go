@@ -85,11 +85,3 @@ func (d *dummyVM) Reset() {
 func (d *dummyVM) Close() error {
 	return nil
 }
-
-func TestSetVM(t *testing.T) {
-	g := &Graph{}
-	g.SetVM(&dummyVM{})
-	if g.m == nil {
-		t.Fail()
-	}
-}
