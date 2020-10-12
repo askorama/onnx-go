@@ -1,12 +1,15 @@
 package gorgonnx
 
 import (
+	"context"
 	"errors"
+	"time"
 
 	"github.com/owulveryck/onnx-go"
 	"gonum.org/v1/gonum/graph"
 	"gonum.org/v1/gonum/graph/simple"
 	"gorgonia.org/gorgonia"
+	xvm "gorgonia.org/gorgonia/x/vm"
 	"gorgonia.org/tensor"
 )
 
@@ -17,7 +20,7 @@ import (
 type Graph struct {
 	g         *simple.WeightedDirectedGraph
 	exprgraph *gorgonia.ExprGraph
-	m         gorgonia.VM
+	m         *xvm.Machine
 	roots     []int64
 	groups    [][]*Node // a reference of all the nodes that belongs to a group
 }
@@ -25,9 +28,11 @@ type Graph struct {
 // SetVM used by the backend
 // A call to this method do not call the PopulateExprgraph method
 // it is the responsibility of the caller to call it before
+/*
 func (g *Graph) SetVM(vm gorgonia.VM) {
 	g.m = vm
 }
+*/
 
 // GetExprGraph returns the gorgonia graph; if the graph is nil, it populates the graph before returing it
 func (g *Graph) GetExprGraph() (*gorgonia.ExprGraph, error) {
@@ -57,13 +62,16 @@ func (g *Graph) Run() error {
 			return err
 		}
 	}
-	if g.m == nil {
-		g.m = gorgonia.NewTapeMachine(g.exprgraph)
-	} else {
-		g.m.Reset()
-	}
+	//if g.m == nil {
+	g.m = xvm.NewMachine(g.exprgraph)
+	defer g.m.Close()
+	//g.m = gorgonia.NewTapeMachine(g.exprgraph)
+	//}
 
-	err := g.m.RunAll()
+	//err := g.m.RunAll()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err := g.m.Run(ctx)
 	if err != nil {
 		return err
 	}
@@ -74,7 +82,8 @@ func (g *Graph) Run() error {
 		if root.gorgoniaNode == nil {
 			return errors.New("root node is nil")
 		}
-		root.t, ok = root.gorgoniaNode.Value().(tensor.Tensor)
+		root.t, ok = g.m.GetResult(root.gorgoniaNode.ID()).(tensor.Tensor)
+		//root.t, ok = root.gorgoniaNode.Value().(tensor.Tensor)
 		if !ok {
 			return errors.New("root node is not a tensor")
 		}
