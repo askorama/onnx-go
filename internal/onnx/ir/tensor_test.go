@@ -510,3 +510,53 @@ func TestNewTensor_int64_noData(t *testing.T) {
 	_, err := txInt64.Tensor()
 	assert.EqualError(t, err, "No data found")
 }
+
+func TestNewTensor_float32_raw_empty(t *testing.T) {
+	dims := []int64{0}
+	dataType := TensorProto_DataType(TensorProto_DataType_value["FLOAT"])
+	rawData := []byte{}
+	name := "testFloat"
+	txFloat32 := &TensorProto{
+		Dims:       dims,
+		DataType:   int32(dataType),
+		Segment:    (*TensorProto_Segment)(nil),
+		FloatData:  nil,
+		Int32Data:  nil,
+		StringData: nil,
+		Int64Data:  nil,
+		Name:       name,
+		DocString:  "",
+		RawData:    rawData,
+		DoubleData: nil,
+		Uint64Data: nil,
+	}
+	_, err := txFloat32.Tensor()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestNewTensor_float64_raw_empty(t *testing.T) {
+	dims := []int64{0}
+	dataType := TensorProto_DataType(TensorProto_DataType_value["DOUBLE"])
+	rawData := []byte{}
+	name := "testFloat"
+	txFloat64 := &TensorProto{
+		Dims:       dims,
+		DataType:   int32(dataType),
+		Segment:    (*TensorProto_Segment)(nil),
+		FloatData:  nil,
+		Int32Data:  nil,
+		StringData: nil,
+		Int64Data:  nil,
+		Name:       name,
+		DocString:  "",
+		RawData:    rawData,
+		DoubleData: nil,
+		Uint64Data: nil,
+	}
+	_, err := txFloat64.Tensor()
+	if err != nil {
+		t.Fatal(err)
+	}
+}

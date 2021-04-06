@@ -90,6 +90,9 @@ func generateConsOptsFromBoolTensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
 func generateConsOptsFromFloat32Tensor(tx *TensorProto) ([]tensor.ConsOpt, error) {
 	switch {
 	case tx.RawData != nil:
+		if len(tx.RawData) == 0 {
+			return []tensor.ConsOpt{tensor.WithBacking([]float32{})}, nil
+		}
 		buf := bytes.NewReader(tx.RawData)
 		element := make([]byte, 4)
 		var err error
@@ -119,6 +122,9 @@ func generateConsOptsFromFloat64Tensor(tx *TensorProto) ([]tensor.ConsOpt, error
 	case tx.DoubleData != nil:
 		return []tensor.ConsOpt{tensor.WithBacking(tx.DoubleData)}, nil
 	case tx.RawData != nil:
+		if len(tx.RawData) == 0 {
+			return []tensor.ConsOpt{tensor.WithBacking([]float64{})}, nil
+		}
 		buf := bytes.NewReader(tx.RawData)
 		element := make([]byte, 8)
 		var err error
