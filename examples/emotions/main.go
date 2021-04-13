@@ -66,17 +66,49 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Finished loading ONNX Model")
 	// Set the first input, the number depends of the model
 	// TODO
 	inputStream := createInputStream(input)
+	fmt.Println(("0 - image work - finished creating input stream"))
 	img, err := png.Decode(inputStream)
+	fmt.Println(("1 - image work - PNG decoded"))
 	if err != nil {
+		fmt.Println(("LOG ERROR"))
 		log.Fatal(err)
 	}
+
+	//------
+	/*
+	// Working with grayscale image, e.g. convert to png
+    f, err := os.Create("surprise-gray.png")
+    if err != nil {
+        // handle error
+        log.Fatal(err)
+    }
+
+	// Convert image to grayscale
+    grayImg := image.NewGray(img.Bounds())
+    for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++ {
+        for x := img.Bounds().Min.X; x < img.Bounds().Max.X; x++ {
+            grayImg.Set(x, y, img.At(x, y))
+        }
+    }
+
+	if err := png.Encode(f, grayImg); err != nil {
+        log.Fatal(err)
+    }
+
+	f.Close()
+	*/
+	//-------
+
 	imgGray, ok := img.(*image.Gray)
+	fmt.Println(("2 - image work - finished image Gray"))
 	if !ok {
 		log.Fatal("Please give a gray image as input")
 	}
+	fmt.Println(("3 - image work"))
 	inputT := tensor.New(tensor.WithShape(1, 1, height, width), tensor.Of(tensor.Float32))
 	err = images.GrayToBCHW(imgGray, inputT)
 	if err != nil {
@@ -93,7 +125,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(("4 - get output tensors"))
 	result := classify(softmax(computedOutputT[0].Data().([]float32)))
+	fmt.Println(("5 - classify"))
 	fmt.Printf("%v / %2.2f%%\n", result[0].emotion, result[0].weight*100)
 	fmt.Printf("%v / %2.2f%%\n", result[1].emotion, result[1].weight*100)
 }
@@ -135,7 +169,7 @@ func createInputStream(input *string) io.Reader {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer imgContent.Close()
+		//defer imgContent.Close()
 		inputStream = imgContent
 	} else {
 		inputStream = os.Stdin
