@@ -20,6 +20,5 @@ doc/introduction/introduction
 
 .DS_Store
 *.wasm
-*.onnx
 /onnx-go.iml
 /.idea/
