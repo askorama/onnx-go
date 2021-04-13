@@ -1,3 +1,14 @@
+# Workshop Demo README
+1. git clone git@github.com:rv-mspivey/onnx-go.git
+2. cd examples/emotions
+3. In terminal run: go run main.go -model model/emotion-ferplus-8.onnx -input grayphoto1.png
+4. In terminal run: go run main.go -model model/emotion-ferplus-8.onnx -input grayphoto2.png
+
+There's already a grayphoto1.png and graphoto2.png that is 64x64 pixels grayscale. The main.go has a commented out 
+section of code that convert other 64x64 PNGs that you have to grayscale if you want.
+
+# Original README
+
 ![ONNX Logo](vignettes/imgs/ONNX_logo_main.png) ![Go Logo](vignettes/imgs/Go-Logo_Blue.png)
 
 [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#machine-learning) [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
