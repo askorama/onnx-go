@@ -2,7 +2,7 @@
 
 to run this utility you need:
 
-- the onnx definition of tiny yolo v2 from the [model zoo](https://github.com/onnx/models/tree/master/vision/object_detection_segmentation/tiny_yolov2).
+- the onnx definition of tiny yolo v2 from the [model zoo](https://github.com/onnx/models/tree/master/vision/object_detection_segmentation/tiny-yolov2).
 - a jpeg picture
 
 ## Usage
