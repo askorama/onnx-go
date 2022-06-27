@@ -27,5 +27,5 @@ require (
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	gorgonia.org/gorgonia v0.9.15 //ct
-	gorgonia.org/tensor v0.9.11
+	gorgonia.org/tensor v0.9.23
 )
