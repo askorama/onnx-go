@@ -15,7 +15,7 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/stretchr/testify v1.8.0
 	github.com/vincent-petithory/dataurl v1.0.0
-	golang.org/x/image v0.0.0-20220902085622-e7cb96979f69
+	golang.org/x/image v0.5.0
 	golang.org/x/tools v0.1.12
 	gonum.org/v1/gonum v0.12.0
 	gorgonia.org/gorgonia v0.9.17 //ct
