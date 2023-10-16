@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -33,7 +32,7 @@ func main() {
 	m := onnx.NewModel(backend)
 
 	// read the onnx model
-	b, err := ioutil.ReadFile(*model)
+	b, err := os.ReadFile(*model)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,7 +43,7 @@ func main() {
 	}
 	// Set the first input, the number depends of the model
 	// TODO
-	b, err = ioutil.ReadFile(*input)
+	b, err = os.ReadFile(*input)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,7 +57,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	b, err = ioutil.ReadFile(*output)
+	b, err = os.ReadFile(*output)
 	if err != nil {
 		log.Fatal(err)
 	}

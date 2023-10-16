@@ -6,7 +6,6 @@ import (
 	"image"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -57,7 +56,7 @@ func main() {
 	m := onnx.NewModel(backend)
 
 	// read the onnx model
-	b, err := ioutil.ReadFile(*model)
+	b, err := os.ReadFile(*model)
 	if err != nil {
 		log.Fatal(err)
 	}

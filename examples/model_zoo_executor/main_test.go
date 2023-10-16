@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -25,19 +24,19 @@ func TestMain(m *testing.M) {
 	}
 	modelFile := filepath.Join(dir, "model.onnx")
 	var err error
-	model, err = ioutil.ReadFile(modelFile)
+	model, err = os.ReadFile(modelFile)
 	if err != nil {
 		log.Println(err)
 		os.Exit(0)
 	}
 	inputFile := filepath.Join(dir, "test_data_set_0/input_0.pb")
-	input, err = ioutil.ReadFile(inputFile)
+	input, err = os.ReadFile(inputFile)
 	if err != nil {
 		log.Println(err)
 		os.Exit(0)
 	}
 	outputFile := filepath.Join(dir, "test_data_set_0/output_0.pb")
-	output, err = ioutil.ReadFile(outputFile)
+	output, err = os.ReadFile(outputFile)
 	if err != nil {
 		log.Println(err)
 		os.Exit(0)

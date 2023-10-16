@@ -4,7 +4,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -65,9 +65,9 @@ func modelPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a model and set the execution backend
 	model = onnx.NewModel(backend)
 	// ...
-	b, err = ioutil.ReadAll(r.Body) // OMIT
-	defer r.Body.Close()            // OMIT
-	if err != nil {                 // OMIT
+	b, err = io.ReadAll(r.Body) // OMIT
+	defer r.Body.Close()        // OMIT
+	if err != nil {             // OMIT
 		http.Error(w, err.Error(), http.StatusInternalServerError) // OMIT
 		log.Println(err)                                           // OMIT
 		return                                                     // OMIT

@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
 func main() {
-	b, err := ioutil.ReadFile(os.Args[1])
+	b, err := os.ReadFile(os.Args[1])
 	if err != nil {
 		panic(err)
 	}
@@ -21,7 +20,7 @@ func main() {
 	fmt.Fprint(&qb, `")}`)
 	io.Copy(os.Stdout, &qb)
 	/*
-		if err = ioutil.WriteFile("olwu.go", qb.Bytes(), 0644); err != nil {
+		if err = os.WriteFile("olwu.go", qb.Bytes(), 0644); err != nil {
 			return
 		}
 			if string(b) == data {

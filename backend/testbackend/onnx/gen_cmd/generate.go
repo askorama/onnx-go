@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go/format"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -33,7 +32,7 @@ func main() {
 		os.Exit(0)
 	}
 	// locate all the directories with the pattern test_op_...
-	files, err := ioutil.ReadDir(*testdir)
+	files, err := os.ReadDir(*testdir)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +47,11 @@ func main() {
 			continue
 		}
 		log.Println("-->", file.Name())
-		optype, testtitle, err := processFile(file)
+		info, err := file.Info()
+		if err != nil {
+			log.Fatal(err)
+		}
+		optype, testtitle, err := processFile(info)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -80,7 +83,7 @@ func processFile(file os.FileInfo) (string, string, error) {
 	var tv testValue
 	var mv modelValue
 	tv.TestName = toCamelCase(file.Name())
-	b, err := ioutil.ReadFile(*testdir + file.Name() + "/model.onnx")
+	b, err := os.ReadFile(*testdir + file.Name() + "/model.onnx")
 	if err != nil {
 		return "", "", err
 	}
@@ -208,7 +211,7 @@ func processModelGraphNodeInput(filename string, node *ir.NodeProto, tv *testVal
 	for i := range node.GetInput() {
 		// Open the tensorproto sample file
 		filepath := fmt.Sprintf("%v%v/test_data_set_0/input_%v.ir", *testdir, filename, i)
-		b, err := ioutil.ReadFile(filepath)
+		b, err := os.ReadFile(filepath)
 		if err != nil {
 			return err
 		}
@@ -244,7 +247,7 @@ func processModelGraphNodeOutput(filename string, node *ir.NodeProto, tv *testVa
 	for i := range node.Output {
 		// Open the tensorproto sample file
 		filepath := fmt.Sprintf("%v%v/test_data_set_0/output_%v.ir", *testdir, filename, i)
-		b, err := ioutil.ReadFile(filepath)
+		b, err := os.ReadFile(filepath)
 		if err != nil {
 			return err
 		}
