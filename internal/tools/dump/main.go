@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -11,7 +10,7 @@ import (
 
 func main() {
 	onnxFile := os.Args[1]
-	b, err := ioutil.ReadFile(onnxFile)
+	b, err := os.ReadFile(onnxFile)
 	if err != nil {
 		log.Fatal(err)
 	}

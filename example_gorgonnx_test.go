@@ -2,8 +2,8 @@ package onnx_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/x/gorgonnx"
@@ -19,7 +19,7 @@ func Example_gorgonia() {
 	model := onnx.NewModel(backend)
 
 	// read the onnx model
-	b, _ := ioutil.ReadFile("model.onnx")
+	b, _ := os.ReadFile("model.onnx")
 	// Decode it into the model
 	err := model.UnmarshalBinary(b)
 	if err != nil {

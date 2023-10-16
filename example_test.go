@@ -1,8 +1,8 @@
 package onnx_test
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/owulveryck/onnx-go"
 	"github.com/owulveryck/onnx-go/backend/simple"
@@ -16,7 +16,7 @@ func Example_simple() {
 	model := onnx.NewModel(backend)
 
 	// read the onnx model
-	b, _ := ioutil.ReadFile("model.onnx")
+	b, _ := os.ReadFile("model.onnx")
 	// Decode it into the model
 	err := model.UnmarshalBinary(b)
 	// END SIMPLE

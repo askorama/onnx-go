@@ -9,7 +9,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -31,7 +30,6 @@ import (
 // will predict 5 bounding boxes (boxesPerCell). A bounding box consists of
 // five data items: x, y, width, height, and a confidence score. Each grid
 // cell also predicts which class each bounding box belongs to.
-//
 const (
 	hSize, wSize  = 416, 416
 	blockSize     = 32
@@ -86,7 +84,7 @@ func main() {
 	m := onnx.NewModel(backend)
 
 	// read the onnx model
-	b, err := ioutil.ReadFile(*model)
+	b, err := os.ReadFile(*model)
 	if err != nil {
 		log.Fatal(err)
 	}

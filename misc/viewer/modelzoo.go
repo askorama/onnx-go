@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/kr/pretty"
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	b, err := ioutil.ReadFile("/Users/olivier.wulveryck/Documents/squeezenet/model.onnx")
+	b, err := os.ReadFile("/Users/olivier.wulveryck/Documents/squeezenet/model.onnx")
 	if err != nil {
 		log.Fatal(err)
 	}
