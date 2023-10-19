@@ -23,6 +23,9 @@ func newGather() operator {
 
 type gather struct {
 	axis int64
+
+	dataShape    tensor.Shape
+	indicesShape tensor.Shape
 }
 
 func (g *gather) Arity() int {
@@ -32,7 +35,10 @@ func (g *gather) Arity() int {
 func (g *gather) Type() hm.Type {
 	a := hm.TypeVariable('a')
 	c := hm.TypeVariable('c')
-	return hm.NewFnType(a, c, a)
+	dataType := gorgonia.TensorType{Dims: len(g.dataShape), Of: a}
+	indicesType := gorgonia.TensorType{Dims: len(g.indicesShape), Of: c}
+	retType := gorgonia.TensorType{Dims: len(g.dataShape) + len(g.indicesShape) - 1, Of: a}
+	return hm.NewFnType(dataType, indicesType, retType)
 }
 
 func gatherInferShape(axis int64, dataShape, indicesShape tensor.Shape) tensor.Shape {
@@ -149,6 +155,8 @@ func (g *gather) apply(gg *Graph, ns ...*Node) error {
 	}
 	data := children[0]
 	indices := children[1]
+	g.dataShape = data.gorgoniaNode.Shape()
+	g.indicesShape = indices.gorgoniaNode.Shape()
 	n.gorgoniaNode, err = gorgonia.ApplyOp(g, data.gorgoniaNode, indices.gorgoniaNode)
 	if err != nil {
 		return err
