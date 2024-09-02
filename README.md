@@ -1,14 +1,22 @@
-This project is no longer maintained. The [recent issue](https://github.com/owulveryck/onnx-go/issues/217#issuecomment-2142018076) made me realize that it is time to archive this project. I do not have any time to maintain it, nor do I have plans to evolve it in the future. The world of deep learning has changed, and I believe that through exaptation, new ideas to make deep learning portable will emerge and make this project obsolete.
-
-
 ![ONNX Logo](vignettes/imgs/ONNX_logo_main.png) ![Go Logo](vignettes/imgs/Go-Logo_Blue.png)
 
 [![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#machine-learning) [![GoDoc](https://godoc.org/github.com/owulveryck/onnx-go?status.svg)](https://godoc.org/github.com/owulveryck/onnx-go) [![Go Report Card](https://goreportcard.com/badge/github.com/owulveryck/onnx-go)](https://goreportcard.com/report/github.com/owulveryck/onnx-go)
 [![Build Status](https://travis-ci.com/owulveryck/onnx-go.svg?branch=master)](https://travis-ci.com/owulveryck/onnx-go)
 [![CodeCov](https://codecov.io/gh/owulveryck/onnx-go/branch/master/graph/badge.svg)](https://codecov.io/gh/owulveryck/onnx-go)
 
-
 This is a Go Interface to [Open Neural Network Exchange (ONNX)](https://onnx.ai/).
+
+# READ BEFORE USING
+
+This project was originally created by [owulveryck](https://github.com/owulveryck), and archived on May 31, 2024.
+
+At [Orama](https://orama.com), we decided to revive the project and we'll be dedicating some substantial efforts to make it shine again!
+
+With that being said, thank you [owulveryck](https://github.com/owulveryck) for your great work and trust in us to bring this project on.
+
+We're starting now to actively maintain it, so if you find any issues, please be patient.
+
+Thanks for your understanding!
 
 ## Overview 
 onnx-go contains primitives to decode a onnx binary model into a computation backend, and use it like any other library in your go code.
