@@ -13,10 +13,12 @@ import (
 // Model is a wrapper around a computation graph.
 // Input and Output are containing the ID of the corresponding nodes.
 type Model struct {
-	backend  Backend
-	dbByName map[string]graph.Node
-	Input    []int64
-	Output   []int64
+	backend     Backend
+	dbByName    map[string]graph.Node
+	Input       []int64
+	InputNames  []string
+	Output      []int64
+	OutputNames []string
 }
 
 // NewModel with dst as backend.
@@ -119,7 +121,9 @@ func (m *Model) decodeProto(model *ir.ModelProto) error {
 // applyModelProtoGraph apply model proto graph tensors to model
 func (m *Model) applyModelProtoGraph(model *ir.ModelProto) error {
 	m.Input = make([]int64, len(model.Graph.Input))
+	m.InputNames = make([]string, len(model.Graph.Input))
 	m.Output = make([]int64, len(model.Graph.Output))
+	m.OutputNames = make([]string, len(model.Graph.Output))
 	m.dbByName = make(map[string]graph.Node, len(model.Graph.Output)+len(model.Graph.Input))
 	// Well...
 	for i, io := range model.Graph.Input {
@@ -128,6 +132,7 @@ func (m *Model) applyModelProtoGraph(model *ir.ModelProto) error {
 			return err
 		}
 		m.Input[i] = n.ID()
+		m.InputNames[i] = io.Name
 	}
 	for _, io := range model.Graph.ValueInfo {
 		_, err := m.processValue(io)
@@ -141,6 +146,7 @@ func (m *Model) applyModelProtoGraph(model *ir.ModelProto) error {
 			return err
 		}
 		m.Output[i] = n.ID()
+		m.OutputNames[i] = io.Name
 	}
 	err := m.applyModelProtoGraphTensors(model)
 	if err != nil {

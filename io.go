@@ -39,6 +39,17 @@ func (m *Model) GetOutputTensors() ([]tensor.Tensor, error) {
 	return output, nil
 }
 
+// GetInputNames returns the names of the model inputs in order.
+// Use this to set inputs by name rather than hardcoding the order.
+func (m *Model) GetInputNames() []string {
+	return m.InputNames
+}
+
+// GetOutputNames returns the names of the model outputs in order.
+func (m *Model) GetOutputNames() []string {
+	return m.OutputNames
+}
+
 // GetInpuTensors from the graph. This function is useful to get informations if the tensor is a placeholder
 // and does not contain any data yet.
 func (m *Model) GetInputTensors() []tensor.Tensor {
